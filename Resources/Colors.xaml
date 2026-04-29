@@ -1,34 +1,42 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <?xaml-comp compile="true" ?>
-<ResourceDictionary 
+<ResourceDictionary
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <Color x:Key="Primary">#512BD4</Color>
-    <Color x:Key="Light">#DFD8F7</Color>
-    <Color x:Key="Dark">#2B0B98</Color>
-    <Color x:Key="White">White</Color>
-    <Color x:Key="Black">Black</Color>
-    <Color x:Key="LightGray">#E5E5E1</Color>
-    <Color x:Key="MidGray">#969696</Color>
-    <Color x:Key="DarkGray">#505050</Color>
-    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource Primary}"/>
-    <SolidColorBrush x:Key="LightBrush" Color="{StaticResource Light}"/>
-    <SolidColorBrush x:Key="DarkBrush" Color="{StaticResource Dark}"/>
-    <SolidColorBrush x:Key="WhiteBrush" Color="{StaticResource White}"/>
-    <SolidColorBrush x:Key="BlackBrush" Color="{StaticResource Black}"/>
-    <SolidColorBrush x:Key="LightGrayBrush" Color="{StaticResource LightGray}"/>
-    <SolidColorBrush x:Key="MidGrayBrush" Color="{StaticResource MidGray}"/>
-    <SolidColorBrush x:Key="DarkGrayBrush" Color="{StaticResource DarkGray}"/>
+    <!-- Paynest brand palette -->
+    <Color x:Key="GreenPrimary">#2A6349</Color>
+    <Color x:Key="GreenAccent">#3D9668</Color>
+    <Color x:Key="GreenLogoBg">#3A7A5C</Color>
+    <Color x:Key="PageBackground">#F2F0EB</Color>
+    <Color x:Key="Error">#D93025</Color>
+    <Color x:Key="TextPrimary">#1C1C1E</Color>
+    <Color x:Key="TextSecondary">#6B6B6B</Color>
+    <Color x:Key="TextPlaceholder">#ABABAB</Color>
+    <Color x:Key="InputBorder">#C8C5BE</Color>
+    <Color x:Key="Divider">#D8D5CE</Color>
+    <Color x:Key="White">#FFFFFF</Color>
+    <Color x:Key="Black">#000000</Color>
 
-    <Color x:Key="Yellow100Accent">#F7B548</Color>
-    <Color x:Key="Yellow200Accent">#FFD590</Color>
-    <Color x:Key="Yellow300Accent">#FFE5B9</Color>
-    <Color x:Key="Cyan100Accent">#28C2D1</Color>
-    <Color x:Key="Cyan200Accent">#7BDDEF</Color>
-    <Color x:Key="Cyan300Accent">#C3F2F4</Color>
-    <Color x:Key="Blue100Accent">#3E8EED</Color>
-    <Color x:Key="Blue200Accent">#72ACF1</Color>
-    <Color x:Key="Blue300Accent">#A7CBF6</Color>
+    <!-- Legacy aliases (Styles.xaml los referencia) -->
+    <Color x:Key="Primary">#2A6349</Color>
+    <Color x:Key="Light">#B8DCC9</Color>
+    <Color x:Key="Dark">#1A3D2C</Color>
+    <Color x:Key="LightGray">#C8C5BE</Color>
+    <Color x:Key="MidGray">#9E9E9E</Color>
+    <Color x:Key="DarkGray">#505050</Color>
+
+    <SolidColorBrush x:Key="GreenPrimaryBrush"  Color="{StaticResource GreenPrimary}"/>
+    <SolidColorBrush x:Key="GreenAccentBrush"   Color="{StaticResource GreenAccent}"/>
+    <SolidColorBrush x:Key="InputBorderBrush"   Color="{StaticResource InputBorder}"/>
+    <SolidColorBrush x:Key="ErrorBrush"         Color="{StaticResource Error}"/>
+    <SolidColorBrush x:Key="PrimaryBrush"       Color="{StaticResource GreenPrimary}"/>
+    <SolidColorBrush x:Key="LightBrush"         Color="{StaticResource Light}"/>
+    <SolidColorBrush x:Key="DarkBrush"          Color="{StaticResource Dark}"/>
+    <SolidColorBrush x:Key="WhiteBrush"         Color="{StaticResource White}"/>
+    <SolidColorBrush x:Key="BlackBrush"         Color="{StaticResource Black}"/>
+    <SolidColorBrush x:Key="LightGrayBrush"     Color="{StaticResource LightGray}"/>
+    <SolidColorBrush x:Key="MidGrayBrush"       Color="{StaticResource MidGray}"/>
+    <SolidColorBrush x:Key="DarkGrayBrush"      Color="{StaticResource DarkGray}"/>
 
 </ResourceDictionary>

@@ -30,3 +30,6 @@ packages/
 Thumbs.db
 Desktop.ini
 .DS_Store
+
+# Local developer configuration
+Paynest.Local.props

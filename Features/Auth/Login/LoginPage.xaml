@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Paynest.Features.Auth.Login.LoginPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Paynest.Features.Auth.Login"
+    x:DataType="vm:LoginViewModel"
+    Shell.NavBarIsVisible="False"
+    BackgroundColor="{StaticResource PageBackground}">
+
+    <Grid RowDefinitions="*, Auto">
+
+        <!-- ── Contenido principal scrollable ─────────────────────────── -->
+        <ScrollView Grid.Row="0">
+            <VerticalStackLayout Padding="28,52,28,24" Spacing="0">
+
+                <!-- Logo + nombre -->
+                <HorizontalStackLayout Spacing="12" Margin="0,0,0,6">
+                    <Image
+                        Source="paynest_icon.png"
+                        HeightRequest="52"
+                        WidthRequest="52"
+                        Aspect="AspectFit"
+                        VerticalOptions="Center"/>
+                    <VerticalStackLayout VerticalOptions="Center" Spacing="2">
+                        <Label
+                            Text="Paynest."
+                            TextColor="{StaticResource TextPrimary}"
+                            FontSize="26"
+                            FontFamily="OpenSansSemibold"/>
+                        <Label
+                            Text="COBROS · CARTERA · CONTROL"
+                            TextColor="{StaticResource GreenAccent}"
+                            FontSize="10"
+                            CharacterSpacing="1.2"/>
+                    </VerticalStackLayout>
+                </HorizontalStackLayout>
+
+                <!-- Descripción -->
+                <Label
+                    Text="Organiza tus cobros y nunca pierdas el control de tu dinero."
+                    TextColor="{StaticResource TextSecondary}"
+                    FontSize="15"
+                    LineHeight="1.45"
+                    Margin="0,16,0,22"/>
+
+                <!-- Divisor -->
+                <BoxView
+                    HeightRequest="1"
+                    BackgroundColor="{StaticResource Divider}"
+                    Margin="0,0,0,28"/>
+
+                <!-- ── Campo email ──────────────────────────────────────── -->
+                <Label
+                    Text="Correo electrónico"
+                    FontSize="14"
+                    FontFamily="OpenSansSemibold"
+                    TextColor="{StaticResource TextPrimary}"
+                    Margin="0,0,0,6"/>
+
+                <Border
+                    Stroke="{StaticResource InputBorderBrush}"
+                    StrokeShape="RoundRectangle 12"
+                    StrokeThickness="1.5"
+                    BackgroundColor="{StaticResource White}"
+                    HeightRequest="52">
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border"
+                                     Binding="{Binding HasEmailError}"
+                                     Value="True">
+                            <Setter Property="Stroke" Value="{StaticResource ErrorBrush}"/>
+                        </DataTrigger>
+                    </Border.Triggers>
+                    <Entry
+                        Placeholder="tu@correo.mx"
+                        Text="{Binding Email}"
+                        Keyboard="Email"
+                        BackgroundColor="Transparent"
+                        PlaceholderColor="{StaticResource TextPlaceholder}"
+                        TextColor="{StaticResource TextPrimary}"
+                        Margin="8,0"
+                        ReturnType="Next"/>
+                </Border>
+
+                <!-- Error email -->
+                <HorizontalStackLayout
+                    IsVisible="{Binding HasEmailError}"
+                    Spacing="4"
+                    Margin="2,5,0,0">
+                    <Label Text="⚠" TextColor="{StaticResource Error}" FontSize="12" VerticalOptions="Center"/>
+                    <Label Text="{Binding EmailError}" TextColor="{StaticResource Error}" FontSize="12" VerticalOptions="Center"/>
+                </HorizontalStackLayout>
+
+                <!-- ── Campo contraseña ────────────────────────────────── -->
+                <Label
+                    Text="Contraseña"
+                    FontSize="14"
+                    FontFamily="OpenSansSemibold"
+                    TextColor="{StaticResource TextPrimary}"
+                    Margin="0,18,0,6"/>
+
+                <Border
+                    Stroke="{StaticResource InputBorderBrush}"
+                    StrokeShape="RoundRectangle 12"
+                    StrokeThickness="1.5"
+                    BackgroundColor="{StaticResource White}"
+                    HeightRequest="52">
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border"
+                                     Binding="{Binding HasPasswordError}"
+                                     Value="True">
+                            <Setter Property="Stroke" Value="{StaticResource ErrorBrush}"/>
+                        </DataTrigger>
+                    </Border.Triggers>
+                    <Grid ColumnDefinitions="*, 44" Padding="8,0,0,0">
+                        <Entry
+                            Grid.Column="0"
+                            Placeholder="Tu contraseña"
+                            Text="{Binding Password}"
+                            IsPassword="{Binding IsPasswordHidden}"
+                            BackgroundColor="Transparent"
+                            PlaceholderColor="{StaticResource TextPlaceholder}"
+                            TextColor="{StaticResource TextPrimary}"
+                            ReturnType="Done"/>
+                        <ImageButton
+                            Grid.Column="1"
+                            Source="{Binding EyeIconSource}"
+                            Command="{Binding TogglePasswordCommand}"
+                            HeightRequest="22"
+                            WidthRequest="22"
+                            BackgroundColor="Transparent"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"/>
+                    </Grid>
+                </Border>
+
+                <!-- Error contraseña -->
+                <HorizontalStackLayout
+                    IsVisible="{Binding HasPasswordError}"
+                    Spacing="4"
+                    Margin="2,5,0,0">
+                    <Label Text="⚠" TextColor="{StaticResource Error}" FontSize="12" VerticalOptions="Center"/>
+                    <Label Text="{Binding PasswordError}" TextColor="{StaticResource Error}" FontSize="12" VerticalOptions="Center"/>
+                </HorizontalStackLayout>
+
+                <!-- ¿Olvidaste tu contraseña? -->
+                <Label
+                    Text="¿Olvidaste tu contraseña?"
+                    TextColor="{StaticResource GreenAccent}"
+                    FontSize="14"
+                    HorizontalOptions="End"
+                    Margin="0,14,0,0">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ForgotPasswordCommand}"/>
+                    </Label.GestureRecognizers>
+                </Label>
+
+                <!-- Error general -->
+                <Border
+                    IsVisible="{Binding HasGeneralError}"
+                    BackgroundColor="#FFF5F5"
+                    Stroke="#FFCDD2"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 10"
+                    Margin="0,18,0,0">
+                    <Label
+                        Text="{Binding GeneralError}"
+                        TextColor="{StaticResource Error}"
+                        FontSize="13"
+                        Padding="14,10"/>
+                </Border>
+
+                <!-- Botón iniciar sesión -->
+                <Button
+                    Text="Iniciar sesión  →"
+                    Command="{Binding LoginCommand}"
+                    IsEnabled="{Binding IsNotLoading}"
+                    BackgroundColor="{StaticResource GreenPrimary}"
+                    TextColor="{StaticResource White}"
+                    FontFamily="OpenSansSemibold"
+                    FontSize="16"
+                    CornerRadius="28"
+                    HeightRequest="56"
+                    HorizontalOptions="Fill"
+                    Margin="0,22,0,0"/>
+
+                <!-- Indicador de carga -->
+                <ActivityIndicator
+                    IsVisible="{Binding IsLoading}"
+                    IsRunning="{Binding IsLoading}"
+                    Color="{StaticResource GreenPrimary}"
+                    HorizontalOptions="Center"
+                    Margin="0,12,0,0"/>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- ── Footer: enlace a registro ──────────────────────────────── -->
+        <HorizontalStackLayout
+            Grid.Row="1"
+            HorizontalOptions="Center"
+            Spacing="4"
+            Margin="0,0,0,36">
+            <Label
+                Text="¿Eres nuevo?"
+                TextColor="{StaticResource TextSecondary}"
+                FontSize="14"/>
+            <Label
+                Text="Regístrate"
+                TextColor="{StaticResource GreenAccent}"
+                FontSize="14"
+                FontFamily="OpenSansSemibold">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding GoToRegisterCommand}"/>
+                </Label.GestureRecognizers>
+            </Label>
+        </HorizontalStackLayout>
+
+    </Grid>
+</ContentPage>
