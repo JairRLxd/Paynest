@@ -16,6 +16,20 @@ public class AuthStateService(IAuthService authService)
     public string?       AccessToken  { get; private set; }
     public bool          IsAuthenticated => AccessToken is not null;
 
+    // Lee profileCompleted directo de la API.
+    // MarkProfileCompleted() se llama al terminar el onboarding para refrescar el token.
+    public bool IsProfileCompleted => CurrentUser?.ProfileCompleted ?? false;
+
+    public bool IsAdminCollector => CurrentUser?.Role == "admin_collector";
+
+    public void MarkProfileCompleted()
+    {
+        if (CurrentUser is null) return;
+        // Optimistic update local hasta que el próximo login refresque CurrentUser
+        CurrentUser = CurrentUser with { ProfileCompleted = true };
+        Preferences.Default.Set($"profile_done_{CurrentUser.Id}", true);
+    }
+
     public event Action? SessionChanged;
 
     // ── operaciones de sesión ────────────────────────────────────────────────
@@ -77,8 +91,16 @@ public class AuthStateService(IAuthService authService)
 
     private void SetSession(AuthResponse response)
     {
-        AccessToken  = response.AccessToken;
-        CurrentUser  = response.User;
+        AccessToken = response.AccessToken;
+        CurrentUser = new UserResponse(
+            response.Id,
+            response.Email,
+            response.FirstName,
+            response.LastNameP,
+            response.LastNameM,
+            response.EmailVerified,
+            response.Role,
+            response.ProfileCompleted);
         SessionChanged?.Invoke();
     }
 

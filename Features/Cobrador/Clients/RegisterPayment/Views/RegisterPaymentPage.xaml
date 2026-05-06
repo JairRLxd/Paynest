@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Paynest.Features.Cobrador.Clients.RegisterPayment.Views.RegisterPaymentPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:Paynest.Features.Cobrador.Clients.Models"
+    xmlns:vm="clr-namespace:Paynest.Features.Cobrador.Clients.RegisterPayment.ViewModels"
+    x:Name="thisPage"
+    x:DataType="vm:RegisterPaymentViewModel"
+    Shell.NavBarIsVisible="False"
+    BackgroundColor="{StaticResource PageBackground}">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- ── Top bar ───────────────────────────────────────────────────────── -->
+        <Grid Grid.Row="0" ColumnDefinitions="44,*" Padding="16,52,16,10">
+            <Border Grid.Column="0" BackgroundColor="Transparent" StrokeThickness="0"
+                    HeightRequest="40" WidthRequest="40">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding BackCommand}"/>
+                </Border.GestureRecognizers>
+                <Label Text="‹" FontSize="30" TextColor="{StaticResource GreenPrimary}"
+                       HorizontalOptions="Center" VerticalOptions="Center"/>
+            </Border>
+            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="1">
+                <Label Text="{Binding ClientNameUpper}"
+                       FontSize="11" FontFamily="OpenSansSemibold" CharacterSpacing="1.5"
+                       TextColor="{StaticResource GreenPrimary}"/>
+                <Label Text="Registrar pago"
+                       FontSize="24" FontFamily="OpenSansSemibold"
+                       TextColor="{StaticResource TextPrimary}"/>
+            </VerticalStackLayout>
+        </Grid>
+
+        <!-- ── Contenido ─────────────────────────────────────────────────────── -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,0,16,20" Spacing="14">
+
+                <!-- ── Tarjeta resumen de deuda ──────────────────────────────── -->
+                <Border BackgroundColor="{StaticResource White}"
+                        Stroke="#DDE5DF" StrokeThickness="1"
+                        StrokeShape="RoundRectangle 20"
+                        Padding="0">
+                    <VerticalStackLayout Spacing="0">
+
+                        <!-- Encabezado verde con monto total -->
+                        <VerticalStackLayout Padding="16,18,16,14" Spacing="6">
+                            <Label Text="DEUDA TOTAL"
+                                   FontSize="11" FontFamily="OpenSansSemibold"
+                                   CharacterSpacing="1.5" TextColor="#6E8175"
+                                   HorizontalTextAlignment="Center"/>
+
+                            <HorizontalStackLayout HorizontalOptions="Center"
+                                                   Spacing="2" VerticalOptions="Center">
+                                <Label Text="$" FontSize="18" FontFamily="OpenSansSemibold"
+                                       TextColor="#EF4444" VerticalOptions="End"
+                                       Margin="0,0,0,5"/>
+                                <Label Text="{Binding TotalDebt}"
+                                       FontSize="30" FontFamily="OpenSansSemibold"
+                                       TextColor="#EF4444"/>
+                            </HorizontalStackLayout>
+
+                            <Border BackgroundColor="{Binding StatusBadgeBg}"
+                                    StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                                    HorizontalOptions="Center" Padding="12,5">
+                                <Label Text="{Binding StatusLabel}"
+                                       FontSize="12" FontFamily="OpenSansSemibold"
+                                       TextColor="{Binding StatusColor}"/>
+                            </Border>
+
+                            <ActivityIndicator IsRunning="{Binding IsLoading}"
+                                               IsVisible="{Binding IsLoading}"
+                                               Color="{StaticResource GreenPrimary}"
+                                               HorizontalOptions="Center"
+                                               Margin="0,4,0,0"/>
+                        </VerticalStackLayout>
+
+                        <BoxView HeightRequest="1" Color="#E3E9E4"/>
+
+                        <!-- Monto a pagar -->
+                        <VerticalStackLayout Padding="16,14,16,16" Spacing="8">
+                            <Label Text="MONTO A PAGAR"
+                                   FontSize="11" FontFamily="OpenSansSemibold"
+                                   CharacterSpacing="1.5" TextColor="#6E8175"/>
+
+                            <Border IsVisible="{Binding HasCurrentDueBreakdown}"
+                                    BackgroundColor="#F5F9F6"
+                                    Stroke="#DCE5DF"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 12"
+                                    Padding="12,10">
+                                <Label Text="{Binding CurrentDueBreakdownText}"
+                                       FontSize="12"
+                                       TextColor="{StaticResource TextSecondary}"/>
+                            </Border>
+
+                            <!-- Pago total: solo lectura -->
+                            <HorizontalStackLayout IsVisible="{Binding IsTotalPayment}"
+                                                   Spacing="2" VerticalOptions="Center">
+                                <Label Text="$" FontSize="18" FontFamily="OpenSansSemibold"
+                                       TextColor="{StaticResource GreenPrimary}"
+                                       VerticalOptions="End" Margin="0,0,0,3"/>
+                                <Label Text="{Binding AmountToPay}"
+                                       FontSize="28" FontFamily="OpenSansSemibold"
+                                       TextColor="{StaticResource GreenPrimary}"/>
+                            </HorizontalStackLayout>
+
+                            <!-- Pago parcial: editable con $ fijo -->
+                            <Border IsVisible="{Binding IsPartialPayment}"
+                                    Stroke="{StaticResource GreenPrimary}"
+                                    StrokeThickness="1.5" StrokeShape="RoundRectangle 14"
+                                    BackgroundColor="#F7FAF7" HeightRequest="52">
+                                <Grid ColumnDefinitions="Auto,*" Margin="14,0" ColumnSpacing="4">
+                                    <Label Grid.Column="0" Text="$"
+                                           FontSize="18" FontFamily="OpenSansSemibold"
+                                           TextColor="{StaticResource TextPrimary}"
+                                           VerticalOptions="Center"/>
+                                    <Entry Grid.Column="1"
+                                           Text="{Binding AmountToPay}"
+                                           Keyboard="Numeric" Placeholder="0.00"
+                                           FontSize="18" FontFamily="OpenSansSemibold"
+                                           PlaceholderColor="{StaticResource TextPlaceholder}"
+                                           TextColor="{StaticResource TextPrimary}"
+                                           BackgroundColor="Transparent"/>
+                                </Grid>
+                            </Border>
+
+                            <Border IsVisible="{Binding HasPartialCarryoverPreview}"
+                                    BackgroundColor="#FFF7ED"
+                                    Stroke="#F9DBAF"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 14"
+                                    Padding="12,10">
+                                <VerticalStackLayout Spacing="4">
+                                    <Label Text="{Binding PartialCarryoverSummary}"
+                                           FontSize="12"
+                                           FontFamily="OpenSansSemibold"
+                                           TextColor="#B54708"/>
+                                    <Label Text="{Binding PartialCarryoverDetail}"
+                                           FontSize="11"
+                                           TextColor="#7A6452"/>
+                                </VerticalStackLayout>
+                            </Border>
+                        </VerticalStackLayout>
+
+                    </VerticalStackLayout>
+                </Border>
+
+                <VerticalStackLayout IsVisible="{Binding HasDebtSummaryItems}" Spacing="10">
+                    <Label Text="Resumen de adeudos"
+                           FontSize="14" FontFamily="OpenSansSemibold"
+                           TextColor="{StaticResource TextPrimary}"/>
+
+                    <Border BackgroundColor="{StaticResource White}"
+                            Stroke="#DDE5DF" StrokeThickness="1"
+                            StrokeShape="RoundRectangle 18"
+                            Padding="0">
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding DebtSummaryItems}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="models:PaymentDebtSummaryItem">
+                                    <VerticalStackLayout Spacing="10" Padding="14,12">
+                                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                                            <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                                <Label Text="{Binding Title}"
+                                                       FontSize="13"
+                                                       FontFamily="OpenSansSemibold"
+                                                       TextColor="{StaticResource TextPrimary}"/>
+                                                <Label Text="{Binding Subtitle}"
+                                                       FontSize="11"
+                                                       TextColor="{StaticResource TextSecondary}"/>
+                                            </VerticalStackLayout>
+
+                                            <Border Grid.Column="1"
+                                                    BackgroundColor="{Binding StatusBackground}"
+                                                    StrokeThickness="0"
+                                                    StrokeShape="RoundRectangle 8"
+                                                    Padding="8,4"
+                                                    VerticalOptions="Start">
+                                                <Label Text="{Binding StatusLabel}"
+                                                       FontSize="11"
+                                                       FontFamily="OpenSansSemibold"
+                                                       TextColor="{Binding StatusTextColor}"/>
+                                            </Border>
+                                        </Grid>
+
+                                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                                            <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                                <Label Text="{Binding PrincipalAmount, StringFormat='Capital pendiente {0}'}"
+                                                       FontSize="12"
+                                                       TextColor="{StaticResource TextSecondary}"/>
+                                                <Label Text="{Binding MoratoryAmount, StringFormat='Mora actual {0}'}"
+                                                       FontSize="12"
+                                                       TextColor="#F04438"
+                                                       IsVisible="{Binding HasMoratoryAmount}"/>
+                                            </VerticalStackLayout>
+
+                                            <VerticalStackLayout Grid.Column="1" Spacing="2"
+                                                                 HorizontalOptions="End">
+                                                <Label Text="Subtotal"
+                                                       FontSize="11"
+                                                       TextColor="{StaticResource TextSecondary}"
+                                                       HorizontalTextAlignment="End"/>
+                                                <Label Text="{Binding TotalAmount}"
+                                                       FontSize="14"
+                                                       FontFamily="OpenSansSemibold"
+                                                       TextColor="{StaticResource GreenPrimary}"
+                                                       HorizontalTextAlignment="End"/>
+                                            </VerticalStackLayout>
+                                        </Grid>
+
+                                        <BoxView HeightRequest="1"
+                                                 Color="#EEF2EE"
+                                                 Margin="0,2,0,0"/>
+                                    </VerticalStackLayout>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- ── Tipo de pago ───────────────────────────────────────────── -->
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Tipo de pago"
+                           FontSize="14" FontFamily="OpenSansSemibold"
+                           TextColor="{StaticResource TextPrimary}"/>
+
+                    <Grid ColumnDefinitions="*,10,*">
+                        <Border Grid.Column="0"
+                                BackgroundColor="{Binding TotalPaymentBg}"
+                                Stroke="#DCE5DF" StrokeThickness="1"
+                                StrokeShape="RoundRectangle 14" Padding="14,12">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SelectTotalPaymentCommand}"/>
+                            </Border.GestureRecognizers>
+                            <Label Text="Pago total"
+                                   FontSize="13" FontFamily="OpenSansSemibold"
+                                   TextColor="{Binding TotalPaymentText}"
+                                   HorizontalTextAlignment="Center"/>
+                        </Border>
+
+                        <Border Grid.Column="2"
+                                IsVisible="{Binding IsPartialPaymentAllowed}"
+                                BackgroundColor="{Binding PartialPaymentBg}"
+                                Stroke="#DCE5DF" StrokeThickness="1"
+                                StrokeShape="RoundRectangle 14" Padding="14,12">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SelectPartialPaymentCommand}"/>
+                            </Border.GestureRecognizers>
+                            <Label Text="Pago parcial"
+                                   FontSize="13" FontFamily="OpenSansSemibold"
+                                   TextColor="{Binding PartialPaymentText}"
+                                   HorizontalTextAlignment="Center"/>
+                        </Border>
+                    </Grid>
+
+                    <Label IsVisible="{Binding IsTotalPayment}"
+                           Text="El pago total liquida toda la deuda pendiente del cliente."
+                           FontSize="11"
+                           TextColor="{StaticResource TextSecondary}"/>
+
+                    <Label IsVisible="{Binding IsPartialPaymentAllowed}"
+                           Text="El pago parcial usa la cuota programada como referencia."
+                           FontSize="11"
+                           TextColor="{StaticResource TextSecondary}"/>
+
+                    <Label IsVisible="{Binding IsPartialPaymentBlocked}"
+                           Text="Esta deuda se liquida en un solo pago; no admite pago parcial."
+                           FontSize="11"
+                           TextColor="{StaticResource TextSecondary}"/>
+                </VerticalStackLayout>
+
+                <!-- ── Método de pago (solo métodos habilitados) ──────────────── -->
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Método de pago"
+                           FontSize="14" FontFamily="OpenSansSemibold"
+                           TextColor="{StaticResource TextPrimary}"/>
+
+                    <FlexLayout Wrap="Wrap" AlignItems="Start" AlignContent="Start">
+
+                        <Border IsVisible="{Binding IsCashEnabled}"
+                                BackgroundColor="{Binding CashBg}"
+                                Stroke="{Binding CashStroke}" StrokeThickness="1.5"
+                                StrokeShape="RoundRectangle 14"
+                                Padding="18,11" Margin="0,0,8,8">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SelectCashCommand}"/>
+                            </Border.GestureRecognizers>
+                            <Label Text="Efectivo"
+                                   FontSize="13" FontFamily="OpenSansSemibold"
+                                   TextColor="{Binding CashText}"/>
+                        </Border>
+
+                        <Border IsVisible="{Binding IsTransferEnabled}"
+                                BackgroundColor="{Binding TransferBg}"
+                                Stroke="{Binding TransferStroke}" StrokeThickness="1.5"
+                                StrokeShape="RoundRectangle 14"
+                                Padding="18,11" Margin="0,0,8,8">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SelectTransferCommand}"/>
+                            </Border.GestureRecognizers>
+                            <Label Text="Transferencia"
+                                   FontSize="13" FontFamily="OpenSansSemibold"
+                                   TextColor="{Binding TransferText}"/>
+                        </Border>
+
+                        <Border IsVisible="{Binding IsCardEnabled}"
+                                BackgroundColor="{Binding CardBg}"
+                                Stroke="{Binding CardStroke}" StrokeThickness="1.5"
+                                StrokeShape="RoundRectangle 14"
+                                Padding="18,11" Margin="0,0,8,8">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SelectCardCommand}"/>
+                            </Border.GestureRecognizers>
+                            <Label Text="Tarjeta"
+                                   FontSize="13" FontFamily="OpenSansSemibold"
+                                   TextColor="{Binding CardText}"/>
+                        </Border>
+
+                    </FlexLayout>
+                </VerticalStackLayout>
+
+                <!-- ── Comprobante (solo transferencia / tarjeta) ────────────────── -->
+                <VerticalStackLayout IsVisible="{Binding IsProofSectionVisible}" Spacing="8">
+                    <Label Text="Comprobante de pago"
+                           FontSize="14" FontFamily="OpenSansSemibold"
+                           TextColor="{StaticResource TextPrimary}"/>
+
+                    <!-- Sin comprobante: botones adjuntar -->
+                    <Grid IsVisible="{Binding HasNoProof}" ColumnDefinitions="*,10,*">
+                        <Border Grid.Column="0"
+                                BackgroundColor="White"
+                                Stroke="{StaticResource GreenPrimary}" StrokeThickness="1.5"
+                                StrokeShape="RoundRectangle 14" Padding="14,14">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding AttachProofFromCameraCommand}"/>
+                            </Border.GestureRecognizers>
+                            <Label Text="📷  Cámara"
+                                   FontSize="13" FontFamily="OpenSansSemibold"
+                                   TextColor="{StaticResource GreenPrimary}"
+                                   HorizontalTextAlignment="Center"/>
+                        </Border>
+                        <Border Grid.Column="2"
+                                BackgroundColor="White"
+                                Stroke="{StaticResource GreenPrimary}" StrokeThickness="1.5"
+                                StrokeShape="RoundRectangle 14" Padding="14,14">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding AttachProofFromGalleryCommand}"/>
+                            </Border.GestureRecognizers>
+                            <Label Text="🖼  Galería"
+                                   FontSize="13" FontFamily="OpenSansSemibold"
+                                   TextColor="{StaticResource GreenPrimary}"
+                                   HorizontalTextAlignment="Center"/>
+                        </Border>
+                    </Grid>
+
+                    <!-- Con comprobante: preview + quitar -->
+                    <VerticalStackLayout IsVisible="{Binding HasProof}" Spacing="10">
+                        <Border Stroke="#DDE5DF" StrokeThickness="1"
+                                StrokeShape="RoundRectangle 14"
+                                Padding="0" HeightRequest="200">
+                            <Image Source="{Binding ProofImageSource}" Aspect="AspectFill"/>
+                        </Border>
+                        <Label Text="✕  Quitar comprobante"
+                               FontSize="13" FontFamily="OpenSansSemibold"
+                               TextColor="#F04438" HorizontalTextAlignment="Center">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding RemoveProofCommand}"/>
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+
+                <!-- ── Notas ──────────────────────────────────────────────────── -->
+                <VerticalStackLayout Spacing="8">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Grid.Column="0" Text="Notas"
+                               FontSize="14" FontFamily="OpenSansSemibold"
+                               TextColor="{StaticResource TextPrimary}" VerticalOptions="Center"/>
+                        <Border Grid.Column="1" BackgroundColor="#EBEBEB"
+                                StrokeThickness="0" StrokeShape="RoundRectangle 8"
+                                Padding="8,3" VerticalOptions="Center">
+                            <Label Text="Opcional" FontSize="11" TextColor="#888888"/>
+                        </Border>
+                    </Grid>
+                    <Border BackgroundColor="{StaticResource White}"
+                            Stroke="{StaticResource InputBorderBrush}" StrokeThickness="1.5"
+                            StrokeShape="RoundRectangle 14" Padding="14,10">
+                        <Editor Text="{Binding Notes}"
+                                Placeholder="Ej. Cobrado en domicilio"
+                                PlaceholderColor="{StaticResource TextPlaceholder}"
+                                TextColor="{StaticResource TextPrimary}"
+                                BackgroundColor="Transparent"
+                                AutoSize="TextChanges"
+                                MinimumHeightRequest="64"/>
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- ── Fecha y hora (auto, no editable) ──────────────────────── -->
+                <VerticalStackLayout Spacing="8">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Grid.Column="0" Text="Fecha y hora"
+                               FontSize="14" FontFamily="OpenSansSemibold"
+                               TextColor="{StaticResource TextPrimary}" VerticalOptions="Center"/>
+                        <Border Grid.Column="1" BackgroundColor="#EBF5EF"
+                                StrokeThickness="0" StrokeShape="RoundRectangle 8"
+                                Padding="8,3" VerticalOptions="Center">
+                            <Label Text="Automática" FontSize="11"
+                                   FontFamily="OpenSansSemibold"
+                                   TextColor="{StaticResource GreenPrimary}"/>
+                        </Border>
+                    </Grid>
+                    <Border BackgroundColor="{StaticResource White}"
+                            Stroke="{StaticResource InputBorderBrush}" StrokeThickness="1.5"
+                            StrokeShape="RoundRectangle 14" Padding="14,12">
+                        <Label Text="{Binding PaymentDateTimeText}"
+                               FontSize="14" FontFamily="OpenSansSemibold"
+                               TextColor="{StaticResource TextPrimary}"/>
+                    </Border>
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- ── Botones fijos ──────────────────────────────────────────────────── -->
+        <Grid Grid.Row="2" Padding="16,10,16,36">
+            <VerticalStackLayout Spacing="10">
+                <Button Text="Confirmar pago"
+                        Command="{Binding ConfirmPaymentCommand}"
+                        BackgroundColor="{StaticResource GreenPrimary}"
+                        TextColor="White" FontFamily="OpenSansSemibold"
+                        FontSize="15" CornerRadius="28" HeightRequest="52"/>
+                <Label Text="Generar ticket después de confirmar →"
+                       FontSize="13" FontFamily="OpenSansSemibold"
+                       TextColor="{StaticResource GreenPrimary}"
+                       HorizontalTextAlignment="Center">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GenerateTicketCommand}"/>
+                    </Label.GestureRecognizers>
+                </Label>
+            </VerticalStackLayout>
+        </Grid>
+
+    </Grid>
+</ContentPage>

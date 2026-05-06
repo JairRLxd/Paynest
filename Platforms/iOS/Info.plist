@@ -33,6 +33,10 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Paynest necesita acceso a la cámara para tomar fotos de tu identificación y selfie.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Paynest necesita acceso a tus fotos para seleccionar imágenes de tu identificación o comprobante.</string>
 	<key>XSAppIconAssets</key>
 	<string>Assets.xcassets/appicon.appiconset</string>
 </dict>

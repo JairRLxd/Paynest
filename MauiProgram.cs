@@ -3,6 +3,32 @@ using Microsoft.Extensions.Logging;
 using Paynest.Core.Interfaces;
 using Paynest.Features.Auth.Login;
 using Paynest.Features.Auth.Register;
+using Paynest.Features.Cobrador.Clients.ViewModels;
+using Paynest.Features.Cobrador.Clients.Views;
+using Paynest.Features.Cobrador.Clients.AddClient.ViewModels;
+using Paynest.Features.Cobrador.Clients.AddClient.Views;
+using Paynest.Features.Cobrador.Clients.ClientPicker.ViewModels;
+using Paynest.Features.Cobrador.Clients.ClientPicker.Views;
+using Paynest.Features.Cobrador.Clients.CreateDebt.ViewModels;
+using Paynest.Features.Cobrador.Clients.CreateDebt.Views;
+using Paynest.Features.Cobrador.Clients.Detail.ViewModels;
+using Paynest.Features.Cobrador.Clients.Detail.Views;
+using Paynest.Features.Cobrador.Clients.Edit.ViewModels;
+using Paynest.Features.Cobrador.Clients.Edit.Views;
+using Paynest.Features.Cobrador.Clients.ComprobanteViewer.ViewModels;
+using Paynest.Features.Cobrador.Clients.ComprobanteViewer.Views;
+using Paynest.Features.Cobrador.Clients.RegisterPayment.ViewModels;
+using Paynest.Features.Cobrador.Clients.RegisterPayment.Views;
+using Paynest.Features.Cobrador.Collections.ViewModels;
+using Paynest.Features.Cobrador.Collections.Views;
+using Paynest.Features.Cobrador.Home.ViewModels;
+using Paynest.Features.Cobrador.Home.Views;
+using Paynest.Features.Cobrador.Profile.Views;
+using Paynest.Features.Cobrador.Schedule.Views;
+using Paynest.Features.Onboarding;
+using Paynest.Features.Onboarding.CompleteProfile;
+using Paynest.Features.Onboarding.IdentityVerification;
+using Paynest.Features.Onboarding.PaymentSetup;
 using Paynest.Features.Splash;
 using Paynest.Infrastructure;
 using Paynest.Infrastructure.Http;
@@ -12,49 +38,84 @@ namespace Paynest;
 
 public static class MauiProgram
 {
-    // Acceso estático al service provider para navegación desde ViewModels
     public static IServiceProvider Services { get; private set; } = null!;
 
     public static MauiApp CreateMauiApp()
     {
         var builder = MauiApp.CreateBuilder();
+        var apiBaseUri = ApiConstants.BaseUri;
 
         builder
             .UseMauiApp<App>()
             .ConfigureFonts(fonts =>
             {
-                fonts.AddFont("OpenSans-Regular.ttf",   "OpenSansRegular");
-                fonts.AddFont("OpenSans-Semibold.ttf",  "OpenSansSemibold");
+                fonts.AddFont("OpenSans-Regular.ttf",  "OpenSansRegular");
+                fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
-        // ── HTTP client con cookie container compartido ──────────────────────
-        // El CookieContainer persiste la cookie HttpOnly del refresh token
-        // mientras la app esté en memoria. Si el proceso se termina, el usuario
-        // deberá volver a iniciar sesión (comportamiento esperado y seguro).
+        // ── HTTP ──────────────────────────────────────────────────────────────
         var cookieContainer = new CookieContainer();
         var handler = new HttpClientHandler { CookieContainer = cookieContainer };
-        var httpClient = new HttpClient(handler)
-        {
-            BaseAddress = new Uri(ApiConstants.BaseUrl)
-        };
+        var httpClient = new HttpClient(handler) { BaseAddress = apiBaseUri };
 
         builder.Services.AddSingleton(httpClient);
+        builder.Services.AddSingleton<ICollectorInviteService, CollectorInviteService>();
+        builder.Services.AddSingleton<ICollectorDebtService, CollectorDebtApiClient>();
+        builder.Services.AddSingleton<ICollectorPaymentService, CollectorPaymentApiClient>();
+        builder.Services.AddSingleton<ICollectorCollectionsService, CollectorCollectionsApiClient>();
+        builder.Services.AddSingleton<ICollectorClientService, CollectorClientApiClient>();
+        builder.Services.AddSingleton<ICollectorDashboardService, CollectorDashboardApiClient>();
+        builder.Services.AddSingleton<IDocumentImageProcessor, DocumentImageProcessor>();
         builder.Services.AddSingleton<IAuthService, AuthApiClient>();
+        builder.Services.AddSingleton<IProfileService, ProfileApiClient>();
+        builder.Services.AddSingleton<PostalCodeClient>();
 
-        // ── Estado de autenticación (singleton en toda la app) ───────────────
+        // ── Auth state ────────────────────────────────────────────────────────
         builder.Services.AddSingleton<AuthStateService>();
+        builder.Services.AddSingleton<CollectorPaymentSettings>();
 
-        // ── Shell ────────────────────────────────────────────────────────────
-        builder.Services.AddTransient<AppShell>();
-
-        // ── Splash ───────────────────────────────────────────────────────────
+        // ── Splash ────────────────────────────────────────────────────────────
         builder.Services.AddTransient<SplashPage>();
 
-        // ── Módulo Auth ──────────────────────────────────────────────────────
+        // ── Módulo Auth ───────────────────────────────────────────────────────
         builder.Services.AddTransient<LoginViewModel>();
         builder.Services.AddTransient<LoginPage>();
         builder.Services.AddTransient<RegisterViewModel>();
         builder.Services.AddTransient<RegisterPage>();
+
+        // ── Módulo Onboarding ─────────────────────────────────────────────────
+        builder.Services.AddSingleton<OnboardingSession>();
+        builder.Services.AddTransient<CompleteProfileViewModel>();
+        builder.Services.AddTransient<CompleteProfilePage>();
+        builder.Services.AddTransient<IdentityVerificationViewModel>();
+        builder.Services.AddTransient<IdentityVerificationPage>();
+        builder.Services.AddTransient<PaymentSetupViewModel>();
+        builder.Services.AddTransient<PaymentSetupPage>();
+
+        // ── Módulo Cobrador ───────────────────────────────────────────────────
+        builder.Services.AddTransient<AppShell>();
+        builder.Services.AddTransient<HomeViewModel>();
+        builder.Services.AddTransient<HomePage>();
+        builder.Services.AddTransient<ClientsViewModel>();
+        builder.Services.AddTransient<ClientsPage>();
+        builder.Services.AddTransient<AddClientViewModel>();
+        builder.Services.AddTransient<AddClientPage>();
+        builder.Services.AddTransient<ClientPickerViewModel>();
+        builder.Services.AddTransient<ClientPickerPage>();
+        builder.Services.AddTransient<ClientDetailViewModel>();
+        builder.Services.AddTransient<ClientDetailPage>();
+        builder.Services.AddTransient<EditClientViewModel>();
+        builder.Services.AddTransient<EditClientPage>();
+        builder.Services.AddTransient<RegisterPaymentViewModel>();
+        builder.Services.AddTransient<RegisterPaymentPage>();
+        builder.Services.AddTransient<ComprobanteViewerViewModel>();
+        builder.Services.AddTransient<ComprobanteViewerPage>();
+        builder.Services.AddTransient<CreateDebtViewModel>();
+        builder.Services.AddTransient<CreateDebtPage>();
+        builder.Services.AddTransient<CollectionsViewModel>();
+        builder.Services.AddTransient<CollectionsPage>();
+        builder.Services.AddTransient<SchedulePage>();
+        builder.Services.AddTransient<UserProfilePage>();
 
 #if DEBUG
         builder.Logging.AddDebug();
@@ -62,6 +123,8 @@ public static class MauiProgram
 
         var app = builder.Build();
         Services = app.Services;
+        var logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Startup");
+        logger.LogInformation("Paynest API Base URL resolved to {BaseUrl}", apiBaseUri);
         return app;
     }
 }

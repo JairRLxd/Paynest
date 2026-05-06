@@ -1,7 +1,9 @@
 using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 using Paynest.Core.Models.Auth;
+using Paynest.Features.Onboarding.CompleteProfile;
 using Paynest.Infrastructure.Exceptions;
 using Paynest.Services;
 
@@ -153,7 +155,23 @@ public partial class LoginViewModel(AuthStateService authState, IServiceProvider
 
     private static void NavigateToApp()
     {
-        var shell = MauiProgram.Services.GetRequiredService<AppShell>();
-        Application.Current!.MainPage = shell;
+        var auth = MauiProgram.Services.GetRequiredService<AuthStateService>();
+
+        if (auth.IsAdminCollector && !auth.IsProfileCompleted)
+        {
+            // Admin/cobrador que aún no completó el onboarding
+            var page = MauiProgram.Services.GetRequiredService<CompleteProfilePage>();
+            Application.Current!.MainPage = new NavigationPage(page)
+            {
+                BarBackgroundColor = Colors.Transparent,
+                BackgroundColor    = Color.FromArgb("#F2F0EB")
+            };
+        }
+        else
+        {
+            // Perfil completo (o rol diferente en el futuro) → app principal
+            var shell = MauiProgram.Services.GetRequiredService<AppShell>();
+            Application.Current!.MainPage = shell;
+        }
     }
 }

@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Paynest.Features.Onboarding.PaymentSetup.PaymentSetupPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Paynest.Features.Onboarding.PaymentSetup"
+    x:DataType="vm:PaymentSetupViewModel"
+    Shell.NavBarIsVisible="False"
+    NavigationPage.HasNavigationBar="False"
+    BackgroundColor="{StaticResource PageBackground}">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- ── Top bar ───────────────────────────────────────────────────── -->
+        <Grid Grid.Row="0" ColumnDefinitions="48,*,48" HeightRequest="56" Padding="4,0"
+              BackgroundColor="{StaticResource PageBackground}">
+            <Button Grid.Column="0" Text="‹" FontSize="30" TextColor="{StaticResource TextPrimary}"
+                    BackgroundColor="Transparent" Command="{Binding BackCommand}"
+                    HorizontalOptions="Center" VerticalOptions="Center" Padding="0"/>
+            <Image  Grid.Column="1" Source="paynestletters.png" HeightRequest="26"
+                    Aspect="AspectFit" HorizontalOptions="Center" VerticalOptions="Center"/>
+        </Grid>
+
+        <!-- ── Contenido scrollable ──────────────────────────────────────── -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="24,20,24,16" Spacing="0">
+
+                <!-- Indicador de pasos: 1 y 2 completados, 3 activo -->
+                <Grid ColumnDefinitions="32,*,32,*,32" Margin="24,0,24,24">
+                    <!-- Paso 1 (completado) -->
+                    <Border Grid.Column="0" HeightRequest="32" WidthRequest="32"
+                            BackgroundColor="{StaticResource GreenPrimary}"
+                            StrokeThickness="0" StrokeShape="Ellipse">
+                        <Label Text="✓" TextColor="White" FontSize="14" FontFamily="OpenSansSemibold"
+                               HorizontalOptions="Center" VerticalOptions="Center"/>
+                    </Border>
+                    <BoxView Grid.Column="1" HeightRequest="2"
+                             BackgroundColor="{StaticResource GreenPrimary}" VerticalOptions="Center"/>
+                    <!-- Paso 2 (completado) -->
+                    <Border Grid.Column="2" HeightRequest="32" WidthRequest="32"
+                            BackgroundColor="{StaticResource GreenPrimary}"
+                            StrokeThickness="0" StrokeShape="Ellipse">
+                        <Label Text="✓" TextColor="White" FontSize="14" FontFamily="OpenSansSemibold"
+                               HorizontalOptions="Center" VerticalOptions="Center"/>
+                    </Border>
+                    <BoxView Grid.Column="3" HeightRequest="2"
+                             BackgroundColor="{StaticResource GreenPrimary}" VerticalOptions="Center"/>
+                    <!-- Paso 3 (activo) -->
+                    <Border Grid.Column="4" HeightRequest="32" WidthRequest="32"
+                            BackgroundColor="{StaticResource GreenPrimary}"
+                            StrokeThickness="0" StrokeShape="Ellipse">
+                        <Label Text="3" TextColor="White" FontSize="14" FontFamily="OpenSansSemibold"
+                               HorizontalOptions="Center" VerticalOptions="Center"/>
+                    </Border>
+                </Grid>
+
+                <!-- Título -->
+                <Label Text="Configura cómo cobrarás"
+                       TextColor="{StaticResource GreenPrimary}"
+                       FontSize="24" FontFamily="OpenSansSemibold"
+                       Margin="0,0,0,8"/>
+                <Label Text="Elige los métodos que usarás para cobrar. Puedes cambiarlos cuando quieras."
+                       TextColor="{StaticResource TextSecondary}"
+                       FontSize="14" LineHeight="1.4"
+                       Margin="0,0,0,24"/>
+
+                <!-- ── Efectivo ─────────────────────────────────────────── -->
+                <Border BackgroundColor="{StaticResource White}" StrokeThickness="0"
+                        StrokeShape="RoundRectangle 16" Padding="18,14" Margin="0,0,0,10">
+                    <Grid ColumnDefinitions="48,*,Auto">
+                        <Border Grid.Column="0" BackgroundColor="#EBF5EF" StrokeThickness="0"
+                                StrokeShape="Ellipse" HeightRequest="40" WidthRequest="40"
+                                VerticalOptions="Center">
+                            <Label Text="💵" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2" Margin="4,0,0,0">
+                            <Label Text="Efectivo" FontFamily="OpenSansSemibold" FontSize="15"
+                                   TextColor="{StaticResource TextPrimary}"/>
+                            <Label Text="Cobros en efectivo" FontSize="12"
+                                   TextColor="{StaticResource TextSecondary}"/>
+                        </VerticalStackLayout>
+                        <Switch Grid.Column="2" IsToggled="{Binding EfectivoEnabled}"
+                                OnColor="{StaticResource GreenPrimary}"
+                                VerticalOptions="Center"/>
+                    </Grid>
+                </Border>
+
+                <!-- ── Transferencia bancaria ──────────────────────────── -->
+                <Border BackgroundColor="{StaticResource White}" StrokeThickness="0"
+                        StrokeShape="RoundRectangle 16" Padding="18,14" Margin="0,0,0,10">
+                    <VerticalStackLayout Spacing="14">
+
+                        <Grid ColumnDefinitions="48,*,Auto">
+                            <Border Grid.Column="0" BackgroundColor="#EBF5EF" StrokeThickness="0"
+                                    StrokeShape="Ellipse" HeightRequest="40" WidthRequest="40"
+                                    VerticalOptions="Center">
+                                <Label Text="🏦" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center"/>
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2" Margin="4,0,0,0">
+                                <Label Text="Transferencia bancaria" FontFamily="OpenSansSemibold"
+                                       FontSize="15" TextColor="{StaticResource TextPrimary}"/>
+                                <Label Text="Recibe pagos por transferencia" FontSize="12"
+                                       TextColor="{StaticResource TextSecondary}"/>
+                            </VerticalStackLayout>
+                            <Switch Grid.Column="2" IsToggled="{Binding TransferenciaEnabled}"
+                                    OnColor="{StaticResource GreenPrimary}" VerticalOptions="Center"/>
+                        </Grid>
+
+                        <!-- Campos bancarios (condicional) -->
+                        <VerticalStackLayout IsVisible="{Binding ShowBankFields}" Spacing="10">
+
+                            <!-- Banco -->
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="Banco" FontSize="13" FontFamily="OpenSansSemibold"
+                                       TextColor="{StaticResource TextSecondary}"/>
+                                <Border Stroke="{StaticResource InputBorderBrush}" StrokeShape="RoundRectangle 10"
+                                        StrokeThickness="1.5" BackgroundColor="{StaticResource PageBackground}"
+                                        HeightRequest="48">
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border" Binding="{Binding HasBankNameError}" Value="True">
+                                            <Setter Property="Stroke" Value="{StaticResource ErrorBrush}"/>
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <Picker Title="Selecciona tu banco" ItemsSource="{Binding Banks}"
+                                            SelectedItem="{Binding BankName}"
+                                            TextColor="{StaticResource TextPrimary}"
+                                            TitleColor="{StaticResource TextPlaceholder}" Margin="10,0"/>
+                                </Border>
+                                <Label Text="{Binding BankNameError}" IsVisible="{Binding HasBankNameError}"
+                                       TextColor="{StaticResource Error}" FontSize="12" Margin="2,0,0,0"/>
+                            </VerticalStackLayout>
+
+                            <!-- Titular -->
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="Titular de la cuenta" FontSize="13" FontFamily="OpenSansSemibold"
+                                       TextColor="{StaticResource TextSecondary}"/>
+                                <Border Stroke="{StaticResource InputBorderBrush}" StrokeShape="RoundRectangle 10"
+                                        StrokeThickness="1.5" BackgroundColor="{StaticResource PageBackground}"
+                                        HeightRequest="48">
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border" Binding="{Binding HasAccountHolderError}" Value="True">
+                                            <Setter Property="Stroke" Value="{StaticResource ErrorBrush}"/>
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <Entry Placeholder="Nombre del titular" Text="{Binding AccountHolder}"
+                                           BackgroundColor="Transparent"
+                                           PlaceholderColor="{StaticResource TextPlaceholder}"
+                                           TextColor="{StaticResource TextPrimary}" Margin="14,0"/>
+                                </Border>
+                                <Label Text="{Binding AccountHolderError}" IsVisible="{Binding HasAccountHolderError}"
+                                       TextColor="{StaticResource Error}" FontSize="12" Margin="2,0,0,0"/>
+                            </VerticalStackLayout>
+
+                            <!-- CLABE -->
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="CLABE" FontSize="13" FontFamily="OpenSansSemibold"
+                                       TextColor="{StaticResource TextSecondary}"/>
+                                <Border Stroke="{StaticResource InputBorderBrush}" StrokeShape="RoundRectangle 10"
+                                        StrokeThickness="1.5" BackgroundColor="{StaticResource PageBackground}"
+                                        HeightRequest="48">
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border" Binding="{Binding HasClabeError}" Value="True">
+                                            <Setter Property="Stroke" Value="{StaticResource ErrorBrush}"/>
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <Entry Placeholder="18 dígitos" Text="{Binding Clabe}"
+                                           Keyboard="Numeric" MaxLength="18"
+                                           BackgroundColor="Transparent"
+                                           PlaceholderColor="{StaticResource TextPlaceholder}"
+                                           TextColor="{StaticResource TextPrimary}" Margin="14,0"/>
+                                </Border>
+                                <Label Text="{Binding ClabeError}" IsVisible="{Binding HasClabeError}"
+                                       TextColor="{StaticResource Error}" FontSize="12" Margin="2,0,0,0"/>
+                            </VerticalStackLayout>
+
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- ── Terminal de cobro ───────────────────────────────── -->
+                <Border BackgroundColor="{StaticResource White}" StrokeThickness="0"
+                        StrokeShape="RoundRectangle 16" Padding="18,14" Margin="0,0,0,4">
+                    <VerticalStackLayout Spacing="14">
+
+                        <Grid ColumnDefinitions="48,*,Auto">
+                            <Border Grid.Column="0" BackgroundColor="#EBF5EF" StrokeThickness="0"
+                                    StrokeShape="Ellipse" HeightRequest="40" WidthRequest="40"
+                                    VerticalOptions="Center">
+                                <Label Text="💳" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center"/>
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2" Margin="4,0,0,0">
+                                <Label Text="Terminal de cobro" FontFamily="OpenSansSemibold"
+                                       FontSize="15" TextColor="{StaticResource TextPrimary}"/>
+                                <Label Text="Cobros con tarjeta en terminal" FontSize="12"
+                                       TextColor="{StaticResource TextSecondary}"/>
+                            </VerticalStackLayout>
+                            <Switch Grid.Column="2" IsToggled="{Binding TerminalEnabled}"
+                                    OnColor="{StaticResource GreenPrimary}" VerticalOptions="Center"/>
+                        </Grid>
+
+                        <!-- Campos de terminal (condicional) -->
+                        <VerticalStackLayout IsVisible="{Binding ShowTerminalFields}" Spacing="10">
+
+                            <!-- Proveedor -->
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="Proveedor de terminal" FontSize="13" FontFamily="OpenSansSemibold"
+                                       TextColor="{StaticResource TextSecondary}"/>
+                                <Border Stroke="{StaticResource InputBorderBrush}" StrokeShape="RoundRectangle 10"
+                                        StrokeThickness="1.5" BackgroundColor="{StaticResource PageBackground}"
+                                        HeightRequest="48">
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border" Binding="{Binding HasTerminalProviderError}" Value="True">
+                                            <Setter Property="Stroke" Value="{StaticResource ErrorBrush}"/>
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <Picker Title="Selecciona el proveedor"
+                                            ItemsSource="{Binding TerminalProviders}"
+                                            SelectedItem="{Binding TerminalProvider}"
+                                            TextColor="{StaticResource TextPrimary}"
+                                            TitleColor="{StaticResource TextPlaceholder}" Margin="10,0"/>
+                                </Border>
+                                <Label Text="{Binding TerminalProviderError}" IsVisible="{Binding HasTerminalProviderError}"
+                                       TextColor="{StaticResource Error}" FontSize="12" Margin="2,0,0,0"/>
+                            </VerticalStackLayout>
+
+                            <!-- Referencia -->
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="Referencia de terminal" FontSize="13" FontFamily="OpenSansSemibold"
+                                       TextColor="{StaticResource TextSecondary}"/>
+                                <Border Stroke="{StaticResource InputBorderBrush}" StrokeShape="RoundRectangle 10"
+                                        StrokeThickness="1.5" BackgroundColor="{StaticResource PageBackground}"
+                                        HeightRequest="48">
+                                    <Entry Placeholder="Ej. CLIP-784512" Text="{Binding TerminalReference}"
+                                           BackgroundColor="Transparent"
+                                           PlaceholderColor="{StaticResource TextPlaceholder}"
+                                           TextColor="{StaticResource TextPrimary}" Margin="14,0"/>
+                                </Border>
+                            </VerticalStackLayout>
+
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Error general -->
+                <Border IsVisible="{Binding HasGeneralError}" BackgroundColor="#FFF5F5"
+                        Stroke="#FFCDD2" StrokeThickness="1" StrokeShape="RoundRectangle 10"
+                        Margin="0,16,0,0">
+                    <Label Text="{Binding GeneralError}" TextColor="{StaticResource Error}"
+                           FontSize="13" Padding="14,10"/>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- ── Footer + botón ───────────────────────────────────────────── -->
+        <VerticalStackLayout Grid.Row="2" Padding="24,8,24,36" Spacing="12"
+                             BackgroundColor="{StaticResource PageBackground}">
+            <Button Text="Guardar y entrar  →" Command="{Binding SaveCommand}"
+                    IsEnabled="{Binding IsNotLoading}"
+                    BackgroundColor="{StaticResource GreenPrimary}"
+                    TextColor="{StaticResource White}" FontFamily="OpenSansSemibold"
+                    FontSize="16" CornerRadius="28" HeightRequest="56" HorizontalOptions="Fill"/>
+            <ActivityIndicator IsVisible="{Binding IsLoading}" IsRunning="{Binding IsLoading}"
+                               Color="{StaticResource GreenPrimary}" HorizontalOptions="Center"/>
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="6">
+                <Label Text="🛡" FontSize="12" VerticalOptions="Center"/>
+                <Label Text="Listo para empezar a cobrar con Paynest"
+                       TextColor="{StaticResource TextSecondary}" FontSize="12"
+                       VerticalOptions="Center"/>
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+
+    </Grid>
+</ContentPage>

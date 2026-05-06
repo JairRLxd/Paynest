@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Paynest.Features.Cobrador.Clients.CreateDebt.Views.CalendarPickerPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:Paynest.Features.Cobrador.Clients.CreateDebt.Models"
+    xmlns:vm="clr-namespace:Paynest.Features.Cobrador.Clients.CreateDebt.ViewModels"
+    x:DataType="vm:CalendarPickerViewModel"
+    BackgroundColor="#66000000"
+    Shell.NavBarIsVisible="False">
+
+    <Grid Padding="20">
+        <Border BackgroundColor="White"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 24"
+                Padding="20"
+                VerticalOptions="Center">
+            <VerticalStackLayout Spacing="18">
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Text="{Binding Title}"
+                           FontSize="18"
+                           FontFamily="OpenSansSemibold"
+                           TextColor="{StaticResource TextPrimary}"/>
+                    <Label Grid.Column="1"
+                           Text="✕"
+                           FontSize="20"
+                           TextColor="{StaticResource TextSecondary}">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding CloseCommand}"/>
+                        </Label.GestureRecognizers>
+                    </Label>
+                </Grid>
+
+                <Grid ColumnDefinitions="40,*,40" VerticalOptions="Center">
+                    <Border BackgroundColor="#F2F4F2"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 12"
+                            HeightRequest="40"
+                            WidthRequest="40">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding PreviousMonthCommand}"/>
+                        </Border.GestureRecognizers>
+                        <Label Text="‹"
+                               FontSize="24"
+                               TextColor="{StaticResource TextPrimary}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+                    </Border>
+
+                    <Label Grid.Column="1"
+                           Text="{Binding MonthLabel}"
+                           FontSize="17"
+                           FontFamily="OpenSansSemibold"
+                           TextColor="{StaticResource TextPrimary}"
+                           HorizontalTextAlignment="Center"
+                           VerticalTextAlignment="Center"/>
+
+                    <Border Grid.Column="2"
+                            BackgroundColor="#F2F4F2"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 12"
+                            HeightRequest="40"
+                            WidthRequest="40">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding NextMonthCommand}"/>
+                        </Border.GestureRecognizers>
+                        <Label Text="›"
+                               FontSize="24"
+                               TextColor="{StaticResource TextPrimary}"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+                    </Border>
+                </Grid>
+
+                <Grid ColumnDefinitions="*,*,*,*,*,*,*">
+                    <Label Text="L" HorizontalTextAlignment="Center" TextColor="{StaticResource TextSecondary}" FontFamily="OpenSansSemibold"/>
+                    <Label Grid.Column="1" Text="M" HorizontalTextAlignment="Center" TextColor="{StaticResource TextSecondary}" FontFamily="OpenSansSemibold"/>
+                    <Label Grid.Column="2" Text="M" HorizontalTextAlignment="Center" TextColor="{StaticResource TextSecondary}" FontFamily="OpenSansSemibold"/>
+                    <Label Grid.Column="3" Text="J" HorizontalTextAlignment="Center" TextColor="{StaticResource TextSecondary}" FontFamily="OpenSansSemibold"/>
+                    <Label Grid.Column="4" Text="V" HorizontalTextAlignment="Center" TextColor="{StaticResource TextSecondary}" FontFamily="OpenSansSemibold"/>
+                    <Label Grid.Column="5" Text="S" HorizontalTextAlignment="Center" TextColor="{StaticResource TextSecondary}" FontFamily="OpenSansSemibold"/>
+                    <Label Grid.Column="6" Text="D" HorizontalTextAlignment="Center" TextColor="{StaticResource TextSecondary}" FontFamily="OpenSansSemibold"/>
+                </Grid>
+
+                <CollectionView ItemsSource="{Binding Days}"
+                                SelectionMode="None"
+                                HeightRequest="300">
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Span="7"
+                                         Orientation="Vertical"
+                                         VerticalItemSpacing="8"
+                                         HorizontalItemSpacing="8"/>
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:CalendarDayItem">
+                            <Border BackgroundColor="{Binding BackgroundColor}"
+                                    Stroke="#E6ECE7"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 14"
+                                    HeightRequest="40">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CalendarPickerViewModel}}, Path=SelectDayCommand}"
+                                        CommandParameter="{Binding .}"/>
+                                </Border.GestureRecognizers>
+                                <Label Text="{Binding DayText}"
+                                       TextColor="{Binding TextColor}"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"
+                                       FontFamily="OpenSansSemibold"/>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <Button Text="Confirmar fecha"
+                        Command="{Binding ConfirmCommand}"
+                        BackgroundColor="{StaticResource GreenPrimary}"
+                        TextColor="White"
+                        FontFamily="OpenSansSemibold"
+                        CornerRadius="22"
+                        HeightRequest="48"/>
+            </VerticalStackLayout>
+        </Border>
+    </Grid>
+</ContentPage>

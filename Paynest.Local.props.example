@@ -1,6 +1,15 @@
 <Project>
   <PropertyGroup>
-    <!-- Copia este archivo a Paynest.Local.props y coloca tu backend local. -->
-    <PaynestBaseUrl>http://192.168.X.X:5080</PaynestBaseUrl>
+    <!-- Android emulator -->
+    <PaynestAndroidEmulatorBaseUrl>http://10.0.2.2:5080</PaynestAndroidEmulatorBaseUrl>
+
+    <!-- iOS simulator en Mac -->
+    <PaynestiOSSimulatorBaseUrl>http://localhost:5080</PaynestiOSSimulatorBaseUrl>
+
+    <!-- Celular fisico: usa la IP LAN actual de tu computadora -->
+    <PaynestPhysicalDeviceBaseUrl>http://192.168.0.145:5080</PaynestPhysicalDeviceBaseUrl>
+
+    <!-- Fallback general si no se puede resolver un caso especifico -->
+    <PaynestBaseUrl>http://192.168.0.145:5080</PaynestBaseUrl>
   </PropertyGroup>
 </Project>

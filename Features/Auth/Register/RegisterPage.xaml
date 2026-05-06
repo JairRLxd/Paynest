@@ -50,9 +50,9 @@
                     BackgroundColor="{StaticResource Divider}"
                     Margin="0,0,0,28"/>
 
-                <!-- ── Nombre completo ─────────────────────────────────── -->
+                <!-- ── Nombre ────────────────────────────────────────── -->
                 <Label
-                    Text="Nombre completo"
+                    Text="Nombre(s)"
                     FontSize="14"
                     FontFamily="OpenSansSemibold"
                     TextColor="{StaticResource TextPrimary}"
@@ -66,14 +66,14 @@
                     HeightRequest="52">
                     <Border.Triggers>
                         <DataTrigger TargetType="Border"
-                                     Binding="{Binding HasFullNameError}"
+                                     Binding="{Binding HasFirstNameError}"
                                      Value="True">
                             <Setter Property="Stroke" Value="{StaticResource ErrorBrush}"/>
                         </DataTrigger>
                     </Border.Triggers>
                     <Entry
-                        Placeholder="Jane Doe"
-                        Text="{Binding FullName}"
+                        Placeholder="Juan"
+                        Text="{Binding FirstName}"
                         Keyboard="Text"
                         BackgroundColor="Transparent"
                         PlaceholderColor="{StaticResource TextPlaceholder}"
@@ -83,12 +83,97 @@
                 </Border>
 
                 <HorizontalStackLayout
-                    IsVisible="{Binding HasFullNameError}"
+                    IsVisible="{Binding HasFirstNameError}"
                     Spacing="4"
                     Margin="2,5,0,0">
                     <Label Text="⚠" TextColor="{StaticResource Error}" FontSize="12" VerticalOptions="Center"/>
-                    <Label Text="{Binding FullNameError}" TextColor="{StaticResource Error}" FontSize="12" VerticalOptions="Center"/>
+                    <Label Text="{Binding FirstNameError}" TextColor="{StaticResource Error}" FontSize="12" VerticalOptions="Center"/>
                 </HorizontalStackLayout>
+
+                <!-- ── Apellidos ──────────────────────────────────────── -->
+                <Grid ColumnDefinitions="*, 12, *" Margin="0,18,0,0">
+
+                    <!-- Apellido paterno -->
+                    <VerticalStackLayout Grid.Column="0">
+                        <Label
+                            Text="Apellido paterno"
+                            FontSize="14"
+                            FontFamily="OpenSansSemibold"
+                            TextColor="{StaticResource TextPrimary}"
+                            Margin="0,0,0,6"/>
+                        <Border
+                            Stroke="{StaticResource InputBorderBrush}"
+                            StrokeShape="RoundRectangle 12"
+                            StrokeThickness="1.5"
+                            BackgroundColor="{StaticResource White}"
+                            HeightRequest="52">
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border"
+                                             Binding="{Binding HasLastNamePError}"
+                                             Value="True">
+                                    <Setter Property="Stroke" Value="{StaticResource ErrorBrush}"/>
+                                </DataTrigger>
+                            </Border.Triggers>
+                            <Entry
+                                Placeholder="García"
+                                Text="{Binding LastNameP}"
+                                Keyboard="Text"
+                                BackgroundColor="Transparent"
+                                PlaceholderColor="{StaticResource TextPlaceholder}"
+                                TextColor="{StaticResource TextPrimary}"
+                                Margin="8,0"
+                                ReturnType="Next"/>
+                        </Border>
+                        <HorizontalStackLayout
+                            IsVisible="{Binding HasLastNamePError}"
+                            Spacing="4"
+                            Margin="2,5,0,0">
+                            <Label Text="⚠" TextColor="{StaticResource Error}" FontSize="12" VerticalOptions="Center"/>
+                            <Label Text="{Binding LastNamePError}" TextColor="{StaticResource Error}" FontSize="12" VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+
+                    <!-- Apellido materno -->
+                    <VerticalStackLayout Grid.Column="2">
+                        <Label
+                            Text="Apellido materno"
+                            FontSize="14"
+                            FontFamily="OpenSansSemibold"
+                            TextColor="{StaticResource TextPrimary}"
+                            Margin="0,0,0,6"/>
+                        <Border
+                            Stroke="{StaticResource InputBorderBrush}"
+                            StrokeShape="RoundRectangle 12"
+                            StrokeThickness="1.5"
+                            BackgroundColor="{StaticResource White}"
+                            HeightRequest="52">
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border"
+                                             Binding="{Binding HasLastNameMError}"
+                                             Value="True">
+                                    <Setter Property="Stroke" Value="{StaticResource ErrorBrush}"/>
+                                </DataTrigger>
+                            </Border.Triggers>
+                            <Entry
+                                Placeholder="López"
+                                Text="{Binding LastNameM}"
+                                Keyboard="Text"
+                                BackgroundColor="Transparent"
+                                PlaceholderColor="{StaticResource TextPlaceholder}"
+                                TextColor="{StaticResource TextPrimary}"
+                                Margin="8,0"
+                                ReturnType="Next"/>
+                        </Border>
+                        <HorizontalStackLayout
+                            IsVisible="{Binding HasLastNameMError}"
+                            Spacing="4"
+                            Margin="2,5,0,0">
+                            <Label Text="⚠" TextColor="{StaticResource Error}" FontSize="12" VerticalOptions="Center"/>
+                            <Label Text="{Binding LastNameMError}" TextColor="{StaticResource Error}" FontSize="12" VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+
+                </Grid>
 
                 <!-- ── Correo electrónico ──────────────────────────────── -->
                 <Label
@@ -96,7 +181,7 @@
                     FontSize="14"
                     FontFamily="OpenSansSemibold"
                     TextColor="{StaticResource TextPrimary}"
-                    Margin="0,18,0,6"/>
+                    Margin="0,22,0,6"/>
 
                 <Border
                     Stroke="{StaticResource InputBorderBrush}"

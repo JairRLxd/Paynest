@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Paynest.Features.Onboarding.IdentityVerification.IdentityVerificationPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Paynest.Features.Onboarding.IdentityVerification"
+    x:DataType="vm:IdentityVerificationViewModel"
+    Shell.NavBarIsVisible="False"
+    NavigationPage.HasNavigationBar="False"
+    BackgroundColor="{StaticResource PageBackground}">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- ── Top bar ───────────────────────────────────────────────────── -->
+        <Grid Grid.Row="0" ColumnDefinitions="48,*,48" HeightRequest="56" Padding="4,0"
+              BackgroundColor="{StaticResource PageBackground}">
+            <Button Grid.Column="0" Text="‹" FontSize="30" TextColor="{StaticResource TextPrimary}"
+                    BackgroundColor="Transparent" Command="{Binding BackCommand}"
+                    HorizontalOptions="Center" VerticalOptions="Center" Padding="0"/>
+            <Image  Grid.Column="1" Source="paynestletters.png" HeightRequest="26"
+                    Aspect="AspectFit" HorizontalOptions="Center" VerticalOptions="Center"/>
+        </Grid>
+
+        <!-- ── Contenido scrollable ──────────────────────────────────────── -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="24,20,24,16" Spacing="0">
+
+                <!-- Indicador de pasos: 1 completado, 2 activo, 3 inactivo -->
+                <Grid ColumnDefinitions="32,*,32,*,32" Margin="24,0,24,24">
+                    <!-- Paso 1 (completado) -->
+                    <Border Grid.Column="0" HeightRequest="32" WidthRequest="32"
+                            BackgroundColor="{StaticResource GreenPrimary}"
+                            StrokeThickness="0" StrokeShape="Ellipse">
+                        <Label Text="✓" TextColor="White" FontSize="14" FontFamily="OpenSansSemibold"
+                               HorizontalOptions="Center" VerticalOptions="Center"/>
+                    </Border>
+                    <BoxView Grid.Column="1" HeightRequest="2"
+                             BackgroundColor="{StaticResource GreenPrimary}" VerticalOptions="Center"/>
+                    <!-- Paso 2 (activo) -->
+                    <Border Grid.Column="2" HeightRequest="32" WidthRequest="32"
+                            BackgroundColor="{StaticResource GreenPrimary}"
+                            StrokeThickness="0" StrokeShape="Ellipse">
+                        <Label Text="2" TextColor="White" FontSize="14" FontFamily="OpenSansSemibold"
+                               HorizontalOptions="Center" VerticalOptions="Center"/>
+                    </Border>
+                    <BoxView Grid.Column="3" HeightRequest="2"
+                             BackgroundColor="{StaticResource InputBorder}" VerticalOptions="Center"/>
+                    <!-- Paso 3 (inactivo) -->
+                    <Border Grid.Column="4" HeightRequest="32" WidthRequest="32"
+                            BackgroundColor="White" Stroke="{StaticResource InputBorderBrush}"
+                            StrokeThickness="2" StrokeShape="Ellipse">
+                        <Label Text="3" TextColor="{StaticResource TextSecondary}" FontSize="14"
+                               HorizontalOptions="Center" VerticalOptions="Center"/>
+                    </Border>
+                </Grid>
+
+                <!-- Título -->
+                <Label Text="Verifica tu identidad"
+                       TextColor="{StaticResource GreenPrimary}"
+                       FontSize="26" FontFamily="OpenSansSemibold"
+                       Margin="0,0,0,8"/>
+                <Label Text="Tu seguridad y la de tus clientes es nuestra prioridad."
+                       TextColor="{StaticResource TextSecondary}"
+                       FontSize="14" LineHeight="1.4"
+                       Margin="0,0,0,28"/>
+
+                <!-- ── Tarjeta: INE / Pasaporte — Frente ──────────────── -->
+                <Border BackgroundColor="{StaticResource White}" StrokeThickness="0"
+                        StrokeShape="RoundRectangle 16" Padding="18,16" Margin="0,0,0,12">
+                    <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="56,*">
+                        <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="3"
+                                BackgroundColor="#EBF5EF" StrokeThickness="0"
+                                StrokeShape="Ellipse" HeightRequest="48" WidthRequest="48"
+                                VerticalOptions="Center">
+                            <Label Text="🪪" FontSize="22" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </Border>
+                        <Label Grid.Row="0" Grid.Column="1" Text="ID oficial — Frente"
+                               FontFamily="OpenSansSemibold" FontSize="15"
+                               TextColor="{StaticResource TextPrimary}"/>
+                        <Label Grid.Row="1" Grid.Column="1"
+                               Text="INE, pasaporte o cédula. Parte frontal, vigente y legible."
+                               TextColor="{StaticResource TextSecondary}" FontSize="13"
+                               LineHeight="1.35" Margin="0,2,0,10"/>
+                        <Button Grid.Row="2" Grid.Column="1"
+                                Text="{Binding IdFronteStatusText}"
+                                TextColor="{Binding IdFronteStatusColor}"
+                                BackgroundColor="Transparent"
+                                BorderColor="{StaticResource InputBorder}"
+                                BorderWidth="1.5" CornerRadius="8" HeightRequest="38"
+                                FontSize="13" HorizontalOptions="Start"
+                                Padding="16,0"
+                                Command="{Binding UploadIdFronteCommand}"/>
+                    </Grid>
+                </Border>
+
+                <!-- ── Tarjeta: INE / Pasaporte — Reverso ─────────────── -->
+                <Border BackgroundColor="{StaticResource White}" StrokeThickness="0"
+                        StrokeShape="RoundRectangle 16" Padding="18,16" Margin="0,0,0,12">
+                    <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="56,*">
+                        <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="3"
+                                BackgroundColor="#EBF5EF" StrokeThickness="0"
+                                StrokeShape="Ellipse" HeightRequest="48" WidthRequest="48"
+                                VerticalOptions="Center">
+                            <Label Text="🪪" FontSize="22" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </Border>
+                        <Label Grid.Row="0" Grid.Column="1" Text="ID oficial — Reverso"
+                               FontFamily="OpenSansSemibold" FontSize="15"
+                               TextColor="{StaticResource TextPrimary}"/>
+                        <Label Grid.Row="1" Grid.Column="1"
+                               Text="Parte trasera de tu identificación."
+                               TextColor="{StaticResource TextSecondary}" FontSize="13"
+                               LineHeight="1.35" Margin="0,2,0,10"/>
+                        <Button Grid.Row="2" Grid.Column="1"
+                                Text="{Binding IdReversoStatusText}"
+                                TextColor="{Binding IdReversoStatusColor}"
+                                BackgroundColor="Transparent"
+                                BorderColor="{StaticResource InputBorder}"
+                                BorderWidth="1.5" CornerRadius="8" HeightRequest="38"
+                                FontSize="13" HorizontalOptions="Start"
+                                Padding="16,0"
+                                Command="{Binding UploadIdReversoCommand}"/>
+                    </Grid>
+                </Border>
+
+                <!-- ── Tarjeta: Selfie ─────────────────────────────────── -->
+                <Border BackgroundColor="{StaticResource White}" StrokeThickness="0"
+                        StrokeShape="RoundRectangle 16" Padding="18,16" Margin="0,0,0,12">
+                    <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="56,*">
+                        <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="3"
+                                BackgroundColor="#EBF5EF" StrokeThickness="0"
+                                StrokeShape="Ellipse" HeightRequest="48" WidthRequest="48"
+                                VerticalOptions="Center">
+                            <Label Text="🤳" FontSize="22" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </Border>
+                        <Label Grid.Row="0" Grid.Column="1" Text="Selfie o validación facial"
+                               FontFamily="OpenSansSemibold" FontSize="15"
+                               TextColor="{StaticResource TextPrimary}"/>
+                        <Label Grid.Row="1" Grid.Column="1"
+                               Text="Toma una selfie para validar que eres tú."
+                               TextColor="{StaticResource TextSecondary}" FontSize="13"
+                               LineHeight="1.35" Margin="0,2,0,10"/>
+                        <Button Grid.Row="2" Grid.Column="1"
+                                Text="{Binding SelfieStatusText}"
+                                TextColor="{Binding SelfieStatusColor}"
+                                BackgroundColor="Transparent"
+                                BorderColor="{StaticResource InputBorder}"
+                                BorderWidth="1.5" CornerRadius="8" HeightRequest="38"
+                                FontSize="13" HorizontalOptions="Start"
+                                Padding="16,0"
+                                Command="{Binding UploadSelfieCommand}"/>
+                    </Grid>
+                </Border>
+
+                <!-- ── Tarjeta: Comprobante de domicilio — Frente ─────── -->
+                <Border BackgroundColor="{StaticResource White}" StrokeThickness="0"
+                        StrokeShape="RoundRectangle 16" Padding="18,16" Margin="0,0,0,12">
+                    <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="56,*">
+                        <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="3"
+                                BackgroundColor="#EBF5EF" StrokeThickness="0"
+                                StrokeShape="Ellipse" HeightRequest="48" WidthRequest="48"
+                                VerticalOptions="Center">
+                            <Label Text="🏠" FontSize="22" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </Border>
+                        <Label Grid.Row="0" Grid.Column="1" Text="Comprobante de domicilio — Frente"
+                               FontFamily="OpenSansSemibold" FontSize="15"
+                               TextColor="{StaticResource TextPrimary}"/>
+                        <Label Grid.Row="1" Grid.Column="1"
+                               Text="Recibo de luz, agua, predial o estado de cuenta (máx. 3 meses)."
+                               TextColor="{StaticResource TextSecondary}" FontSize="13"
+                               LineHeight="1.35" Margin="0,2,0,10"/>
+                        <Button Grid.Row="2" Grid.Column="1"
+                                Text="{Binding AddressFronteStatusText}"
+                                TextColor="{Binding AddressFronteStatusColor}"
+                                BackgroundColor="Transparent"
+                                BorderColor="{StaticResource InputBorder}"
+                                BorderWidth="1.5" CornerRadius="8" HeightRequest="38"
+                                FontSize="13" HorizontalOptions="Start"
+                                Padding="16,0"
+                                Command="{Binding UploadAddressFronteCommand}"/>
+                    </Grid>
+                </Border>
+
+                <!-- ── Tarjeta: Comprobante de domicilio — Reverso ────── -->
+                <Border BackgroundColor="{StaticResource White}" StrokeThickness="0"
+                        StrokeShape="RoundRectangle 16" Padding="18,16" Margin="0,0,0,4">
+                    <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="56,*">
+                        <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="3"
+                                BackgroundColor="#EBF5EF" StrokeThickness="0"
+                                StrokeShape="Ellipse" HeightRequest="48" WidthRequest="48"
+                                VerticalOptions="Center">
+                            <Label Text="🏠" FontSize="22" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </Border>
+                        <Label Grid.Row="0" Grid.Column="1" Text="Comprobante de domicilio — Reverso"
+                               FontFamily="OpenSansSemibold" FontSize="15"
+                               TextColor="{StaticResource TextPrimary}"/>
+                        <Label Grid.Row="1" Grid.Column="1"
+                               Text="Parte trasera del comprobante, si aplica."
+                               TextColor="{StaticResource TextSecondary}" FontSize="13"
+                               LineHeight="1.35" Margin="0,2,0,10"/>
+                        <Button Grid.Row="2" Grid.Column="1"
+                                Text="{Binding AddressReversoStatusText}"
+                                TextColor="{Binding AddressReversoStatusColor}"
+                                BackgroundColor="Transparent"
+                                BorderColor="{StaticResource InputBorder}"
+                                BorderWidth="1.5" CornerRadius="8" HeightRequest="38"
+                                FontSize="13" HorizontalOptions="Start"
+                                Padding="16,0"
+                                Command="{Binding UploadAddressReversoCommand}"/>
+                    </Grid>
+                </Border>
+
+                <!-- Error general -->
+                <Border IsVisible="{Binding HasGeneralError}" BackgroundColor="#FFF5F5"
+                        Stroke="#FFCDD2" StrokeThickness="1" StrokeShape="RoundRectangle 10"
+                        Margin="0,16,0,0">
+                    <Label Text="{Binding GeneralError}" TextColor="{StaticResource Error}"
+                           FontSize="13" Padding="14,10"/>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- ── Footer + botón ───────────────────────────────────────────── -->
+        <VerticalStackLayout Grid.Row="2" Padding="24,8,24,36" Spacing="12"
+                             BackgroundColor="{StaticResource PageBackground}">
+            <Button Text="Continuar  →" Command="{Binding ContinueCommand}"
+                    IsEnabled="{Binding IsNotLoading}"
+                    BackgroundColor="{StaticResource GreenPrimary}"
+                    TextColor="{StaticResource White}" FontFamily="OpenSansSemibold"
+                    FontSize="16" CornerRadius="28" HeightRequest="56" HorizontalOptions="Fill"/>
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="6">
+                <Label Text="🔒" FontSize="12" VerticalOptions="Center"/>
+                <Label Text="Tu información está protegida y encriptada"
+                       TextColor="{StaticResource TextSecondary}" FontSize="12"
+                       VerticalOptions="Center"/>
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+
+    </Grid>
+</ContentPage>

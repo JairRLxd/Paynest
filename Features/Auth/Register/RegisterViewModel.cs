@@ -1,8 +1,10 @@
 using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Paynest.Core.Models.Auth;
+using Paynest.Features.Onboarding.CompleteProfile;
 using Paynest.Infrastructure.Exceptions;
 using Paynest.Services;
 
@@ -14,7 +16,9 @@ public partial class RegisterViewModel(
 {
     // ── campos del formulario ────────────────────────────────────────────────
 
-    [ObservableProperty] private string _fullName        = string.Empty;
+    [ObservableProperty] private string _firstName       = string.Empty;
+    [ObservableProperty] private string _lastNameP       = string.Empty;
+    [ObservableProperty] private string _lastNameM       = string.Empty;
     [ObservableProperty] private string _email           = string.Empty;
     [ObservableProperty] private string _password        = string.Empty;
     [ObservableProperty] private string _passwordConfirm = string.Empty;
@@ -22,8 +26,16 @@ public partial class RegisterViewModel(
     // ── estado de errores ────────────────────────────────────────────────────
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(HasFullNameError))]
-    private string? _fullNameError;
+    [NotifyPropertyChangedFor(nameof(HasFirstNameError))]
+    private string? _firstNameError;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasLastNamePError))]
+    private string? _lastNamePError;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasLastNameMError))]
+    private string? _lastNameMError;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasEmailError))]
@@ -41,7 +53,9 @@ public partial class RegisterViewModel(
     [NotifyPropertyChangedFor(nameof(HasGeneralError))]
     private string? _generalError;
 
-    public bool HasFullNameError        => FullNameError        is not null;
+    public bool HasFirstNameError       => FirstNameError       is not null;
+    public bool HasLastNamePError       => LastNamePError       is not null;
+    public bool HasLastNameMError       => LastNameMError       is not null;
     public bool HasEmailError           => EmailError           is not null;
     public bool HasPasswordError        => PasswordError        is not null;
     public bool HasPasswordConfirmError => PasswordConfirmError is not null;
@@ -84,7 +98,7 @@ public partial class RegisterViewModel(
         try
         {
             await authState.RegisterAsync(
-                new RegisterRequest(Email.Trim(), FullName.Trim(), Password, PasswordConfirm));
+                new RegisterRequest(Email.Trim(), FirstName.Trim(), LastNameP.Trim(), LastNameM.Trim(), Password, PasswordConfirm));
             NavigateToApp();
         }
         catch (AuthException ex)
@@ -119,12 +133,26 @@ public partial class RegisterViewModel(
     {
         var ok = true;
 
-        if (string.IsNullOrWhiteSpace(FullName))
+        if (string.IsNullOrWhiteSpace(FirstName))
         {
-            FullNameError = "Ingresa tu nombre completo";
+            FirstNameError = "Ingresa tu nombre";
             ok = false;
         }
-        else FullNameError = null;
+        else FirstNameError = null;
+
+        if (string.IsNullOrWhiteSpace(LastNameP))
+        {
+            LastNamePError = "Ingresa tu apellido paterno";
+            ok = false;
+        }
+        else LastNamePError = null;
+
+        if (string.IsNullOrWhiteSpace(LastNameM))
+        {
+            LastNameMError = "Ingresa tu apellido materno";
+            ok = false;
+        }
+        else LastNameMError = null;
 
         if (string.IsNullOrWhiteSpace(Email))
         {
@@ -199,7 +227,9 @@ public partial class RegisterViewModel(
         if (p.Details is { Count: > 0 })
         {
             if (p.Details.TryGetValue("email",           out var em)) EmailError           = em[0];
-            if (p.Details.TryGetValue("fullName",        out var fn)) FullNameError        = fn[0];
+            if (p.Details.TryGetValue("firstName",       out var fn)) FirstNameError       = fn[0];
+            if (p.Details.TryGetValue("lastNameP",       out var lp)) LastNamePError       = lp[0];
+            if (p.Details.TryGetValue("lastNameM",       out var lm)) LastNameMError       = lm[0];
             if (p.Details.TryGetValue("password",        out var pw)) PasswordError        = pw[0];
             if (p.Details.TryGetValue("passwordConfirm", out var pc)) PasswordConfirmError = pc[0];
             return;
@@ -210,7 +240,12 @@ public partial class RegisterViewModel(
 
     private static void NavigateToApp()
     {
-        var shell = MauiProgram.Services.GetRequiredService<AppShell>();
-        Application.Current!.MainPage = shell;
+        // Registro exitoso → flujo de onboarding (3 pasos)
+        var page = MauiProgram.Services.GetRequiredService<CompleteProfilePage>();
+        Application.Current!.MainPage = new NavigationPage(page)
+        {
+            BarBackgroundColor = Colors.Transparent,
+            BackgroundColor    = Color.FromArgb("#F2F0EB")
+        };
     }
 }

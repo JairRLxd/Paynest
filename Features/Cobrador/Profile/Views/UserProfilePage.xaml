@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Paynest.Features.Cobrador.Profile.Views.UserProfilePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Shell.NavBarIsVisible="False"
+    BackgroundColor="{StaticResource PageBackground}">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- Header -->
+        <Border Grid.Row="0" BackgroundColor="{StaticResource GreenPrimary}"
+                StrokeThickness="0">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="0,0,28,28"/>
+            </Border.StrokeShape>
+            <Grid ColumnDefinitions="*,Auto" Padding="24,52,24,24">
+                <VerticalStackLayout Grid.Column="0" VerticalOptions="End" Spacing="2">
+                    <Label Text="Mi Perfil" FontFamily="OpenSansSemibold" FontSize="26"
+                           TextColor="White"/>
+                    <Label Text="Configuración y cuenta"
+                           TextColor="#B8DCC9" FontSize="13"/>
+                </VerticalStackLayout>
+                <Image Grid.Column="1" Source="paynestletters.png" HeightRequest="22"
+                       Aspect="AspectFit" VerticalOptions="Start" Opacity="0.7"/>
+            </Grid>
+        </Border>
+
+        <!-- Contenido placeholder -->
+        <VerticalStackLayout Grid.Row="1" VerticalOptions="Center" Spacing="12" Padding="32">
+            <Label Text="👤" FontSize="52" HorizontalOptions="Center"/>
+            <Label Text="Próximamente" FontFamily="OpenSansSemibold" FontSize="20"
+                   TextColor="{StaticResource GreenPrimary}" HorizontalOptions="Center"/>
+            <Label Text="Aquí podrás ver tu perfil, métodos de pago y ajustes de cuenta."
+                   TextColor="{StaticResource TextSecondary}" FontSize="14"
+                   HorizontalOptions="Center" HorizontalTextAlignment="Center" LineHeight="1.4"/>
+        </VerticalStackLayout>
+
+    </Grid>
+</ContentPage>

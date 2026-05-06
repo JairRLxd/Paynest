@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Paynest.Features.Onboarding.CompleteProfile.CompleteProfilePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Paynest.Features.Onboarding.CompleteProfile"
+    x:DataType="vm:CompleteProfileViewModel"
+    Shell.NavBarIsVisible="False"
+    NavigationPage.HasNavigationBar="False"
+    BackgroundColor="{StaticResource PageBackground}">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- ── Top bar ───────────────────────────────────────────────────── -->
+        <Grid Grid.Row="0" ColumnDefinitions="48,*,48" HeightRequest="56" Padding="4,0"
+              BackgroundColor="{StaticResource PageBackground}">
+            <Button Grid.Column="0" Text="‹" FontSize="30" TextColor="{StaticResource TextPrimary}"
+                    BackgroundColor="Transparent" Command="{Binding BackCommand}"
+                    HorizontalOptions="Center" VerticalOptions="Center" Padding="0"/>
+            <Image  Grid.Column="1" Source="paynestletters.png" HeightRequest="26"
+                    Aspect="AspectFit" HorizontalOptions="Center" VerticalOptions="Center"/>
+        </Grid>
+
+        <!-- ── Contenido scrollable ──────────────────────────────────────── -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="24,20,24,16" Spacing="0">
+
+                <!-- Indicador de pasos -->
+                <Grid ColumnDefinitions="32,*,32,*,32" Margin="24,0,24,24">
+                    <!-- Paso 1 (activo) -->
+                    <Border Grid.Column="0" HeightRequest="32" WidthRequest="32"
+                            BackgroundColor="{StaticResource GreenPrimary}"
+                            StrokeThickness="0" StrokeShape="Ellipse">
+                        <Label Text="1" TextColor="White" FontSize="14" FontFamily="OpenSansSemibold"
+                               HorizontalOptions="Center" VerticalOptions="Center"/>
+                    </Border>
+                    <BoxView Grid.Column="1" HeightRequest="2" BackgroundColor="{StaticResource InputBorder}"
+                             VerticalOptions="Center"/>
+                    <!-- Paso 2 (inactivo) -->
+                    <Border Grid.Column="2" HeightRequest="32" WidthRequest="32"
+                            BackgroundColor="White" Stroke="{StaticResource InputBorderBrush}"
+                            StrokeThickness="2" StrokeShape="Ellipse">
+                        <Label Text="2" TextColor="{StaticResource TextSecondary}" FontSize="14"
+                               HorizontalOptions="Center" VerticalOptions="Center"/>
+                    </Border>
+                    <BoxView Grid.Column="3" HeightRequest="2" BackgroundColor="{StaticResource InputBorder}"
+                             VerticalOptions="Center"/>
+                    <!-- Paso 3 (inactivo) -->
+                    <Border Grid.Column="4" HeightRequest="32" WidthRequest="32"
+                            BackgroundColor="White" Stroke="{StaticResource InputBorderBrush}"
+                            StrokeThickness="2" StrokeShape="Ellipse">
+                        <Label Text="3" TextColor="{StaticResource TextSecondary}" FontSize="14"
+                               HorizontalOptions="Center" VerticalOptions="Center"/>
+                    </Border>
+                </Grid>
+
+                <!-- Título -->
+                <Label Text="Completa tu perfil"
+                       TextColor="{StaticResource GreenPrimary}"
+                       FontSize="26" FontFamily="OpenSansSemibold"
+                       Margin="0,0,0,8"/>
+                <Label Text="Estos datos nos ayudan a dejar tu cuenta lista para que puedas empezar a cobrar."
+                       TextColor="{StaticResource TextSecondary}"
+                       FontSize="14" LineHeight="1.4"
+                       Margin="0,0,0,24"/>
+
+                <!-- ── Datos personales ─────────────────────────────────── -->
+                <Label Text="Datos personales" FontFamily="OpenSansSemibold"
+                       FontSize="13" TextColor="{StaticResource TextSecondary}"
+                       CharacterSpacing="0.8" Margin="0,0,0,12"/>
+
+                <!-- Nombre visible -->
+                <Border Stroke="{StaticResource InputBorderBrush}" StrokeShape="RoundRectangle 12"
+                        StrokeThickness="1.5" BackgroundColor="{StaticResource White}" HeightRequest="52">
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border" Binding="{Binding HasVisibleNameError}" Value="True">
+                            <Setter Property="Stroke" Value="{StaticResource ErrorBrush}"/>
+                        </DataTrigger>
+                    </Border.Triggers>
+                    <Entry Placeholder="Nombre visible" Text="{Binding VisibleName}"
+                           BackgroundColor="Transparent" PlaceholderColor="{StaticResource TextPlaceholder}"
+                           TextColor="{StaticResource TextPrimary}" Margin="14,0" ReturnType="Next"/>
+                </Border>
+                <Label Text="{Binding VisibleNameError}" IsVisible="{Binding HasVisibleNameError}"
+                       TextColor="{StaticResource Error}" FontSize="12" Margin="2,4,0,0"/>
+
+                <!-- Teléfono -->
+                <Border Stroke="{StaticResource InputBorderBrush}" StrokeShape="RoundRectangle 12"
+                        StrokeThickness="1.5" BackgroundColor="{StaticResource White}"
+                        HeightRequest="52" Margin="0,12,0,0">
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border" Binding="{Binding HasPhoneError}" Value="True">
+                            <Setter Property="Stroke" Value="{StaticResource ErrorBrush}"/>
+                        </DataTrigger>
+                    </Border.Triggers>
+                    <Entry Placeholder="Teléfono de contacto" Text="{Binding Phone}"
+                           Keyboard="Telephone" BackgroundColor="Transparent"
+                           PlaceholderColor="{StaticResource TextPlaceholder}"
+                           TextColor="{StaticResource TextPrimary}" Margin="14,0" ReturnType="Next"/>
+                </Border>
+                <Label Text="{Binding PhoneError}" IsVisible="{Binding HasPhoneError}"
+                       TextColor="{StaticResource Error}" FontSize="12" Margin="2,4,0,0"/>
+
+                <!-- Código postal + spinner -->
+                <Grid ColumnDefinitions="*,12,Auto" Margin="0,12,0,0">
+                    <Border Grid.Column="0" Stroke="{StaticResource InputBorderBrush}"
+                            StrokeShape="RoundRectangle 12" StrokeThickness="1.5"
+                            BackgroundColor="{StaticResource White}" HeightRequest="52">
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border" Binding="{Binding HasPostalCodeError}" Value="True">
+                                <Setter Property="Stroke" Value="{StaticResource ErrorBrush}"/>
+                            </DataTrigger>
+                        </Border.Triggers>
+                        <Entry Placeholder="Código postal" Text="{Binding PostalCode}"
+                               Keyboard="Numeric" MaxLength="5"
+                               BackgroundColor="Transparent" PlaceholderColor="{StaticResource TextPlaceholder}"
+                               TextColor="{StaticResource TextPrimary}" Margin="14,0" ReturnType="Next"/>
+                    </Border>
+                    <ActivityIndicator Grid.Column="2"
+                                       IsVisible="{Binding IsLookingUp}" IsRunning="{Binding IsLookingUp}"
+                                       Color="{StaticResource GreenPrimary}"
+                                       WidthRequest="26" HeightRequest="26" VerticalOptions="Center"/>
+                </Grid>
+                <Label Text="{Binding PostalCodeError}" IsVisible="{Binding HasPostalCodeError}"
+                       TextColor="{StaticResource Error}" FontSize="12" Margin="2,4,0,0"/>
+
+                <!-- Colonia (Picker alimentado por la API) -->
+                <Border Stroke="{StaticResource InputBorderBrush}" StrokeShape="RoundRectangle 12"
+                        StrokeThickness="1.5" BackgroundColor="{StaticResource White}"
+                        HeightRequest="52" Margin="0,12,0,0">
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border" Binding="{Binding HasColoniaError}" Value="True">
+                            <Setter Property="Stroke" Value="{StaticResource ErrorBrush}"/>
+                        </DataTrigger>
+                    </Border.Triggers>
+                    <Picker Title="Colonia" ItemsSource="{Binding Colonias}"
+                            SelectedItem="{Binding Colonia}"
+                            TextColor="{StaticResource TextPrimary}"
+                            TitleColor="{StaticResource TextPlaceholder}" Margin="10,0"/>
+                </Border>
+                <Label Text="{Binding ColoniaError}" IsVisible="{Binding HasColoniaError}"
+                       TextColor="{StaticResource Error}" FontSize="12" Margin="2,4,0,0"/>
+
+                <!-- Municipio + Estado (solo lectura, auto-rellenados) -->
+                <Grid ColumnDefinitions="*,12,*" Margin="0,12,0,0">
+                    <Border Grid.Column="0" Stroke="{StaticResource InputBorderBrush}"
+                            StrokeShape="RoundRectangle 12" StrokeThickness="1.5"
+                            BackgroundColor="#F6F6F6" HeightRequest="52">
+                        <Entry Placeholder="Municipio" Text="{Binding Municipio}"
+                               IsReadOnly="True" BackgroundColor="Transparent"
+                               PlaceholderColor="{StaticResource TextPlaceholder}"
+                               TextColor="{StaticResource TextPrimary}" Margin="14,0"/>
+                    </Border>
+                    <Border Grid.Column="2" Stroke="{StaticResource InputBorderBrush}"
+                            StrokeShape="RoundRectangle 12" StrokeThickness="1.5"
+                            BackgroundColor="#F6F6F6" HeightRequest="52">
+                        <Entry Placeholder="Estado" Text="{Binding Estado}"
+                               IsReadOnly="True" BackgroundColor="Transparent"
+                               PlaceholderColor="{StaticResource TextPlaceholder}"
+                               TextColor="{StaticResource TextPrimary}" Margin="14,0"/>
+                    </Border>
+                </Grid>
+
+                <!-- Dirección -->
+                <Border Stroke="{StaticResource InputBorderBrush}" StrokeShape="RoundRectangle 12"
+                        StrokeThickness="1.5" BackgroundColor="{StaticResource White}"
+                        HeightRequest="52" Margin="0,12,0,0">
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border" Binding="{Binding HasAddressError}" Value="True">
+                            <Setter Property="Stroke" Value="{StaticResource ErrorBrush}"/>
+                        </DataTrigger>
+                    </Border.Triggers>
+                    <Entry Placeholder="Dirección" Text="{Binding Address}"
+                           BackgroundColor="Transparent" PlaceholderColor="{StaticResource TextPlaceholder}"
+                           TextColor="{StaticResource TextPrimary}" Margin="14,0" ReturnType="Next"/>
+                </Border>
+                <Label Text="{Binding AddressError}" IsVisible="{Binding HasAddressError}"
+                       TextColor="{StaticResource Error}" FontSize="12" Margin="2,4,0,0"/>
+
+                <!-- CURP -->
+                <Border Stroke="{StaticResource InputBorderBrush}" StrokeShape="RoundRectangle 12"
+                        StrokeThickness="1.5" BackgroundColor="{StaticResource White}"
+                        HeightRequest="52" Margin="0,12,0,0">
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border" Binding="{Binding HasCurpError}" Value="True">
+                            <Setter Property="Stroke" Value="{StaticResource ErrorBrush}"/>
+                        </DataTrigger>
+                    </Border.Triggers>
+                    <Entry Placeholder="CURP" Text="{Binding Curp}"
+                           BackgroundColor="Transparent" PlaceholderColor="{StaticResource TextPlaceholder}"
+                           TextColor="{StaticResource TextPrimary}" Margin="14,0"
+                           MaxLength="18" ReturnType="Next"/>
+                </Border>
+                <Label Text="{Binding CurpError}" IsVisible="{Binding HasCurpError}"
+                       TextColor="{StaticResource Error}" FontSize="12" Margin="2,4,0,0"/>
+
+                <!-- RFC -->
+                <Border Stroke="{StaticResource InputBorderBrush}" StrokeShape="RoundRectangle 12"
+                        StrokeThickness="1.5" BackgroundColor="{StaticResource White}"
+                        HeightRequest="52" Margin="0,12,0,0">
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border" Binding="{Binding HasRfcError}" Value="True">
+                            <Setter Property="Stroke" Value="{StaticResource ErrorBrush}"/>
+                        </DataTrigger>
+                    </Border.Triggers>
+                    <Entry Placeholder="RFC" Text="{Binding Rfc}"
+                           BackgroundColor="Transparent" PlaceholderColor="{StaticResource TextPlaceholder}"
+                           TextColor="{StaticResource TextPrimary}" Margin="14,0"
+                           MaxLength="13" ReturnType="Next"/>
+                </Border>
+                <Label Text="{Binding RfcError}" IsVisible="{Binding HasRfcError}"
+                       TextColor="{StaticResource Error}" FontSize="12" Margin="2,4,0,0"/>
+
+                <!-- ── Tipo de operación ────────────────────────────────── -->
+                <Label Text="Tipo de operación" FontFamily="OpenSansSemibold"
+                       FontSize="13" TextColor="{StaticResource TextSecondary}"
+                       CharacterSpacing="0.8" Margin="0,24,0,10"/>
+
+                <Border Stroke="{StaticResource InputBorderBrush}" StrokeShape="RoundRectangle 14"
+                        StrokeThickness="1.5" BackgroundColor="{StaticResource White}" Padding="4">
+                    <Grid ColumnDefinitions="*,*">
+                        <!-- Persona -->
+                        <Border Grid.Column="0" StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                                BackgroundColor="{Binding PersonaBgColor}" Padding="0,10">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SelectPersonaCommand}"/>
+                            </Border.GestureRecognizers>
+                            <Label Text="Persona" FontSize="14" FontFamily="OpenSansSemibold"
+                                   TextColor="{Binding PersonaTextColor}"
+                                   HorizontalOptions="Center"/>
+                        </Border>
+                        <!-- Empresa -->
+                        <Border Grid.Column="1" StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                                BackgroundColor="{Binding EmpresaBgColor}" Padding="0,10">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding SelectEmpresaCommand}"/>
+                            </Border.GestureRecognizers>
+                            <Label Text="Empresa" FontSize="14" FontFamily="OpenSansSemibold"
+                                   TextColor="{Binding EmpresaTextColor}"
+                                   HorizontalOptions="Center"/>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- ── Campos de negocio (condicional) ────────────────── -->
+                <VerticalStackLayout IsVisible="{Binding IsEmpresa}" Spacing="0" Margin="0,12,0,0">
+
+                    <!-- Nombre del negocio -->
+                    <Border Stroke="{StaticResource InputBorderBrush}" StrokeShape="RoundRectangle 12"
+                            StrokeThickness="1.5" BackgroundColor="{StaticResource White}" HeightRequest="52">
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border" Binding="{Binding HasBusinessNameError}" Value="True">
+                                <Setter Property="Stroke" Value="{StaticResource ErrorBrush}"/>
+                            </DataTrigger>
+                        </Border.Triggers>
+                        <Entry Placeholder="Nombre del negocio" Text="{Binding BusinessName}"
+                               BackgroundColor="Transparent" PlaceholderColor="{StaticResource TextPlaceholder}"
+                               TextColor="{StaticResource TextPrimary}" Margin="14,0" ReturnType="Next"/>
+                    </Border>
+                    <Label Text="{Binding BusinessNameError}" IsVisible="{Binding HasBusinessNameError}"
+                           TextColor="{StaticResource Error}" FontSize="12" Margin="2,4,0,0"/>
+
+                    <!-- Giro -->
+                    <Border Stroke="{StaticResource InputBorderBrush}" StrokeShape="RoundRectangle 12"
+                            StrokeThickness="1.5" BackgroundColor="{StaticResource White}"
+                            HeightRequest="52" Margin="0,12,0,0">
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border" Binding="{Binding HasBusinessTypeError}" Value="True">
+                                <Setter Property="Stroke" Value="{StaticResource ErrorBrush}"/>
+                            </DataTrigger>
+                        </Border.Triggers>
+                        <Picker Title="Giro o tipo de negocio" ItemsSource="{Binding BusinessTypes}"
+                                SelectedItem="{Binding BusinessType}"
+                                TextColor="{StaticResource TextPrimary}"
+                                TitleColor="{StaticResource TextPlaceholder}" Margin="10,0"/>
+                    </Border>
+                    <Label Text="{Binding BusinessTypeError}" IsVisible="{Binding HasBusinessTypeError}"
+                           TextColor="{StaticResource Error}" FontSize="12" Margin="2,4,0,0"/>
+
+                    <!-- Logo del negocio -->
+                    <Label Text="Logo o imagen del negocio" FontFamily="OpenSansSemibold"
+                           FontSize="13" TextColor="{StaticResource TextSecondary}"
+                           CharacterSpacing="0.8" Margin="0,16,0,8"/>
+                    <Border Stroke="{StaticResource InputBorderBrush}" StrokeShape="RoundRectangle 12"
+                            StrokeThickness="1.5" BackgroundColor="{StaticResource White}"
+                            HeightRequest="72" Margin="0,0,0,4">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding PickBusinessLogoCommand}"/>
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="4">
+                            <Label Text="📷" FontSize="20" HorizontalOptions="Center"/>
+                            <Label Text="Subir logo" FontSize="13" TextColor="{StaticResource GreenAccent}"
+                                   FontFamily="OpenSansSemibold" HorizontalOptions="Center"/>
+                            <Label Text="PNG o JPG, máximo 2MB" FontSize="11"
+                                   TextColor="{StaticResource TextPlaceholder}" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+                    </Border>
+
+                </VerticalStackLayout>
+
+                <!-- Error general -->
+                <Border IsVisible="{Binding HasGeneralError}" BackgroundColor="#FFF5F5"
+                        Stroke="#FFCDD2" StrokeThickness="1" StrokeShape="RoundRectangle 10"
+                        Margin="0,16,0,0">
+                    <Label Text="{Binding GeneralError}" TextColor="{StaticResource Error}"
+                           FontSize="13" Padding="14,10"/>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- ── Botón continuar (fijo abajo) ─────────────────────────────── -->
+        <Grid Grid.Row="2" Padding="24,12,24,36" BackgroundColor="{StaticResource PageBackground}">
+            <Button Text="Continuar  →" Command="{Binding ContinueCommand}"
+                    IsEnabled="{Binding IsNotLoading}"
+                    BackgroundColor="{StaticResource GreenPrimary}"
+                    TextColor="{StaticResource White}" FontFamily="OpenSansSemibold"
+                    FontSize="16" CornerRadius="28" HeightRequest="56" HorizontalOptions="Fill"/>
+            <ActivityIndicator IsVisible="{Binding IsLoading}" IsRunning="{Binding IsLoading}"
+                               Color="{StaticResource GreenPrimary}"
+                               HorizontalOptions="Center" VerticalOptions="Center"/>
+        </Grid>
+
+    </Grid>
+</ContentPage>

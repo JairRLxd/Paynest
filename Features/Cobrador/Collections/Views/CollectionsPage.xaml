@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Paynest.Features.Cobrador.Collections.Views.CollectionsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Paynest.Features.Cobrador.Collections.ViewModels"
+    xmlns:models="clr-namespace:Paynest.Features.Cobrador.Collections.Models"
+    x:Name="thisPage"
+    x:DataType="vm:CollectionsViewModel"
+    Shell.NavBarIsVisible="False"
+    BackgroundColor="{StaticResource PageBackground}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,52,20,32" Spacing="0">
+
+            <!-- ── Título + botón Nueva ──────────────────────────────────── -->
+            <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,20">
+                <Label Grid.Column="0" Text="Gestión de cobros"
+                       FontFamily="OpenSansSemibold" FontSize="28"
+                       TextColor="{StaticResource TextPrimary}"
+                       VerticalOptions="Center"/>
+
+                <Border Grid.Column="1"
+                        BackgroundColor="{StaticResource GreenPrimary}"
+                        StrokeThickness="0" StrokeShape="RoundRectangle 22"
+                        Padding="16,10" VerticalOptions="Center">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding NewDebtCommand}"/>
+                    </Border.GestureRecognizers>
+                    <HorizontalStackLayout Spacing="6">
+                        <Label Text="＋" TextColor="White" FontSize="16"
+                               FontFamily="OpenSansSemibold" VerticalOptions="Center"/>
+                        <Label Text="Nueva" TextColor="White" FontSize="14"
+                               FontFamily="OpenSansSemibold" VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+                </Border>
+            </Grid>
+
+            <!-- ── Tarjetas de estadísticas ──────────────────────────────── -->
+            <Grid ColumnDefinitions="*,12,*" Margin="0,0,0,24">
+
+                <Border Grid.Column="0"
+                        BackgroundColor="{StaticResource White}"
+                        StrokeThickness="0" StrokeShape="RoundRectangle 16"
+                        Padding="16,14">
+                    <VerticalStackLayout Spacing="4">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Grid.Column="0" Text="TOTAL ADEUDADO"
+                                   FontSize="10" FontFamily="OpenSansSemibold"
+                                   CharacterSpacing="0.6"
+                                   TextColor="{StaticResource TextSecondary}"/>
+                            <Border Grid.Column="1"
+                                    BackgroundColor="#EBF5EF" StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 6" Padding="6,4">
+                                <Label Text="▤" FontSize="11"
+                                       TextColor="{StaticResource GreenPrimary}"/>
+                            </Border>
+                        </Grid>
+                        <Label Text="{Binding TotalAdeudado}"
+                               FontFamily="OpenSansSemibold" FontSize="24"
+                               TextColor="{StaticResource TextPrimary}"/>
+                        <Label Text="{Binding TotalDeudas}"
+                               FontSize="12" TextColor="{StaticResource TextSecondary}"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Grid.Column="2"
+                        BackgroundColor="{StaticResource White}"
+                        StrokeThickness="0" StrokeShape="RoundRectangle 16"
+                        Padding="16,14">
+                    <VerticalStackLayout Spacing="4">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Grid.Column="0" Text="VENCIDAS"
+                                   FontSize="10" FontFamily="OpenSansSemibold"
+                                   CharacterSpacing="0.6"
+                                   TextColor="{StaticResource TextSecondary}"/>
+                            <Border Grid.Column="1"
+                                    BackgroundColor="#FFF1F3" StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 6" Padding="6,4">
+                                <Label Text="⚠" FontSize="11" TextColor="#F04438"/>
+                            </Border>
+                        </Grid>
+                        <Label Text="{Binding VencidasCount}"
+                               FontFamily="OpenSansSemibold" FontSize="28"
+                               TextColor="#F04438"/>
+                        <Label Text="{Binding VencidasAmount}"
+                               FontSize="12" TextColor="{StaticResource TextSecondary}"/>
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <!-- ── Encabezado sección ─────────────────────────────────────── -->
+            <Label Text="Cobros pendientes"
+                   FontFamily="OpenSansSemibold" FontSize="16"
+                   TextColor="{StaticResource TextPrimary}"
+                   Margin="0,0,0,12"/>
+
+            <!-- Loading -->
+            <ActivityIndicator IsRunning="{Binding IsLoading}"
+                               IsVisible="{Binding IsLoading}"
+                               Color="{StaticResource GreenPrimary}"
+                               HorizontalOptions="Center"
+                               Margin="0,30,0,0"/>
+
+            <!-- Estado vacío -->
+            <VerticalStackLayout IsVisible="{Binding IsEmpty}"
+                                 HorizontalOptions="Center"
+                                 Spacing="8" Margin="0,30,0,0">
+                <Label Text="Sin cobros pendientes"
+                       FontSize="14" FontFamily="OpenSansSemibold"
+                       TextColor="{StaticResource TextSecondary}"
+                       HorizontalTextAlignment="Center"/>
+                <Label Text="Cuando registres deudas activas aparecerán aquí."
+                       FontSize="12" TextColor="{StaticResource TextSecondary}"
+                       HorizontalTextAlignment="Center"/>
+            </VerticalStackLayout>
+
+            <!-- ── Lista de cobros ────────────────────────────────────────── -->
+            <VerticalStackLayout IsVisible="{Binding HasDebts}"
+                                 BindableLayout.ItemsSource="{Binding Debts}" Spacing="10">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="models:CollectionDebtItem">
+
+                        <Border BackgroundColor="{StaticResource White}"
+                                StrokeThickness="0" StrokeShape="RoundRectangle 16"
+                                Padding="14,14">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={x:Reference thisPage}, Path=BindingContext.SelectDebtCommand}"
+                                    CommandParameter="{Binding}"/>
+                            </Border.GestureRecognizers>
+
+                            <Grid ColumnDefinitions="44,*" ColumnSpacing="12">
+
+                                <!-- Avatar -->
+                                <Border Grid.Column="0"
+                                        BackgroundColor="{Binding AvatarColor}"
+                                        StrokeThickness="0" StrokeShape="Ellipse"
+                                        HeightRequest="42" WidthRequest="42"
+                                        VerticalOptions="Start" Margin="0,2,0,0">
+                                    <Label Text="{Binding Initials}"
+                                           TextColor="White" FontSize="14"
+                                           FontFamily="OpenSansSemibold"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"/>
+                                </Border>
+
+                                <!-- Contenido -->
+                                <VerticalStackLayout Grid.Column="1" Spacing="8">
+
+                                    <!-- Nombre + monto total -->
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <VerticalStackLayout Grid.Column="0" Spacing="1">
+                                            <Label Text="{Binding ClientName}"
+                                                   FontFamily="OpenSansSemibold" FontSize="14"
+                                                   TextColor="{StaticResource TextPrimary}"/>
+                                            <Label Text="{Binding Description}"
+                                                   FontSize="12"
+                                                   TextColor="{StaticResource TextSecondary}"/>
+                                        </VerticalStackLayout>
+                                        <Label Grid.Column="1"
+                                               Text="{Binding DisplayAmount}"
+                                               FontFamily="OpenSansSemibold" FontSize="15"
+                                               TextColor="{StaticResource TextPrimary}"
+                                               VerticalOptions="Center"/>
+                                    </Grid>
+
+                                    <!-- Badge status + fecha + eliminar -->
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <HorizontalStackLayout Grid.Column="0" Spacing="8"
+                                                               VerticalOptions="Center">
+                                            <Border BackgroundColor="{Binding StatusBg}"
+                                                    StrokeThickness="0"
+                                                    StrokeShape="RoundRectangle 8"
+                                                    Padding="8,3">
+                                                <Label Text="{Binding Status}"
+                                                       FontSize="11" FontFamily="OpenSansSemibold"
+                                                       TextColor="{Binding StatusText}"/>
+                                            </Border>
+                                            <Label Text="{Binding DueText}"
+                                                   FontSize="12"
+                                                   TextColor="{StaticResource TextSecondary}"
+                                                   VerticalOptions="Center"/>
+                                        </HorizontalStackLayout>
+
+                                        <!-- Botón eliminar -->
+                                        <Border Grid.Column="1"
+                                                BackgroundColor="#FFF1F3"
+                                                StrokeThickness="0"
+                                                StrokeShape="RoundRectangle 8"
+                                                HeightRequest="30" WidthRequest="30">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer
+                                                    Command="{Binding Source={x:Reference thisPage}, Path=BindingContext.DeleteDebtCommand}"
+                                                    CommandParameter="{Binding}"/>
+                                            </Border.GestureRecognizers>
+                                            <Label Text="✕" FontSize="12"
+                                                   TextColor="#F04438"
+                                                   HorizontalOptions="Center"
+                                                   VerticalOptions="Center"/>
+                                        </Border>
+                                    </Grid>
+
+                                    <!-- ── Desglose de interés (solo cuando HasInterest) ── -->
+                                    <VerticalStackLayout IsVisible="{Binding HasInterest}" Spacing="0">
+
+                                        <BoxView HeightRequest="1" Color="#EEF2EE" Margin="0,2,0,8"/>
+
+                                        <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,5">
+                                            <Label Grid.Column="0"
+                                                   Text="Cuota programada"
+                                                   FontSize="12"
+                                                   TextColor="{StaticResource TextSecondary}"/>
+                                            <Label Grid.Column="1"
+                                                   Text="{Binding Amount}"
+                                                   FontSize="12" FontFamily="OpenSansSemibold"
+                                                   TextColor="{StaticResource TextPrimary}"/>
+                                        </Grid>
+
+                                        <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,8">
+                                            <Label Grid.Column="0"
+                                                   Text="{Binding InterestLabel}"
+                                                   FontSize="12"
+                                                   TextColor="#F04438"/>
+                                            <Label Grid.Column="1"
+                                                   Text="{Binding InterestAmount}"
+                                                   FontSize="12" FontFamily="OpenSansSemibold"
+                                                   TextColor="#F04438"/>
+                                        </Grid>
+
+                                        <BoxView HeightRequest="1" Color="#EEF2EE" Margin="0,0,0,8"/>
+
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <Label Grid.Column="0"
+                                                   Text="Total a cobrar hoy"
+                                                   FontSize="13" FontFamily="OpenSansSemibold"
+                                                   TextColor="{StaticResource TextPrimary}"/>
+                                            <Label Grid.Column="1"
+                                                   Text="{Binding TotalAmount}"
+                                                   FontSize="14" FontFamily="OpenSansSemibold"
+                                                   TextColor="{StaticResource GreenPrimary}"/>
+                                        </Grid>
+
+                                    </VerticalStackLayout>
+
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
