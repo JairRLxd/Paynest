@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Paynest"
+             x:Class="Paynest.SkeletonCardView">
+    <Border Style="{StaticResource AppCardBorder}" Margin="{StaticResource CardItemMargin}">
+        <VerticalStackLayout Spacing="10">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                <BoxView HeightRequest="16" WidthRequest="150" CornerRadius="8" Color="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}" />
+                <BoxView Grid.Column="1" HeightRequest="24" WidthRequest="86" CornerRadius="8" Color="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}" />
+            </Grid>
+            <BoxView HeightRequest="12" WidthRequest="210" CornerRadius="6" Color="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}" />
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                <BoxView HeightRequest="12" WidthRequest="110" CornerRadius="6" Color="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}" />
+                <BoxView Grid.Column="1" HeightRequest="26" WidthRequest="92" CornerRadius="10" Color="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}" />
+            </Grid>
+            <BoxView
+                IsVisible="{Binding Source={RelativeSource AncestorType={x:Type local:SkeletonCardView}}, Path=ShowButton}"
+                HeightRequest="48"
+                CornerRadius="14"
+                Color="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}" />
+        </VerticalStackLayout>
+    </Border>
+</ContentView>

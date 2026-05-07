@@ -1,13 +1,53 @@
 using System.Security.Cryptography;
 using System.Text;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using Paynest.Core.Interfaces;
 using QRCoder;
 
 namespace Paynest.Services;
 
-public class CollectorInviteService : ICollectorInviteService
+public class CollectorInviteService(HttpClient http, AuthStateService authState) : ICollectorInviteService
 {
     private const string CodePrefix = "PAY-";
+    private const string InvitePath = "/api/v1/collector/invite";
+
+    public Task<CollectorInviteDto> GetInviteAsync(CancellationToken ct = default)
+    {
+        return authState.CallProtectedAsync(async token =>
+        {
+            try
+            {
+                using var request = new HttpRequestMessage(HttpMethod.Get, InvitePath);
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                using var response = await http.SendAsync(request, ct);
+                if (response.IsSuccessStatusCode)
+                {
+                    var invite = await response.Content.ReadFromJsonAsync<CollectorInviteDto>(cancellationToken: ct);
+                    if (!string.IsNullOrWhiteSpace(invite?.CollectorCode))
+                    {
+                        return invite;
+                    }
+                }
+            }
+            catch
+            {
+                // Mientras backend expone el contrato oficial, mantenemos el flujo usable.
+            }
+
+            var collectorId = authState.CurrentUser?.Id ?? "anonymous_collector";
+            return new CollectorInviteDto
+            {
+                CollectorId = collectorId,
+                CollectorCode = GetOrCreateCollectorCode(collectorId),
+                CreatedAt = DateTime.UtcNow,
+                Status = "local",
+                IsLocalFallback = true
+            };
+        }, ct);
+    }
 
     public string GetOrCreateCollectorCode(string collectorId)
     {

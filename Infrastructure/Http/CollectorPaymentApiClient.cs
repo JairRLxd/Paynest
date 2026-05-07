@@ -11,13 +11,13 @@ namespace Paynest.Infrastructure.Http;
 public class CollectorPaymentApiClient(HttpClient http, AuthStateService authState) : ICollectorPaymentService
 {
     public Task<PaymentPreviewResponse> PreviewAsync(string clientId, PreviewPaymentRequest request, CancellationToken ct = default)
-        => SendAsync<PaymentPreviewResponse>(HttpMethod.Post, $"api/collector/clients/{clientId}/payments/preview", request, ct);
+        => SendAsync<PaymentPreviewResponse>(HttpMethod.Post, $"/api/v1/collector/clients/{clientId}/payments/preview", request, ct);
 
     public Task<RegisterPaymentResponse> RegisterAsync(string clientId, RegisterPaymentRequest request, CancellationToken ct = default)
-        => SendAsync<RegisterPaymentResponse>(HttpMethod.Post, $"api/collector/clients/{clientId}/payments", request, ct);
+        => SendAsync<RegisterPaymentResponse>(HttpMethod.Post, $"/api/v1/collector/clients/{clientId}/payments", request, ct);
 
     public async Task<IReadOnlyList<PaymentHistoryItemModel>> GetHistoryAsync(string clientId, CancellationToken ct = default)
-        => await SendAsync<List<PaymentHistoryItemModel>>(HttpMethod.Get, $"api/collector/clients/{clientId}/payments/history", body: null, ct) ?? [];
+        => await SendAsync<List<PaymentHistoryItemModel>>(HttpMethod.Get, $"/api/v1/collector/clients/{clientId}/payments/history", body: null, ct) ?? [];
 
     private Task<T> SendAsync<T>(HttpMethod method, string path, object? body, CancellationToken ct)
         => authState.CallProtectedAsync(

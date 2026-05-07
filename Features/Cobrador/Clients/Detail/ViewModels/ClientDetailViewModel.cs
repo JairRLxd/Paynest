@@ -211,7 +211,8 @@ public partial class ClientDetailViewModel : ObservableObject
         if (page.BindingContext is RegisterPaymentViewModel vm)
             vm.Load(ToPaymentSnapshot());
 
-        await Application.Current!.MainPage!.Navigation.PushAsync(page);
+        if (App.CurrentNavigation is { } navigation)
+            await navigation.PushAsync(page);
     }
 
     [RelayCommand]
@@ -224,7 +225,8 @@ public partial class ClientDetailViewModel : ObservableObject
         if (page.BindingContext is EditClientViewModel vm)
             vm.Load(ToSnapshot());
 
-        await Application.Current!.MainPage!.Navigation.PushAsync(page);
+        if (App.CurrentNavigation is { } navigation)
+            await navigation.PushAsync(page);
     }
 
     [RelayCommand]
@@ -238,7 +240,8 @@ public partial class ClientDetailViewModel : ObservableObject
                 RegisteredAt, TotalDebt, StatusLabel,
                 Color.FromArgb("#F3F4F6"), StatusColor));
         }
-        await Application.Current!.MainPage!.Navigation.PushAsync(page);
+        if (App.CurrentNavigation is { } navigation)
+            await navigation.PushAsync(page);
     }
 
     [RelayCommand]
@@ -250,7 +253,8 @@ public partial class ClientDetailViewModel : ObservableObject
         if (!HasPhoto || PhotoSource is null) return;
 
         var viewer = new PhotoViewerPage(PhotoSource);
-        await Application.Current!.MainPage!.Navigation.PushModalAsync(viewer, animated: true);
+        if (App.CurrentNavigation is { } navigation)
+            await navigation.PushModalAsync(viewer, animated: true);
     }
 
     [RelayCommand]
@@ -259,7 +263,7 @@ public partial class ClientDetailViewModel : ObservableObject
         var page = Application.Current?.Windows.FirstOrDefault()?.Page;
         if (page is null) return;
 
-        string? action = await page.DisplayActionSheet(
+        string? action = await page.DisplayActionSheetAsync(
             null, "Cancelar", "Eliminar cliente", "Editar cliente");
 
         switch (action)
@@ -282,7 +286,8 @@ public partial class ClientDetailViewModel : ObservableObject
             vm.OnRejected = () => UpdateDebtItem(debt, "Pendiente", needsReview: false);
         }
 
-        await Application.Current!.MainPage!.Navigation.PushAsync(page);
+        if (App.CurrentNavigation is { } navigation)
+            await navigation.PushAsync(page);
     }
 
     private void UpdateDebtItem(ClientDebtItem old, string newStatus, bool needsReview = false)

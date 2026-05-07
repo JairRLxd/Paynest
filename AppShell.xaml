@@ -3,49 +3,125 @@
     x:Class="Paynest.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:Paynest"
     xmlns:home="clr-namespace:Paynest.Features.Cobrador.Home.Views"
     xmlns:clients="clr-namespace:Paynest.Features.Cobrador.Clients.Views"
     xmlns:collections="clr-namespace:Paynest.Features.Cobrador.Collections.Views"
     xmlns:schedule="clr-namespace:Paynest.Features.Cobrador.Schedule.Views"
     xmlns:profile="clr-namespace:Paynest.Features.Cobrador.Profile.Views"
     Shell.FlyoutBehavior="Disabled"
-    Shell.TabBarBackgroundColor="White"
-    Shell.TabBarForegroundColor="#2A6349"
-    Shell.TabBarUnselectedColor="#9E9E9E"
-    Shell.TabBarTitleColor="#2A6349">
+    Shell.BackgroundColor="{StaticResource GreenPrimary}"
+    Shell.ForegroundColor="{StaticResource White}"
+    Shell.TitleColor="{StaticResource White}"
+    Shell.UnselectedColor="{StaticResource TabBarInactiveLight}"
+    Shell.TabBarBackgroundColor="{StaticResource TabBarBgLight}"
+    Shell.TabBarForegroundColor="{StaticResource TabBarActiveLight}"
+    Shell.TabBarTitleColor="{StaticResource TabBarActiveLight}"
+    Shell.TabBarUnselectedColor="{StaticResource TabBarInactiveLight}">
 
-    <TabBar>
+    <Shell.FlyoutHeader>
+        <Grid
+            Padding="20,28,20,18"
+            RowDefinitions="Auto,Auto"
+            RowSpacing="14"
+            BackgroundColor="{AppThemeBinding Light={StaticResource AppBg}, Dark={StaticResource AppBgDark}}">
+            <Grid ColumnDefinitions="52,*" ColumnSpacing="12">
+                <Border
+                    HeightRequest="52"
+                    WidthRequest="52"
+                    Stroke="Transparent"
+                    StrokeShape="RoundRectangle 16"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource AppSurfaceAlt}, Dark={StaticResource AppBorderDark}}">
+                    <Image Source="paynest_icon.png" HeightRequest="34" WidthRequest="34" HorizontalOptions="Center" VerticalOptions="Center" />
+                </Border>
+                <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                    <Label
+                        Text="Paynest"
+                        FontFamily="OpenSansSemibold"
+                        FontSize="20"
+                        TextColor="{AppThemeBinding Light={StaticResource AppTextPrimary}, Dark={StaticResource AppTextPrimaryDark}}" />
+                    <Label
+                        x:Name="FlyoutUserLabel"
+                        Text="Cliente"
+                        FontSize="13"
+                        LineBreakMode="TailTruncation"
+                        TextColor="{AppThemeBinding Light={StaticResource AppTextSecondary}, Dark={StaticResource AppTextSecondaryDark}}" />
+                </VerticalStackLayout>
+            </Grid>
 
+            <Border
+                Grid.Row="1"
+                Padding="12,10"
+                Stroke="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}"
+                StrokeShape="RoundRectangle 14"
+                BackgroundColor="{AppThemeBinding Light={StaticResource AppSurface}, Dark={StaticResource AppSurfaceDark}}">
+                <VerticalStackLayout Spacing="3">
+                    <Label
+                        Text="Deuda activa"
+                        FontSize="12"
+                        TextColor="{AppThemeBinding Light={StaticResource AppTextSecondary}, Dark={StaticResource AppTextSecondaryDark}}" />
+                    <Label
+                        x:Name="FlyoutGroupLabel"
+                        Text="Sin grupo seleccionado"
+                        FontFamily="OpenSansSemibold"
+                        FontSize="14"
+                        LineBreakMode="TailTruncation"
+                        TextColor="{AppThemeBinding Light={StaticResource AppTextPrimary}, Dark={StaticResource AppTextPrimaryDark}}" />
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+    </Shell.FlyoutHeader>
+
+    <TabBar x:Name="ClientTabBar" Route="client">
+        <Tab Title="Inicio" Icon="tab_home.svg">
+            <ShellContent ContentTemplate="{DataTemplate local:MainPage}" Route="main" />
+        </Tab>
+        <Tab Title="Calendario" Icon="tab_calendar.svg">
+            <ShellContent ContentTemplate="{DataTemplate local:CalendarPage}" Route="calendar" />
+        </Tab>
+        <Tab Title="Recibos" Icon="tab_receipt.svg">
+            <ShellContent ContentTemplate="{DataTemplate local:ReceiptsPage}" Route="receipts" />
+        </Tab>
+        <Tab Title="Saldo" Icon="tab_card.svg">
+            <ShellContent ContentTemplate="{DataTemplate local:CardSimulatorPage}" Route="card" />
+        </Tab>
+    </TabBar>
+
+    <TabBar x:Name="CollectorTabBar" Route="collector">
         <ShellContent
             Title="Inicio"
             Icon="tab_home.svg"
-            Route="home"
-            ContentTemplate="{DataTemplate home:HomePage}"/>
+            Route="collector_home"
+            ContentTemplate="{DataTemplate home:HomePage}" />
 
         <ShellContent
             Title="Clientes"
             Icon="tab_clients.svg"
             Route="clients"
-            ContentTemplate="{DataTemplate clients:ClientsPage}"/>
+            ContentTemplate="{DataTemplate clients:ClientsPage}" />
 
         <ShellContent
             Title="Cobros"
             Icon="tab_collections.svg"
             Route="collections"
-            ContentTemplate="{DataTemplate collections:CollectionsPage}"/>
+            ContentTemplate="{DataTemplate collections:CollectionsPage}" />
 
         <ShellContent
             Title="Agenda"
             Icon="tab_schedule.svg"
             Route="schedule"
-            ContentTemplate="{DataTemplate schedule:SchedulePage}"/>
+            ContentTemplate="{DataTemplate schedule:SchedulePage}" />
 
         <ShellContent
             Title="Perfil"
             Icon="tab_profile.svg"
             Route="profile"
-            ContentTemplate="{DataTemplate profile:UserProfilePage}"/>
-
+            ContentTemplate="{DataTemplate profile:UserProfilePage}" />
     </TabBar>
+
+    <MenuItem x:Name="SwitchGroupMenuItem" Text="Cambiar deuda activa" Clicked="OnSwitchGroupClicked" />
+    <MenuItem x:Name="LinkCollectorMenuItem" Text="Vincular cobrador" Clicked="OnLinkCollectorClicked" />
+    <MenuItem x:Name="NotificationsMenuItem" Text="Recordatorios" Clicked="OnNotificationsClicked" />
+    <MenuItem Text="Cerrar sesión" Clicked="OnLogoutClicked" />
 
 </Shell>

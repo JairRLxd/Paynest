@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Paynest"
+             x:Class="Paynest.InstallmentCardView">
+    <Border Style="{StaticResource AppCardBorder}" Margin="{StaticResource CardItemMargin}">
+        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="10">
+            <Label
+                FontAttributes="Bold"
+                FontSize="17"
+                LineBreakMode="TailTruncation"
+                Text="{Binding Source={RelativeSource AncestorType={x:Type local:InstallmentCardView}}, Path=TitleText}" />
+            <Label
+                Grid.Column="1"
+                Style="{StaticResource AppAmountText}"
+                LineBreakMode="TailTruncation"
+                Text="{Binding Source={RelativeSource AncestorType={x:Type local:InstallmentCardView}}, Path=AmountText}" />
+            <Label
+                Grid.Row="1"
+                Style="{StaticResource AppCaption}"
+                Text="{Binding Source={RelativeSource AncestorType={x:Type local:InstallmentCardView}}, Path=DetailText}" />
+            <local:StatusBadgeView
+                Grid.Row="1"
+                Grid.Column="1"
+                BadgeIcon="{Binding Source={RelativeSource AncestorType={x:Type local:InstallmentCardView}}, Path=StatusIcon}"
+                BadgeText="{Binding Source={RelativeSource AncestorType={x:Type local:InstallmentCardView}}, Path=StatusText}"
+                BadgeBackground="{Binding Source={RelativeSource AncestorType={x:Type local:InstallmentCardView}}, Path=StatusBackground}"
+                BadgeForeground="{Binding Source={RelativeSource AncestorType={x:Type local:InstallmentCardView}}, Path=StatusForeground}" />
+            <local:ActionButtonView
+                Grid.Row="2"
+                Grid.ColumnSpan="2"
+                Margin="0,10,0,0"
+                IsVisible="{Binding Source={RelativeSource AncestorType={x:Type local:InstallmentCardView}}, Path=ShowActionButton}"
+                Text="{Binding Source={RelativeSource AncestorType={x:Type local:InstallmentCardView}}, Path=ActionText}"
+                IsBusy="{Binding Source={RelativeSource AncestorType={x:Type local:InstallmentCardView}}, Path=IsBusy}"
+                IsActionEnabled="{Binding Source={RelativeSource AncestorType={x:Type local:InstallmentCardView}}, Path=IsActionEnabled}"
+                SemanticDescription="{Binding Source={RelativeSource AncestorType={x:Type local:InstallmentCardView}}, Path=ActionSemanticDescription}"
+                CommandParameter="{Binding Source={RelativeSource AncestorType={x:Type local:InstallmentCardView}}, Path=CommandParameter}"
+                Clicked="OnActionClicked" />
+        </Grid>
+    </Border>
+</ContentView>

@@ -59,7 +59,7 @@ public partial class ClientPickerViewModel : ObservableObject
         }
     }
 
-    partial void OnSearchTextChanged(string _) => ApplyFilter();
+    partial void OnSearchTextChanged(string value) => ApplyFilter();
 
     private void ApplyFilter()
     {
@@ -77,21 +77,26 @@ public partial class ClientPickerViewModel : ObservableObject
     [RelayCommand]
     async Task SelectClientAsync(ClientSummary client)
     {
-        await Application.Current!.MainPage!.Navigation.PopModalAsync();
+        if (App.CurrentNavigation is not { } navigation) return;
+        await navigation.PopModalAsync();
         OnClientSelected?.Invoke(client);
     }
 
     [RelayCommand]
     async Task AddNewClientAsync()
     {
-        await Application.Current!.MainPage!.Navigation.PopModalAsync(animated: false);
+        if (App.CurrentNavigation is not { } navigation) return;
+        await navigation.PopModalAsync(animated: false);
         if (OnAddNewClient is not null)
             await OnAddNewClient.Invoke();
     }
 
     [RelayCommand]
     async Task DismissAsync()
-        => await Application.Current!.MainPage!.Navigation.PopModalAsync();
+    {
+        if (App.CurrentNavigation is { } navigation)
+            await navigation.PopModalAsync();
+    }
 
     private static ClientSummary MapToSummary(CollectorClientSummaryDto dto)
     {
@@ -127,6 +132,6 @@ public partial class ClientPickerViewModel : ObservableObject
     private static async Task ShowAlertAsync(string title, string msg)
     {
         if (Application.Current?.Windows.FirstOrDefault()?.Page is Page p)
-            await p.DisplayAlert(title, msg, "Entendido");
+            await p.DisplayAlertAsync(title, msg, "Entendido");
     }
 }

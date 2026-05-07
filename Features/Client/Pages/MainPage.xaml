@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 xmlns:local="clr-namespace:Paynest"
+			 xmlns:vm="clr-namespace:Paynest.Features.Client.ViewModels"
+			 x:Class="Paynest.MainPage"
+			 Title="Inicio"
+			 BackgroundColor="{StaticResource AppBg}">
+	<ScrollView>
+		<VerticalStackLayout x:Name="RootLayout" Padding="{StaticResource PagePadding}" Spacing="{StaticResource Space16}">
+			<Label Style="{StaticResource AppPageTitle}" Text="Tus deudas activas" />
+			<Label Style="{StaticResource AppCaption}" Text="{Binding CurrentGroupText}" />
+			<local:NetworkBannerView
+				IsVisible="False"
+				TitleText="No pudimos conectar con la API."
+				MessageText="Desliza para actualizar.">
+				<local:NetworkBannerView.Triggers>
+					<DataTrigger TargetType="local:NetworkBannerView" Binding="{Binding State}" Value="{x:Static vm:ScreenState.Error}">
+						<Setter Property="IsVisible" Value="True" />
+					</DataTrigger>
+				</local:NetworkBannerView.Triggers>
+			</local:NetworkBannerView>
+
+			<local:PageStateContainer State="{Binding State}">
+				<local:PageStateContainer.LoadingContent>
+					<VerticalStackLayout Spacing="{StaticResource Space12}">
+						<ActivityIndicator IsRunning="True" Color="{StaticResource AppAccent}" HorizontalOptions="Center" />
+						<local:DashboardSkeletonView />
+					</VerticalStackLayout>
+				</local:PageStateContainer.LoadingContent>
+
+				<local:PageStateContainer.ContentBody>
+					<RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
+						<VerticalStackLayout Spacing="{StaticResource Space16}">
+							<Border Style="{StaticResource AppCardBorder}" Margin="{StaticResource CardItemMargin}">
+								<Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="12" RowSpacing="14">
+									<local:SummaryMetricView TitleText="Pendiente total" ValueText="{Binding TotalPendingText}" ValueFontSize="23" />
+									<local:SummaryMetricView Grid.Column="1" TitleText="Próximo pago" ValueText="{Binding NextPaymentText}" ValueFontSize="16" />
+									<local:SummaryMetricView Grid.Row="1" TitleText="Grupos activos" ValueText="{Binding ActiveGroupsText}" ValueFontSize="18" />
+									<local:SummaryMetricView Grid.Row="1" Grid.Column="1" TitleText="Cuotas vencidas" ValueText="{Binding OverdueCountText}" ValueColor="{StaticResource DangerFg}" ValueFontSize="18" />
+								</Grid>
+							</Border>
+
+							<Border
+								Style="{StaticResource AppCardBorder}"
+								Margin="{StaticResource CardItemMargin}"
+								BackgroundColor="{StaticResource AppSurfaceAlt}"
+								Stroke="#D8E9DE">
+								<Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="12" RowSpacing="8">
+									<VerticalStackLayout Spacing="2">
+										<Label Text="Saldo Paynest" TextColor="{StaticResource GreenPrimary}" FontAttributes="Bold" FontSize="14" />
+										<Label Text="{Binding WalletBalanceText}" TextColor="{StaticResource TextPrimary}" FontAttributes="Bold" FontSize="24" />
+									</VerticalStackLayout>
+									<Button
+										Grid.Column="1"
+										Text="Abonar"
+										Style="{StaticResource AppSecondaryButton}"
+										VerticalOptions="Center"
+										SemanticProperties.Description="Ir a Saldo Paynest para abonar dinero"
+										Clicked="OnWalletSummaryClicked" />
+									<Label Grid.Row="1" Grid.ColumnSpan="2" Style="{StaticResource AppCaption}" Text="Último movimiento" />
+									<Grid Grid.Row="2" Grid.ColumnSpan="2" ColumnDefinitions="*,Auto" ColumnSpacing="10">
+										<Label Text="{Binding WalletMovementText}" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}" LineBreakMode="TailTruncation" />
+										<Label
+											Grid.Column="1"
+											Text="{Binding WalletMovementAmountText}"
+											TextColor="{Binding WalletMovementAmountColor}"
+											FontAttributes="Bold"
+											IsVisible="{Binding HasWalletMovement}" />
+									</Grid>
+								</Grid>
+							</Border>
+
+							<Label Style="{StaticResource AppSectionTitle}" Text="Deudas activas" />
+							<CollectionView x:Name="GroupsCollection" ItemsSource="{Binding Groups}" SelectionMode="Single" SelectionChanged="OnGroupSelectionChanged" SemanticProperties.Description="Lista de deudas activas, toca una deuda para ver su detalle">
+								<CollectionView.ItemTemplate>
+									<DataTemplate>
+										<Border Style="{StaticResource AppCardBorder}" Margin="{StaticResource CardItemMargin}">
+											<VerticalStackLayout Spacing="10">
+												<Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+													<Label FontAttributes="Bold" FontSize="20" Text="{Binding Name}" LineBreakMode="TailTruncation" />
+													<Label Grid.Column="1" Text="›" FontSize="28" TextColor="{StaticResource AppAccent}" VerticalOptions="Center" />
+												</Grid>
+												<Label Style="{StaticResource AppCaption}" Text="{Binding FreelancerName}" LineBreakMode="TailTruncation" />
+												<Label Style="{StaticResource AppCaption}" Text="{Binding FrequencyText}" />
+												<Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+													<Label Style="{StaticResource AppCaption}" Text="Pendiente" VerticalOptions="Center" />
+													<Label Grid.Column="1" Style="{StaticResource AppAmountText}" Text="{Binding PendingAmountText}" LineBreakMode="TailTruncation" />
+												</Grid>
+												<Label Text="Ver detalle" FontAttributes="Bold" FontSize="13" TextColor="{StaticResource AppAccent}" />
+											</VerticalStackLayout>
+										</Border>
+									</DataTemplate>
+								</CollectionView.ItemTemplate>
+							</CollectionView>
+
+							<Label Style="{StaticResource AppSectionTitle}" Text="Próximos pagos" />
+							<CollectionView ItemsSource="{Binding UpcomingInstallments}" SelectionMode="None">
+								<CollectionView.ItemTemplate>
+									<DataTemplate>
+										<local:InstallmentCardView
+											TitleText="{Binding Title}"
+											AmountText="{Binding AmountText}"
+											DetailText="{Binding DueDateText}"
+											StatusIcon="{Binding StatusIcon}"
+											StatusText="{Binding StatusText}"
+											StatusBackground="{Binding StatusBg}"
+											StatusForeground="{Binding StatusFg}" />
+									</DataTemplate>
+								</CollectionView.ItemTemplate>
+							</CollectionView>
+						</VerticalStackLayout>
+					</RefreshView>
+				</local:PageStateContainer.ContentBody>
+
+				<local:PageStateContainer.EmptyContent>
+						<local:EmptyStateView
+							IconSource="tab_home.svg"
+							TitleText="Tu panel está limpio"
+							DescriptionText="Vinculate con tu cobrador para consultar las deudas y pagos que registre para ti."
+							ActionText="Vincular cobrador"
+							ActionCommand="{Binding LinkCollectorCommand}" />
+				</local:PageStateContainer.EmptyContent>
+
+				<local:PageStateContainer.ErrorContent>
+					<local:ErrorCardView ErrorMessage="{Binding ErrorMessage}" RetryCommand="{Binding RetryCommand}" />
+				</local:PageStateContainer.ErrorContent>
+			</local:PageStateContainer>
+		</VerticalStackLayout>
+	</ScrollView>
+</ContentPage>

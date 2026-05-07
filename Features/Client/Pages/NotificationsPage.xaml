@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 xmlns:local="clr-namespace:Paynest"
+			 x:Class="Paynest.NotificationsPage"
+			 Title="Notificaciones"
+			 BackgroundColor="{StaticResource AppBg}">
+	<VerticalStackLayout x:Name="RootLayout" Padding="{StaticResource PagePadding}" Spacing="{StaticResource Space16}">
+		<Label Style="{StaticResource AppPageTitle}" Text="Recordatorios de vencimiento" SemanticProperties.HeadingLevel="Level1" />
+		<Label Style="{StaticResource AppCaption}" Text="Define cómo quieres recibir avisos para no atrasarte." />
+
+		<Border
+			BackgroundColor="{StaticResource AppSurfaceAlt}"
+			Stroke="#D8E9DE"
+			StrokeShape="RoundRectangle 16"
+			Padding="14">
+			<Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+				<Border
+					BackgroundColor="#DDEFE5"
+					StrokeThickness="0"
+					StrokeShape="RoundRectangle 18"
+					HeightRequest="48"
+					WidthRequest="48"
+					VerticalOptions="Start">
+					<Label Text="!" TextColor="{StaticResource GreenPrimary}" FontAttributes="Bold" FontSize="22" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+				</Border>
+				<VerticalStackLayout Grid.Column="1" Spacing="4">
+					<Label Text="Vista previa" TextColor="{StaticResource GreenPrimary}" FontAttributes="Bold" FontSize="14" />
+					<Label Text="{Binding ReminderSummary}" TextColor="{StaticResource TextPrimary}" FontAttributes="Bold" LineBreakMode="WordWrap" />
+					<Label Style="{StaticResource AppCaption}" Text="{Binding ReminderTimeText}" />
+				</VerticalStackLayout>
+			</Grid>
+		</Border>
+
+		<Border Style="{StaticResource AppCardBorder}">
+			<VerticalStackLayout Spacing="{StaticResource Space16}">
+				<VerticalStackLayout Spacing="2">
+					<Label Text="Cuándo avisarte" FontAttributes="Bold" FontSize="18" />
+					<Label Style="{StaticResource AppCaption}" Text="Elige los momentos clave antes del vencimiento." />
+				</VerticalStackLayout>
+				<Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+					<VerticalStackLayout Spacing="3">
+						<Label FontAttributes="Bold" FontSize="16" Text="Avisar 3 días antes" />
+						<Label Style="{StaticResource AppCaption}" Text="Útil para preparar el pago con tiempo." />
+					</VerticalStackLayout>
+					<Switch IsToggled="{Binding NotifyThreeDaysBefore}" SemanticProperties.Description="Activar o desactivar recordatorio tres días antes del vencimiento" />
+				</Grid>
+				<BoxView HeightRequest="1" Color="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}" />
+				<Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+					<VerticalStackLayout Spacing="3">
+						<Label FontAttributes="Bold" FontSize="16" Text="Avisar el día de vencimiento" />
+						<Label Style="{StaticResource AppCaption}" Text="Recibe un último aviso antes de atrasarte." />
+					</VerticalStackLayout>
+					<Switch IsToggled="{Binding NotifySameDay}" SemanticProperties.Description="Activar o desactivar recordatorio el día del vencimiento" />
+				</Grid>
+			</VerticalStackLayout>
+		</Border>
+
+		<Border Style="{StaticResource AppCardBorder}">
+			<VerticalStackLayout Spacing="{StaticResource Space16}">
+				<Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+					<VerticalStackLayout Spacing="3">
+						<Label FontAttributes="Bold" FontSize="16" Text="Hora del recordatorio" />
+						<Label Style="{StaticResource AppCaption}" Text="{Binding ReminderTimeText}" />
+					</VerticalStackLayout>
+					<TimePicker Grid.Column="1" Time="{Binding ReminderTime}" VerticalOptions="Center" SemanticProperties.Description="Seleccionar hora para los recordatorios" />
+				</Grid>
+				<BoxView HeightRequest="1" Color="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}" />
+				<Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+					<VerticalStackLayout Spacing="3">
+						<Label FontAttributes="Bold" FontSize="16" Text="Notificación push" />
+						<Label Style="{StaticResource AppCaption}" Text="Recibe avisos dentro del dispositivo." />
+					</VerticalStackLayout>
+					<Switch IsToggled="{Binding PushEnabled}" SemanticProperties.Description="Activar o desactivar notificaciones push" />
+				</Grid>
+				<BoxView HeightRequest="1" Color="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}" />
+				<Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+					<VerticalStackLayout Spacing="3">
+						<Label FontAttributes="Bold" FontSize="16" Text="Aviso por correo" />
+						<Label Style="{StaticResource AppCaption}" Text="Útil si también quieres respaldo por email." />
+					</VerticalStackLayout>
+					<Switch IsToggled="{Binding EmailEnabled}" SemanticProperties.Description="Activar o desactivar avisos por correo" />
+				</Grid>
+			</VerticalStackLayout>
+		</Border>
+
+		<Border
+			BackgroundColor="{StaticResource AppSurfaceAlt}"
+			Stroke="{StaticResource AppBorder}"
+			StrokeShape="RoundRectangle 14"
+			Padding="12,10">
+			<Label
+				Style="{StaticResource AppCaption}"
+				Text="Los cambios se aplicarán a tus próximas cuotas al guardar."
+				HorizontalTextAlignment="Center" />
+		</Border>
+
+		<local:ActionButtonView
+			Text="{Binding SaveButtonText}"
+			IsBusy="{Binding IsSaving}"
+			IsActionEnabled="{Binding IsNotSaving}"
+			SemanticDescription="Guardar la configuración de notificaciones de vencimiento"
+			Clicked="OnSaveClicked" />
+	</VerticalStackLayout>
+</ContentPage>

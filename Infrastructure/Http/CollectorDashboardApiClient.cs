@@ -18,7 +18,7 @@ public class CollectorDashboardApiClient(HttpClient http, AuthStateService authS
 
     private async Task<CollectorDashboardResponse> GetAuthorizedAsync(string accessToken, CancellationToken ct)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Get, "api/collector/dashboard");
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/api/v1/collector/dashboard");
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 

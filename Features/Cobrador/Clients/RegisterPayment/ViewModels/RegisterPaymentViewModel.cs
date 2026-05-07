@@ -200,7 +200,11 @@ public partial class RegisterPaymentViewModel(
         IsLoading = true;
         try
         {
-            var req     = new PreviewPaymentRequest(Amount: 0m, IsTotalPayment: true, PaymentDateTime: null);
+            var req     = new PreviewPaymentRequest(
+                Amount: null,
+                IsTotalPayment: true,
+                Method: ToBackendMethod(SelectedMethod),
+                PaymentDateTime: null);
             var preview = await paymentService.PreviewAsync(_clientId, req);
             ApplyPreview(preview, isInitial: true);
         }
@@ -246,7 +250,12 @@ public partial class RegisterPaymentViewModel(
         IsLoading = true;
         try
         {
-            var req     = new PreviewPaymentRequest(amount, IsTotalPayment, DateTime.Now);
+            var req     = new PreviewPaymentRequest(
+                amount,
+                IsTotalPayment,
+                ToBackendMethod(SelectedMethod),
+                DateTime.Now,
+                string.IsNullOrWhiteSpace(Notes) ? null : Notes.Trim());
             var preview = await paymentService.PreviewAsync(_clientId, req, ct);
             ApplyPreview(preview, isInitial: false);
         }
@@ -334,8 +343,8 @@ public partial class RegisterPaymentViewModel(
         IsTotalPayment = true;
 
         _suppressAmountPreview = true;
-        AmountToPay = _preview?.TotalDebtAmount is > 0m tot
-            ? tot.ToString("N2")
+        AmountToPay = _preview is { TotalDebtAmount: > 0m } totalPreview
+            ? totalPreview.TotalDebtAmount.ToString("N2")
             : "0.00";
         _suppressAmountPreview = false;
 
@@ -351,8 +360,8 @@ public partial class RegisterPaymentViewModel(
         IsTotalPayment = false;
 
         _suppressAmountPreview = true;
-        AmountToPay = _preview?.ScheduledPaymentAmount is > 0m sched
-            ? sched.ToString("N2")
+        AmountToPay = _preview is { ScheduledPaymentAmount: > 0m } scheduledPreview
+            ? scheduledPreview.ScheduledPaymentAmount.ToString("N2")
             : string.Empty;
         _suppressAmountPreview = false;
 
@@ -379,7 +388,11 @@ public partial class RegisterPaymentViewModel(
     {
         try
         {
-            var photo = await MediaPicker.Default.PickPhotoAsync();
+            var photos = await MediaPicker.Default.PickPhotosAsync(new MediaPickerOptions
+            {
+                Title = "Selecciona el comprobante"
+            });
+            var photo = photos?.FirstOrDefault();
             if (photo is not null) ProofImagePath = photo.FullPath;
         }
         catch { }
@@ -407,17 +420,10 @@ public partial class RegisterPaymentViewModel(
         IsLoading = true;
         try
         {
-            var method = SelectedMethod switch
-            {
-                PaymentMethod.Transfer => "Transferencia",
-                PaymentMethod.Card     => "Tarjeta",
-                _                      => "Efectivo"
-            };
-
             var request = new RegisterPaymentRequest(
                 Amount:          amount,
                 IsTotalPayment:  IsTotalPayment,
-                Method:          method,
+                Method:          ToBackendMethod(SelectedMethod),
                 PaymentDateTime: PaymentDateTime,
                 Notes:           string.IsNullOrWhiteSpace(Notes) ? null : Notes.Trim(),
                 ProofFilePath:   ProofImagePath);
@@ -460,7 +466,7 @@ public partial class RegisterPaymentViewModel(
     private static async Task<bool> ShowConfirmAsync(string title, string msg)
     {
         if (Application.Current?.Windows.FirstOrDefault()?.Page is Page p)
-            return await p.DisplayAlert(title, msg, "Confirmar", "Cancelar");
+            return await p.DisplayAlertAsync(title, msg, "Confirmar", "Cancelar");
         return false;
     }
 
@@ -475,4 +481,11 @@ public partial class RegisterPaymentViewModel(
     private static string FormatMoney(decimal amount) => $"${amount:N2}";
 
     public enum PaymentMethod { Cash, Transfer, Card }
+
+    private static string ToBackendMethod(PaymentMethod method) => method switch
+    {
+        PaymentMethod.Transfer => "Transfer",
+        PaymentMethod.Card => "Card",
+        _ => "Cash",
+    };
 }

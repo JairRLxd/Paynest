@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 xmlns:local="clr-namespace:Paynest"
+			 x:Class="Paynest.DebtDetailPage"
+			 Title="Detalle de deuda"
+			 BackgroundColor="{StaticResource AppBg}">
+	<Grid>
+		<ScrollView>
+			<VerticalStackLayout x:Name="RootLayout" Padding="{StaticResource PagePadding}" Spacing="{StaticResource Space16}">
+				<Label Style="{StaticResource AppPageTitle}" Text="{Binding HeaderText}" />
+				<Label Style="{StaticResource AppCaption}" Text="{Binding SubHeaderText}" />
+
+				<Border
+					IsVisible="{Binding IsAllPaidStateVisible}"
+					Margin="{StaticResource CardItemMargin}"
+					Padding="14"
+					Stroke="#D8E9DE"
+					StrokeShape="RoundRectangle 16"
+					BackgroundColor="{StaticResource AppSurfaceAlt}"
+					Shadow="{StaticResource AppCardShadow}">
+					<Grid Padding="4,2" ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="12" RowSpacing="8">
+						<Border
+							Grid.RowSpan="3"
+							BackgroundColor="#DDEFE5"
+							StrokeThickness="0"
+							StrokeShape="RoundRectangle 18"
+							HeightRequest="48"
+							WidthRequest="48"
+							VerticalOptions="Start">
+							<Label
+								Text="✓"
+								TextColor="{StaticResource GreenPrimary}"
+								FontAttributes="Bold"
+								FontSize="22"
+								HorizontalTextAlignment="Center"
+								VerticalTextAlignment="Center" />
+						</Border>
+						<Label
+							Grid.Column="1"
+							Text="Todas las cuotas están al día"
+							TextColor="{StaticResource GreenPrimary}"
+							FontAttributes="Bold"
+							FontSize="17" />
+						<Label
+							Grid.Row="1"
+							Grid.Column="1"
+							Style="{StaticResource AppCaption}"
+							Text="Esta deuda ya no tiene pagos pendientes ni vencidos." />
+						<Button
+							Grid.Row="2"
+							Grid.Column="1"
+							Style="{StaticResource AppSecondaryButton}"
+							Text="Ver recibos"
+							SemanticProperties.Description="Ir a la lista de recibos"
+							Clicked="OnViewReceiptsFromSettledStateClicked" />
+					</Grid>
+				</Border>
+
+				<CollectionView ItemsSource="{Binding InstallmentSections}" IsGrouped="True" SelectionMode="None">
+					<CollectionView.GroupHeaderTemplate>
+						<DataTemplate>
+							<local:SectionHeaderView TitleText="{Binding Title}" MetaText="{Binding CountText}" />
+						</DataTemplate>
+					</CollectionView.GroupHeaderTemplate>
+					<CollectionView.ItemTemplate>
+						<DataTemplate>
+							<local:InstallmentCardView
+								TitleText="{Binding Title}"
+								AmountText="{Binding AmountText}"
+								DetailText="{Binding DueDateText}"
+								StatusIcon="{Binding StatusIcon}"
+								StatusText="{Binding StatusText}"
+								StatusBackground="{Binding StatusBg}"
+								StatusForeground="{Binding StatusFg}"
+								ShowActionButton="{Binding ShowPayButton}"
+								ActionText="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.PayActionText}"
+								IsBusy="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.IsPaying}"
+								IsActionEnabled="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.IsNotPaying}"
+								ActionSemanticDescription="Marcar esta cuota como pagada"
+								CommandParameter="{Binding Id}"
+								Clicked="OnPayInstallmentClicked" />
+						</DataTemplate>
+					</CollectionView.ItemTemplate>
+				</CollectionView>
+			</VerticalStackLayout>
+		</ScrollView>
+
+		<Grid
+			x:Name="PaymentSheetOverlay"
+			IsVisible="False"
+			BackgroundColor="#990B1220">
+			<Grid.GestureRecognizers>
+				<TapGestureRecognizer Tapped="OnPaymentSheetDismissClicked" />
+			</Grid.GestureRecognizers>
+			<Border
+				x:Name="PaymentSheetPanel"
+				Margin="12"
+				Padding="18"
+				BackgroundColor="{AppThemeBinding Light={StaticResource AppSurface}, Dark={StaticResource AppSurfaceDark}}"
+				Stroke="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}"
+				StrokeShape="RoundRectangle 16"
+				Shadow="{StaticResource AppCardShadow}"
+				VerticalOptions="End"
+				TranslationY="360">
+				<Border.GestureRecognizers>
+					<TapGestureRecognizer />
+				</Border.GestureRecognizers>
+				<VerticalStackLayout Spacing="14">
+					<Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+						<VerticalStackLayout Spacing="2">
+							<Label Text="Confirmar pago" FontAttributes="Bold" FontSize="20" />
+							<Label x:Name="PaymentSheetTitleLabel" Style="{StaticResource AppCaption}" Text="Cuota" />
+						</VerticalStackLayout>
+						<Button
+							Grid.Column="1"
+							Text="×"
+							FontSize="20"
+							WidthRequest="42"
+							HeightRequest="42"
+							Padding="0"
+							BackgroundColor="{StaticResource Divider}"
+							TextColor="{StaticResource TextSecondary}"
+							SemanticProperties.Description="Cerrar confirmación de pago"
+							Clicked="OnPaymentSheetDismissClicked" />
+					</Grid>
+
+					<Border
+						x:Name="PaymentSheetStatusBadge"
+						StrokeThickness="0"
+						StrokeShape="RoundRectangle 12"
+						Padding="12,8"
+						BackgroundColor="{StaticResource AppSurfaceAlt}">
+						<Label x:Name="PaymentSheetStatusLabel" Text="Pago con Saldo Paynest" TextColor="{StaticResource GreenPrimary}" FontAttributes="Bold" />
+					</Border>
+
+					<Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="11">
+						<Label Style="{StaticResource AppCaption}" Text="Monto de la cuota" />
+						<Label x:Name="PaymentSheetAmountLabel" Grid.Column="1" FontAttributes="Bold" Text="$0.00" />
+
+						<Label Grid.Row="1" Style="{StaticResource AppCaption}" Text="Saldo disponible" />
+						<Label x:Name="PaymentSheetBalanceLabel" Grid.Row="1" Grid.Column="1" FontAttributes="Bold" Text="$0.00" />
+
+						<Label x:Name="PaymentSheetAfterTitleLabel" Grid.Row="2" Style="{StaticResource AppCaption}" Text="Saldo después del pago" />
+						<Label x:Name="PaymentSheetAfterLabel" Grid.Row="2" Grid.Column="1" FontAttributes="Bold" Text="$0.00" />
+
+						<BoxView Grid.Row="3" Grid.ColumnSpan="2" HeightRequest="1" Color="{StaticResource AppBorder}" />
+					</Grid>
+
+					<Label
+						x:Name="PaymentSheetMessageLabel"
+						Style="{StaticResource AppCaption}"
+						Text="Revisa el monto antes de confirmar."
+						LineBreakMode="WordWrap" />
+
+					<Button
+						x:Name="PaymentSheetPrimaryButton"
+						Style="{StaticResource AppPrimaryButton}"
+						Text="Pagar con Saldo Paynest"
+						SemanticProperties.Description="Confirmar pago con Saldo Paynest"
+						Clicked="OnPaymentSheetPrimaryClicked" />
+					<Button
+						x:Name="PaymentSheetSecondaryButton"
+						Style="{StaticResource AppSecondaryButton}"
+						Text="Cancelar"
+						SemanticProperties.Description="Cancelar pago y cerrar confirmación"
+						Clicked="OnPaymentSheetDismissClicked" />
+				</VerticalStackLayout>
+			</Border>
+		</Grid>
+
+		<Grid
+			x:Name="PaymentSuccessOverlay"
+			IsVisible="False"
+			BackgroundColor="#990B1220">
+			<Grid.GestureRecognizers>
+				<TapGestureRecognizer Tapped="OnPaymentSuccessContinueClicked" />
+			</Grid.GestureRecognizers>
+			<Border
+				x:Name="PaymentSuccessPanel"
+				Margin="12"
+				Padding="18"
+				BackgroundColor="{AppThemeBinding Light={StaticResource AppSurface}, Dark={StaticResource AppSurfaceDark}}"
+				Stroke="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}"
+				StrokeShape="RoundRectangle 16"
+				Shadow="{StaticResource AppCardShadow}"
+				VerticalOptions="End"
+				TranslationY="360">
+				<Border.GestureRecognizers>
+					<TapGestureRecognizer />
+				</Border.GestureRecognizers>
+				<VerticalStackLayout Spacing="14">
+					<Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+						<Border
+							BackgroundColor="#DDEFE5"
+							StrokeThickness="0"
+							StrokeShape="RoundRectangle 20"
+							HeightRequest="52"
+							WidthRequest="52"
+							VerticalOptions="Start">
+							<Label
+								Text="✓"
+								TextColor="{StaticResource GreenPrimary}"
+								FontAttributes="Bold"
+								FontSize="24"
+								HorizontalTextAlignment="Center"
+								VerticalTextAlignment="Center" />
+						</Border>
+						<VerticalStackLayout Grid.Column="1" Spacing="3">
+							<Label Text="Pago aplicado" FontAttributes="Bold" FontSize="21" />
+							<Label
+								x:Name="PaymentSuccessSubtitleLabel"
+								Style="{StaticResource AppCaption}"
+								Text="La cuota quedó registrada como pagada."
+								LineBreakMode="WordWrap" />
+						</VerticalStackLayout>
+					</Grid>
+
+					<Border
+						BackgroundColor="{StaticResource AppSurfaceAlt}"
+						Stroke="{StaticResource AppBorder}"
+						StrokeShape="RoundRectangle 14"
+						Padding="14,12">
+						<Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" RowSpacing="8">
+							<Label Style="{StaticResource AppCaption}" Text="Saldo restante" />
+							<Label
+								x:Name="PaymentSuccessBalanceLabel"
+								Grid.Column="1"
+								FontAttributes="Bold"
+								Text="$0.00"
+								TextColor="{StaticResource GreenPrimary}" />
+							<Label Grid.Row="1" Style="{StaticResource AppCaption}" Text="Recibo" />
+							<Label
+								Grid.Row="1"
+								Grid.Column="1"
+								FontAttributes="Bold"
+								Text="Generado"
+								TextColor="{StaticResource GreenPrimary}" />
+						</Grid>
+					</Border>
+
+					<Button
+						Style="{StaticResource AppPrimaryButton}"
+						Text="Ver recibo"
+						SemanticProperties.Description="Abrir el recibo generado por el pago"
+						Clicked="OnPaymentSuccessViewReceiptClicked" />
+					<Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+						<Button
+							Style="{StaticResource AppSecondaryButton}"
+							Text="Ver recibos"
+							SemanticProperties.Description="Ir a la lista de recibos"
+							Clicked="OnPaymentSuccessViewReceiptsClicked" />
+						<Button
+							Grid.Column="1"
+							Style="{StaticResource AppSecondaryButton}"
+							Text="Seguir aquí"
+							SemanticProperties.Description="Cerrar confirmación de pago aplicado"
+							Clicked="OnPaymentSuccessContinueClicked" />
+					</Grid>
+				</VerticalStackLayout>
+			</Border>
+		</Grid>
+	</Grid>
+</ContentPage>

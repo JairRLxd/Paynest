@@ -1,3 +1,4 @@
+﻿#nullable enable
 using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -75,9 +76,9 @@ public partial class LoginViewModel(AuthStateService authState, IServiceProvider
         {
             HandleApiError(ex);
         }
-        catch
+        catch (Exception ex)
         {
-            GeneralError = "Sin conexión. Verifica tu internet e intenta de nuevo.";
+            GeneralError = NetworkErrorMessageProvider.From(ex);
         }
         finally
         {
@@ -89,7 +90,11 @@ public partial class LoginViewModel(AuthStateService authState, IServiceProvider
     async Task GoToRegisterAsync()
     {
         var page = sp.GetRequiredService<Features.Auth.Register.RegisterPage>();
-        await Application.Current!.MainPage!.Navigation.PushAsync(page);
+        var navigation = Application.Current?.Windows.FirstOrDefault()?.Page?.Navigation;
+        if (navigation is not null)
+        {
+            await navigation.PushAsync(page);
+        }
     }
 
     [RelayCommand]
@@ -156,22 +161,22 @@ public partial class LoginViewModel(AuthStateService authState, IServiceProvider
     private static void NavigateToApp()
     {
         var auth = MauiProgram.Services.GetRequiredService<AuthStateService>();
+        App.SetRootPage(App.BuildAuthenticatedRootPage(auth));
+    }
 
-        if (auth.IsAdminCollector && !auth.IsProfileCompleted)
+    partial void OnEmailChanged(string value)
+    {
+        if (!string.IsNullOrWhiteSpace(EmailError))
         {
-            // Admin/cobrador que aún no completó el onboarding
-            var page = MauiProgram.Services.GetRequiredService<CompleteProfilePage>();
-            Application.Current!.MainPage = new NavigationPage(page)
-            {
-                BarBackgroundColor = Colors.Transparent,
-                BackgroundColor    = Color.FromArgb("#F2F0EB")
-            };
+            EmailError = null;
         }
-        else
+    }
+
+    partial void OnPasswordChanged(string value)
+    {
+        if (!string.IsNullOrWhiteSpace(PasswordError))
         {
-            // Perfil completo (o rol diferente en el futuro) → app principal
-            var shell = MauiProgram.Services.GetRequiredService<AppShell>();
-            Application.Current!.MainPage = shell;
+            PasswordError = null;
         }
     }
 }

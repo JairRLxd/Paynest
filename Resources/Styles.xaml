@@ -3,6 +3,12 @@
 <ResourceDictionary 
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    <x:Double x:Key="Space8">8</x:Double>
+    <x:Double x:Key="Space12">12</x:Double>
+    <x:Double x:Key="Space16">16</x:Double>
+    <x:Double x:Key="Space20">20</x:Double>
+    <Thickness x:Key="PagePadding">20,16</Thickness>
+    <Thickness x:Key="CardItemMargin">0,0,0,8</Thickness>
 
     <Style TargetType="ActivityIndicator">
         <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
@@ -362,6 +368,113 @@
         <Setter Property="BarTextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
         <Setter Property="UnselectedTabColor" Value="{AppThemeBinding Light={StaticResource LightGray}, Dark={StaticResource DarkGray}}" />
         <Setter Property="SelectedTabColor" Value="{AppThemeBinding Light={StaticResource DarkGray}, Dark={StaticResource LightGray}}" />
+    </Style>
+
+    <Style x:Key="AppPageTitle" TargetType="Label">
+        <Setter Property="FontFamily" Value="OpenSansSemibold" />
+        <Setter Property="FontSize" Value="26" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource AppTextPrimary}, Dark={StaticResource AppTextPrimaryDark}}" />
+    </Style>
+
+    <Style x:Key="AppSectionTitle" TargetType="Label">
+        <Setter Property="FontFamily" Value="OpenSansSemibold" />
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource AppTextPrimary}, Dark={StaticResource AppTextPrimaryDark}}" />
+    </Style>
+
+    <Style x:Key="AppCaption" TargetType="Label">
+        <Setter Property="FontFamily" Value="OpenSansRegular" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource AppTextSecondary}, Dark={StaticResource AppTextSecondaryDark}}" />
+    </Style>
+
+    <Style x:Key="AppAmountText" TargetType="Label">
+        <Setter Property="FontFamily" Value="OpenSansSemibold" />
+        <Setter Property="FontSize" Value="23" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource AppTextPrimary}, Dark={StaticResource AppTextPrimaryDark}}" />
+    </Style>
+
+    <Shadow x:Key="AppCardShadow" Brush="#1A2A6349" Offset="0,6" Radius="14" Opacity="0.45" />
+
+    <Style x:Key="AppCard" TargetType="Frame">
+        <Setter Property="Padding" Value="14" />
+        <Setter Property="CornerRadius" Value="16" />
+        <Setter Property="HasShadow" Value="True" />
+        <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}" />
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource AppSurface}, Dark={StaticResource AppSurfaceDark}}" />
+        <Setter Property="Shadow" Value="{StaticResource AppCardShadow}" />
+    </Style>
+
+    <Style x:Key="AppCardBorder" TargetType="Border">
+        <Setter Property="Padding" Value="14" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 16" />
+        <Setter Property="Stroke" Value="{StaticResource AppBorder}" />
+        <Setter Property="BackgroundColor" Value="{StaticResource AppSurface}" />
+        <Setter Property="Shadow" Value="{StaticResource AppCardShadow}" />
+    </Style>
+
+    <Style x:Key="AppPrimaryButton" TargetType="Button">
+        <Setter Property="FontFamily" Value="OpenSansSemibold" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="CornerRadius" Value="14" />
+        <Setter Property="HeightRequest" Value="50" />
+        <Setter Property="Padding" Value="16,10" />
+        <Setter Property="BackgroundColor" Value="{StaticResource AppAccent}" />
+        <Setter Property="TextColor" Value="{StaticResource White}" />
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Pressed">
+                        <VisualState.Setters>
+                            <Setter Property="Opacity" Value="0.88" />
+                            <Setter Property="Scale" Value="0.985" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="Opacity" Value="0.45" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+
+    <Style x:Key="AppSecondaryButton" TargetType="Button">
+        <Setter Property="FontFamily" Value="OpenSansSemibold" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="CornerRadius" Value="14" />
+        <Setter Property="HeightRequest" Value="44" />
+        <Setter Property="Padding" Value="14,8" />
+        <Setter Property="BackgroundColor" Value="{StaticResource AppSurface}" />
+        <Setter Property="BorderColor" Value="{StaticResource AppBorder}" />
+        <Setter Property="BorderWidth" Value="1" />
+        <Setter Property="TextColor" Value="{StaticResource AppAccent}" />
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Pressed">
+                        <VisualState.Setters>
+                            <Setter Property="Opacity" Value="0.86" />
+                            <Setter Property="Scale" Value="0.985" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="Opacity" Value="0.45" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+
+    <Style x:Key="AppBadgeText" TargetType="Label">
+        <Setter Property="FontFamily" Value="OpenSansSemibold" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Padding" Value="10,4" />
     </Style>
 
 </ResourceDictionary>

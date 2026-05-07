@@ -1,3 +1,4 @@
+﻿#nullable enable
 using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -109,11 +110,7 @@ public partial class RegisterViewModel(
         catch (Exception ex)
         {
             logger.LogError(ex, "Register failed before a usable API error was produced");
-#if DEBUG
-            GeneralError = $"Error de conexión: {ex.Message}";
-#else
-            GeneralError = "Sin conexión. Verifica tu internet e intenta de nuevo.";
-#endif
+            GeneralError = NetworkErrorMessageProvider.From(ex);
         }
         finally
         {
@@ -124,7 +121,11 @@ public partial class RegisterViewModel(
     [RelayCommand]
     async Task GoToLoginAsync()
     {
-        await Application.Current!.MainPage!.Navigation.PopAsync();
+        var navigation = Application.Current?.Windows.FirstOrDefault()?.Page?.Navigation;
+        if (navigation is not null)
+        {
+            await navigation.PopAsync();
+        }
     }
 
     // ── helpers ──────────────────────────────────────────────────────────────
@@ -240,12 +241,55 @@ public partial class RegisterViewModel(
 
     private static void NavigateToApp()
     {
-        // Registro exitoso → flujo de onboarding (3 pasos)
-        var page = MauiProgram.Services.GetRequiredService<CompleteProfilePage>();
-        Application.Current!.MainPage = new NavigationPage(page)
+        var auth = MauiProgram.Services.GetRequiredService<AuthStateService>();
+        App.SetRootPage(App.BuildAuthenticatedRootPage(auth));
+    }
+
+    partial void OnFirstNameChanged(string value)
+    {
+        if (!string.IsNullOrWhiteSpace(FirstNameError))
         {
-            BarBackgroundColor = Colors.Transparent,
-            BackgroundColor    = Color.FromArgb("#F2F0EB")
-        };
+            FirstNameError = null;
+        }
+    }
+
+    partial void OnLastNamePChanged(string value)
+    {
+        if (!string.IsNullOrWhiteSpace(LastNamePError))
+        {
+            LastNamePError = null;
+        }
+    }
+
+    partial void OnLastNameMChanged(string value)
+    {
+        if (!string.IsNullOrWhiteSpace(LastNameMError))
+        {
+            LastNameMError = null;
+        }
+    }
+
+    partial void OnEmailChanged(string value)
+    {
+        if (!string.IsNullOrWhiteSpace(EmailError))
+        {
+            EmailError = null;
+        }
+    }
+
+    partial void OnPasswordChanged(string value)
+    {
+        if (!string.IsNullOrWhiteSpace(PasswordError))
+        {
+            PasswordError = null;
+        }
+    }
+
+    partial void OnPasswordConfirmChanged(string value)
+    {
+        if (!string.IsNullOrWhiteSpace(PasswordConfirmError))
+        {
+            PasswordConfirmError = null;
+        }
     }
 }

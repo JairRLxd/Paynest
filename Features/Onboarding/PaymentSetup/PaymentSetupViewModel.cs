@@ -110,7 +110,10 @@ public partial class PaymentSetupViewModel(
 
     [RelayCommand]
     async Task BackAsync()
-        => await Application.Current!.MainPage!.Navigation.PopAsync();
+    {
+        if (App.CurrentNavigation is { } navigation)
+            await navigation.PopAsync();
+    }
 
     // ── Validación ──────────────────────────────────────────────────────────
 
@@ -154,6 +157,6 @@ public partial class PaymentSetupViewModel(
     private static void NavigateToMain()
     {
         var shell = MauiProgram.Services.GetRequiredService<AppShell>();
-        Application.Current!.MainPage = shell;
+        App.SetRootPage(shell);
     }
 }

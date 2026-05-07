@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 xmlns:local="clr-namespace:Paynest"
+			 xmlns:vm="clr-namespace:Paynest.Features.Client.ViewModels"
+			 x:Class="Paynest.CalendarPage"
+			 Title="Calendario"
+			 BackgroundColor="{StaticResource AppBg}">
+	<ContentPage.Resources>
+		<Style x:Key="CalendarFilterButton" TargetType="Button">
+			<Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource AppSurface}, Dark={StaticResource AppSurfaceDark}}" />
+			<Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}" />
+			<Setter Property="BorderWidth" Value="1" />
+			<Setter Property="CornerRadius" Value="18" />
+			<Setter Property="FontFamily" Value="OpenSansSemibold" />
+			<Setter Property="FontSize" Value="13" />
+			<Setter Property="HeightRequest" Value="38" />
+			<Setter Property="Padding" Value="14,8" />
+			<Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource AppTextSecondary}, Dark={StaticResource AppTextSecondaryDark}}" />
+		</Style>
+	</ContentPage.Resources>
+	<VerticalStackLayout x:Name="RootLayout" Padding="{StaticResource PagePadding}" Spacing="{StaticResource Space16}">
+		<Label Style="{StaticResource AppPageTitle}" Text="Vencimientos" SemanticProperties.HeadingLevel="Level1" />
+		<DatePicker Date="{Binding SelectedDate}" SemanticProperties.Description="Selector de mes y año para filtrar vencimientos" />
+		<Label Style="{StaticResource AppCaption}" Text="{Binding FilterText}" />
+		<ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+			<HorizontalStackLayout Spacing="8">
+				<Button Style="{StaticResource CalendarFilterButton}" Text="Todas" Command="{Binding SetStatusFilterCommand}" CommandParameter="All" Clicked="OnFilterButtonClicked" SemanticProperties.Description="Mostrar todas las cuotas del calendario">
+					<Button.Triggers>
+						<DataTrigger TargetType="Button" Binding="{Binding IsAllFilterSelected}" Value="True">
+							<Setter Property="BackgroundColor" Value="{StaticResource AppAccent}" />
+							<Setter Property="BorderColor" Value="{StaticResource AppAccent}" />
+							<Setter Property="TextColor" Value="{StaticResource White}" />
+						</DataTrigger>
+					</Button.Triggers>
+				</Button>
+				<Button Style="{StaticResource CalendarFilterButton}" Text="Pendientes" Command="{Binding SetStatusFilterCommand}" CommandParameter="Pending" Clicked="OnFilterButtonClicked" SemanticProperties.Description="Mostrar cuotas pendientes del calendario">
+					<Button.Triggers>
+						<DataTrigger TargetType="Button" Binding="{Binding IsPendingFilterSelected}" Value="True">
+							<Setter Property="BackgroundColor" Value="{StaticResource WarningFg}" />
+							<Setter Property="BorderColor" Value="{StaticResource WarningFg}" />
+							<Setter Property="TextColor" Value="{StaticResource White}" />
+						</DataTrigger>
+					</Button.Triggers>
+				</Button>
+				<Button Style="{StaticResource CalendarFilterButton}" Text="Vencidas" Command="{Binding SetStatusFilterCommand}" CommandParameter="Overdue" Clicked="OnFilterButtonClicked" SemanticProperties.Description="Mostrar cuotas vencidas del calendario">
+					<Button.Triggers>
+						<DataTrigger TargetType="Button" Binding="{Binding IsOverdueFilterSelected}" Value="True">
+							<Setter Property="BackgroundColor" Value="{StaticResource DangerFg}" />
+							<Setter Property="BorderColor" Value="{StaticResource DangerFg}" />
+							<Setter Property="TextColor" Value="{StaticResource White}" />
+						</DataTrigger>
+					</Button.Triggers>
+				</Button>
+				<Button Style="{StaticResource CalendarFilterButton}" Text="Pagadas" Command="{Binding SetStatusFilterCommand}" CommandParameter="Paid" Clicked="OnFilterButtonClicked" SemanticProperties.Description="Mostrar cuotas pagadas del calendario">
+					<Button.Triggers>
+						<DataTrigger TargetType="Button" Binding="{Binding IsPaidFilterSelected}" Value="True">
+							<Setter Property="BackgroundColor" Value="{StaticResource SuccessFg}" />
+							<Setter Property="BorderColor" Value="{StaticResource SuccessFg}" />
+							<Setter Property="TextColor" Value="{StaticResource White}" />
+						</DataTrigger>
+					</Button.Triggers>
+				</Button>
+			</HorizontalStackLayout>
+		</ScrollView>
+		<local:NetworkBannerView
+			IsVisible="False"
+			TitleText="Sin conexión con el servidor."
+			MessageText="Desliza hacia abajo para reintentar.">
+			<local:NetworkBannerView.Triggers>
+				<DataTrigger TargetType="local:NetworkBannerView" Binding="{Binding State}" Value="{x:Static vm:ScreenState.Error}">
+					<Setter Property="IsVisible" Value="True" />
+				</DataTrigger>
+			</local:NetworkBannerView.Triggers>
+		</local:NetworkBannerView>
+
+		<local:PageStateContainer State="{Binding State}">
+			<local:PageStateContainer.LoadingContent>
+				<VerticalStackLayout Spacing="{StaticResource Space12}">
+					<ActivityIndicator IsRunning="True" Color="{StaticResource AppAccent}" HorizontalOptions="Center" />
+					<local:CalendarSkeletonView />
+				</VerticalStackLayout>
+			</local:PageStateContainer.LoadingContent>
+
+			<local:PageStateContainer.ContentBody>
+				<RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
+					<CollectionView ItemsSource="{Binding InstallmentSections}" IsGrouped="True" SelectionMode="None" SemanticProperties.Description="Lista de vencimientos agrupados por fecha">
+						<CollectionView.GroupHeaderTemplate>
+							<DataTemplate>
+								<local:SectionHeaderView TitleText="{Binding Title}" MetaText="{Binding CountText}" />
+							</DataTemplate>
+						</CollectionView.GroupHeaderTemplate>
+						<CollectionView.ItemTemplate>
+							<DataTemplate>
+								<Border
+									Margin="{StaticResource CardItemMargin}"
+									Padding="14"
+									BackgroundColor="{AppThemeBinding Light={StaticResource AppSurface}, Dark={StaticResource AppSurfaceDark}}"
+									Stroke="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}"
+									StrokeShape="RoundRectangle 16"
+									Shadow="{StaticResource AppCardShadow}">
+									<Grid Padding="4,2" ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
+										<Label Grid.RowSpan="2" FontAttributes="Bold" FontSize="16" Text="{Binding DayText}" VerticalOptions="Center" />
+										<Label Grid.Column="1" FontAttributes="Bold" FontSize="17" Text="{Binding Title}" />
+										<Label Grid.Column="2" Style="{StaticResource AppAmountText}" Text="{Binding AmountText}" />
+										<Label Grid.Row="1" Grid.Column="1" Style="{StaticResource AppCaption}" Text="{Binding GroupText}" />
+										<local:StatusBadgeView Grid.Row="1"
+															 Grid.Column="2"
+															 BadgeIcon="{Binding StatusIcon}"
+															 BadgeText="{Binding StatusText}"
+															 BadgeBackground="{Binding StatusBg}"
+															 BadgeForeground="{Binding StatusFg}" />
+									</Grid>
+								</Border>
+							</DataTemplate>
+						</CollectionView.ItemTemplate>
+					</CollectionView>
+				</RefreshView>
+			</local:PageStateContainer.ContentBody>
+
+			<local:PageStateContainer.EmptyContent>
+				<local:EmptyStateView
+					IconSource="tab_calendar.svg"
+					TitleText="{Binding EmptyTitleText}"
+					DescriptionText="{Binding EmptyDescriptionText}"
+					ActionText="Actualizar ahora"
+					ActionCommand="{Binding RefreshCommand}" />
+			</local:PageStateContainer.EmptyContent>
+
+			<local:PageStateContainer.ErrorContent>
+				<local:ErrorCardView ErrorMessage="{Binding ErrorMessage}" RetryCommand="{Binding RetryCommand}" />
+			</local:PageStateContainer.ErrorContent>
+		</local:PageStateContainer>
+	</VerticalStackLayout>
+</ContentPage>

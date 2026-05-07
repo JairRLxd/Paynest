@@ -1,6 +1,8 @@
 namespace Paynest.Core.Models.Cobrador.Clients.RegisterPayment;
 
 public sealed record PreviewPaymentRequest(
-    decimal   Amount,
+    decimal?  Amount,
     bool      IsTotalPayment,
-    DateTime? PaymentDateTime);
+    string    Method,
+    DateTime? PaymentDateTime,
+    string?   Notes = null);

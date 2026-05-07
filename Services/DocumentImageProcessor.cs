@@ -164,7 +164,7 @@ public partial class DocumentImageProcessor : IDocumentImageProcessor
 
         using var finalBitmap = targetDimensions.Width == sourceInfo.Width && targetDimensions.Height == sourceInfo.Height
             ? sourceBitmap.Copy()
-            : sourceBitmap.Resize(targetBitmapInfo, SKFilterQuality.High)
+            : sourceBitmap.Resize(targetBitmapInfo, new SKSamplingOptions(SKFilterMode.Linear, SKMipmapMode.Linear))
                 ?? throw new InvalidOperationException("No pudimos redimensionar la imagen.");
 
         using var image = SKImage.FromBitmap(finalBitmap);

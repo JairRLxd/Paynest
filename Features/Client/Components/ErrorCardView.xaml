@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Paynest"
+             x:Class="Paynest.ErrorCardView">
+    <Border Style="{StaticResource AppCardBorder}" Stroke="{AppThemeBinding Light={StaticResource DangerFg}, Dark={StaticResource DangerBg}}">
+        <VerticalStackLayout Spacing="8">
+            <Label FontSize="24" HorizontalTextAlignment="Center" Text="⚠️" />
+            <Label Style="{StaticResource AppSectionTitle}" HorizontalTextAlignment="Center" Text="No pudimos cargar esta sección" />
+            <Label Style="{StaticResource AppCaption}" HorizontalTextAlignment="Center" Text="{Binding Source={RelativeSource AncestorType={x:Type local:ErrorCardView}}, Path=ErrorMessage}" />
+            <Button
+                Text="Reintentar"
+                SemanticProperties.Description="Reintentar cargar esta sección"
+                Command="{Binding Source={RelativeSource AncestorType={x:Type local:ErrorCardView}}, Path=RetryCommand}" />
+        </VerticalStackLayout>
+    </Border>
+</ContentView>

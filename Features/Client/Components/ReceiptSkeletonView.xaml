@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Paynest.ReceiptSkeletonView">
+    <VerticalStackLayout Spacing="{StaticResource Space12}">
+        <BoxView HeightRequest="18" WidthRequest="130" CornerRadius="8" Color="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}" />
+        <Border Style="{StaticResource AppCardBorder}" Margin="{StaticResource CardItemMargin}">
+            <VerticalStackLayout Spacing="10">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                    <BoxView HeightRequest="18" WidthRequest="150" CornerRadius="8" Color="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}" />
+                    <BoxView Grid.Column="1" HeightRequest="24" WidthRequest="90" CornerRadius="8" Color="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}" />
+                </Grid>
+                <BoxView HeightRequest="12" WidthRequest="190" CornerRadius="6" Color="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}" />
+                <BoxView HeightRequest="12" WidthRequest="160" CornerRadius="6" Color="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}" />
+                <BoxView HeightRequest="46" CornerRadius="12" Color="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}" />
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                    <BoxView HeightRequest="44" CornerRadius="12" Color="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}" />
+                    <BoxView Grid.Column="1" HeightRequest="44" CornerRadius="12" Color="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}" />
+                </Grid>
+            </VerticalStackLayout>
+        </Border>
+        <Border Style="{StaticResource AppCardBorder}" Margin="{StaticResource CardItemMargin}">
+            <VerticalStackLayout Spacing="10">
+                <BoxView HeightRequest="18" WidthRequest="165" CornerRadius="8" Color="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}" />
+                <BoxView HeightRequest="12" WidthRequest="210" CornerRadius="6" Color="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}" />
+                <BoxView HeightRequest="46" CornerRadius="12" Color="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}" />
+            </VerticalStackLayout>
+        </Border>
+    </VerticalStackLayout>
+</ContentView>

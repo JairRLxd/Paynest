@@ -116,12 +116,16 @@ public partial class IdentityVerificationViewModel(
 
         GeneralError = null;
         var next = MauiProgram.Services.GetRequiredService<PaymentSetupPage>();
-        await Application.Current!.MainPage!.Navigation.PushAsync(next);
+        if (App.CurrentNavigation is { } navigation)
+            await navigation.PushAsync(next);
     }
 
     [RelayCommand]
     async Task BackAsync()
-        => await Application.Current!.MainPage!.Navigation.PopAsync();
+    {
+        if (App.CurrentNavigation is { } navigation)
+            await navigation.PopAsync();
+    }
 
     // ── Helpers ──────────────────────────────────────────────────────────────
 
@@ -237,7 +241,7 @@ public partial class IdentityVerificationViewModel(
     }
 
     private static Page? GetCurrentPage()
-        => Application.Current?.Windows.FirstOrDefault()?.Page;
+        => App.CurrentPage;
 
     private async Task UploadWithCompatibilityFallbackAsync(FileResult result, DocumentType type)
     {

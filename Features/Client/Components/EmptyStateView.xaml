@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Paynest"
+             x:Class="Paynest.EmptyStateView">
+    <Border Style="{StaticResource AppCardBorder}">
+        <VerticalStackLayout Spacing="10" Padding="4,8">
+            <Border
+                BackgroundColor="{AppThemeBinding Light={StaticResource AppSurfaceAlt}, Dark={StaticResource AppBorderDark}}"
+                Stroke="Transparent"
+                StrokeShape="RoundRectangle 18"
+                HeightRequest="56"
+                WidthRequest="56"
+                HorizontalOptions="Center">
+                <Image
+                    HeightRequest="26"
+                    WidthRequest="26"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    Source="{Binding Source={RelativeSource AncestorType={x:Type local:EmptyStateView}}, Path=IconSource}" />
+            </Border>
+            <Label
+                Style="{StaticResource AppSectionTitle}"
+                HorizontalTextAlignment="Center"
+                Text="{Binding Source={RelativeSource AncestorType={x:Type local:EmptyStateView}}, Path=TitleText}" />
+            <Label
+                Style="{StaticResource AppCaption}"
+                HorizontalTextAlignment="Center"
+                Text="{Binding Source={RelativeSource AncestorType={x:Type local:EmptyStateView}}, Path=DescriptionText}" />
+            <Button
+                Style="{StaticResource AppPrimaryButton}"
+                Text="{Binding Source={RelativeSource AncestorType={x:Type local:EmptyStateView}}, Path=ActionText}"
+                SemanticProperties.Description="{Binding Source={RelativeSource AncestorType={x:Type local:EmptyStateView}}, Path=ActionText}"
+                Command="{Binding Source={RelativeSource AncestorType={x:Type local:EmptyStateView}}, Path=ActionCommand}" />
+        </VerticalStackLayout>
+    </Border>
+</ContentView>

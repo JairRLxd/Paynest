@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Paynest"
+             x:Class="Paynest.SummaryMetricView">
+    <VerticalStackLayout Spacing="2">
+        <Label
+            Style="{StaticResource AppCaption}"
+            Text="{Binding Source={RelativeSource AncestorType={x:Type local:SummaryMetricView}}, Path=TitleText}" />
+        <Label
+            FontAttributes="Bold"
+            FontSize="{Binding Source={RelativeSource AncestorType={x:Type local:SummaryMetricView}}, Path=ValueFontSize}"
+            LineBreakMode="TailTruncation"
+            Text="{Binding Source={RelativeSource AncestorType={x:Type local:SummaryMetricView}}, Path=ValueText}"
+            TextColor="{Binding Source={RelativeSource AncestorType={x:Type local:SummaryMetricView}}, Path=ValueColor}" />
+    </VerticalStackLayout>
+</ContentView>

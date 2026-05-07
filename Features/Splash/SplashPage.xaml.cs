@@ -18,32 +18,36 @@ public partial class SplashPage : ContentPage
     {
         base.OnAppearing();
         await PlayAnimation();
-        NavigateAfterSplash();
+        await NavigateAfterSplashAsync();
     }
 
     private async Task PlayAnimation()
     {
         // Fase 1: Logo entra — fade-in + scale 0.82 → 1.0, ease-out
         await Task.WhenAll(
-            LogoImage.FadeTo(1, 450, Easing.CubicOut),
-            LogoImage.ScaleTo(1.0, 450, Easing.CubicOut)
+            LogoImage.FadeToAsync(1, 450, Easing.CubicOut),
+            LogoImage.ScaleToAsync(1.0, 450, Easing.CubicOut)
         );
 
         // Fase 2: Micro-bounce profesional
-        await LogoImage.ScaleTo(1.06, 110, Easing.CubicOut);
-        await LogoImage.ScaleTo(1.0,  140, Easing.CubicIn);
+        await LogoImage.ScaleToAsync(1.06, 110, Easing.CubicOut);
+        await LogoImage.ScaleToAsync(1.0,  140, Easing.CubicIn);
 
         // Fase 3: Hold
         await Task.Delay(1100);
     }
 
-    private void NavigateAfterSplash()
+    private async Task NavigateAfterSplashAsync()
     {
-        Page next = _authState.IsAuthenticated
-            ? MauiProgram.Services.GetRequiredService<AppShell>()
+        var hasSession = await _authState.RestoreSessionAsync();
+        Page next = hasSession
+            ? App.BuildAuthenticatedRootPage(_authState)
             : BuildLoginPage();
 
-        Application.Current!.MainPage = next;
+        if (Application.Current?.Windows.Count > 0)
+        {
+            Application.Current.Windows[0].Page = next;
+        }
     }
 
     private static NavigationPage BuildLoginPage()

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+			 xmlns:local="clr-namespace:Paynest"
+			 x:Class="Paynest.CardSimulatorPage"
+			 Title="Saldo"
+			 BackgroundColor="{StaticResource AppBg}">
+	<RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
+		<ScrollView x:Name="PageScrollView">
+			<VerticalStackLayout x:Name="RootLayout" Padding="20,16,20,96" Spacing="{StaticResource Space16}">
+				<Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+					<VerticalStackLayout Spacing="2">
+						<Label Style="{StaticResource AppPageTitle}" Text="Saldo Paynest" />
+						<Label Style="{StaticResource AppCaption}" Text="{Binding LastUpdatedText}" />
+					</VerticalStackLayout>
+					<Button
+						Grid.Column="1"
+						Text="Abonar"
+						Style="{StaticResource AppSecondaryButton}"
+						VerticalOptions="Center"
+						SemanticProperties.Description="Ir al formulario para abonar saldo"
+						Clicked="OnQuickDepositClicked" />
+				</Grid>
+				<local:WalletSkeletonView IsVisible="{Binding IsLoading}" />
+				<VerticalStackLayout Spacing="{StaticResource Space16}" IsVisible="{Binding IsNotLoading}">
+				<Border StrokeThickness="0" StrokeShape="RoundRectangle 18">
+					<Border.Background>
+						<LinearGradientBrush EndPoint="1,1">
+							<GradientStop Color="#1A3D2C" Offset="0.1" />
+							<GradientStop Color="#2A6349" Offset="0.7" />
+							<GradientStop Color="#3D9668" Offset="1.0" />
+						</LinearGradientBrush>
+					</Border.Background>
+					<Grid Padding="18" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
+						<Label Text="Saldo Paynest" TextColor="#DDEFE5" FontAttributes="Bold" />
+						<Label Grid.Column="1" Text="MXN" TextColor="#DDEFE5" FontAttributes="Bold" />
+						<Label Grid.Row="1" Grid.ColumnSpan="2" Margin="0,14,0,0" Text="{Binding BalanceText}" TextColor="White" FontSize="30" FontAttributes="Bold" />
+						<HorizontalStackLayout Grid.Row="2" Grid.ColumnSpan="2" Margin="0,14,0,0" Spacing="8">
+							<BoxView WidthRequest="10" HeightRequest="10" CornerRadius="5" Color="#B8DCC9" />
+							<Label Text="Saldo disponible" TextColor="#DDEFE5" FontSize="12" />
+						</HorizontalStackLayout>
+					</Grid>
+				</Border>
+
+				<Border Style="{StaticResource AppCardBorder}" Margin="{StaticResource CardItemMargin}">
+					<VerticalStackLayout Spacing="10">
+						<Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+							<Label
+								Text="Último movimiento"
+								TextColor="{AppThemeBinding Light={StaticResource AppAccent}, Dark={StaticResource AppAccentDark}}"
+								FontAttributes="Bold"
+								FontSize="13"
+								LineBreakMode="TailTruncation" />
+							<Label
+								Grid.Column="1"
+								Text="{Binding LatestMovementAmountText}"
+								TextColor="{Binding LatestMovementAmountColor}"
+								FontAttributes="Bold"
+								FontSize="16"
+								HorizontalTextAlignment="End"
+								IsVisible="{Binding HasLatestMovement}" />
+						</Grid>
+						<Label
+							Text="{Binding LatestMovementTitle}"
+							TextColor="{AppThemeBinding Light={StaticResource AppTextPrimary}, Dark={StaticResource AppTextPrimaryDark}}"
+							FontAttributes="Bold"
+							FontSize="16"
+							LineBreakMode="TailTruncation" />
+						<Label
+							Style="{StaticResource AppCaption}"
+							Text="{Binding LatestMovementMetaText}"
+							LineBreakMode="WordWrap"
+							MaxLines="2" />
+					</VerticalStackLayout>
+				</Border>
+
+				<local:ErrorCardView
+					IsVisible="{Binding HasError}"
+					ErrorMessage="{Binding ErrorMessage}"
+					RetryCommand="{Binding RefreshCommand}" />
+
+				<Border
+					x:Name="DepositFormCard"
+					Margin="{StaticResource CardItemMargin}"
+					Padding="14"
+					BackgroundColor="{AppThemeBinding Light={StaticResource AppSurface}, Dark={StaticResource AppSurfaceDark}}"
+					Stroke="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}"
+					StrokeShape="RoundRectangle 16"
+					Shadow="{StaticResource AppCardShadow}">
+					<VerticalStackLayout Spacing="{StaticResource Space12}">
+						<VerticalStackLayout Spacing="6">
+							<Label Style="{StaticResource AppCaption}" Text="Concepto" />
+							<Entry Placeholder="Ej. Abono de prueba" Text="{Binding Description}" ClearButtonVisibility="WhileEditing" SemanticProperties.Description="Concepto del abono de saldo" />
+						</VerticalStackLayout>
+
+						<VerticalStackLayout Spacing="6">
+							<Label Style="{StaticResource AppCaption}" Text="Monto" />
+							<Entry x:Name="AmountEntry" Placeholder="$0.00" Keyboard="Numeric" Text="{Binding AmountInput}" SemanticProperties.Description="Monto a abonar al saldo Paynest" />
+						</VerticalStackLayout>
+
+						<Border
+							IsVisible="{Binding HasValidationError}"
+							BackgroundColor="{StaticResource DangerBg}"
+							Stroke="{StaticResource DangerFg}"
+							StrokeShape="RoundRectangle 10"
+							StrokeThickness="1"
+							Padding="12,9">
+							<Label Text="{Binding ValidationError}" TextColor="{StaticResource DangerFg}" FontSize="13" />
+						</Border>
+
+						<local:ActionButtonView
+							Text="{Binding DepositButtonText}"
+							IsBusy="{Binding IsDepositing}"
+							IsActionEnabled="{Binding IsNotBusy}"
+							SemanticDescription="Abonar saldo Paynest"
+							Clicked="OnDepositClicked" />
+					</VerticalStackLayout>
+				</Border>
+
+				<Label Style="{StaticResource AppSectionTitle}" Text="Movimientos" />
+				<Border
+					IsVisible="{Binding HasNoMovements}"
+					Margin="{StaticResource CardItemMargin}"
+					Padding="14"
+					BackgroundColor="{AppThemeBinding Light={StaticResource AppSurface}, Dark={StaticResource AppSurfaceDark}}"
+					Stroke="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}"
+					StrokeShape="RoundRectangle 16"
+					Shadow="{StaticResource AppCardShadow}">
+					<VerticalStackLayout Spacing="6" Padding="4,8">
+						<Label FontAttributes="Bold" FontSize="16" HorizontalTextAlignment="Center" Text="Aún no hay movimientos" />
+						<Label Style="{StaticResource AppCaption}" HorizontalTextAlignment="Center" Text="Abona saldo o paga una cuota para ver actividad aquí." />
+					</VerticalStackLayout>
+				</Border>
+					<VerticalStackLayout
+						Spacing="0"
+						BindableLayout.ItemsSource="{Binding Movements}"
+						SemanticProperties.Description="Lista de movimientos de saldo Paynest">
+						<BindableLayout.ItemTemplate>
+							<DataTemplate>
+								<Border
+								Margin="{StaticResource CardItemMargin}"
+								Padding="14"
+								BackgroundColor="{Binding CardBackground}"
+								Stroke="{Binding CardBorderColor}"
+								StrokeShape="RoundRectangle 16"
+								Scale="{Binding CardScale}"
+								Shadow="{StaticResource AppCardShadow}">
+								<Grid Padding="4,2" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="10">
+									<VerticalStackLayout Spacing="4">
+										<HorizontalStackLayout Spacing="8">
+											<Label FontAttributes="Bold" FontSize="16" Text="{Binding Description}" LineBreakMode="TailTruncation" />
+											<Border
+												IsVisible="{Binding IsNewBadgeVisible}"
+												BackgroundColor="{StaticResource AppSurfaceAlt}"
+												StrokeThickness="0"
+												StrokeShape="RoundRectangle 8"
+												Padding="7,3"
+												VerticalOptions="Center">
+												<Label Text="Nuevo" TextColor="{StaticResource GreenPrimary}" FontAttributes="Bold" FontSize="11" />
+											</Border>
+										</HorizontalStackLayout>
+										<Label Style="{StaticResource AppCaption}" Text="{Binding DateText}" />
+										<Label Style="{StaticResource AppCaption}" Text="{Binding ReferenceText}" />
+									</VerticalStackLayout>
+									<VerticalStackLayout Grid.Column="1" Spacing="6" HorizontalOptions="End">
+										<Border
+											BackgroundColor="{Binding BadgeBackground}"
+											StrokeThickness="0"
+											StrokeShape="RoundRectangle 10"
+											Padding="10,4"
+											HorizontalOptions="End">
+											<Label Text="{Binding TypeText}" TextColor="{Binding BadgeForeground}" FontAttributes="Bold" FontSize="12" />
+										</Border>
+										<Label FontAttributes="Bold" FontSize="18" Text="{Binding AmountText}" TextColor="{Binding AmountColor}" HorizontalTextAlignment="End" />
+									</VerticalStackLayout>
+								</Grid>
+							</Border>
+							</DataTemplate>
+						</BindableLayout.ItemTemplate>
+					</VerticalStackLayout>
+				</VerticalStackLayout>
+			</VerticalStackLayout>
+		</ScrollView>
+	</RefreshView>
+</ContentPage>

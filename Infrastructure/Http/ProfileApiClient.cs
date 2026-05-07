@@ -13,7 +13,7 @@ public class ProfileApiClient(HttpClient http, AuthStateService authState) : IPr
 {
     public async Task SavePersonalInfoAsync(UserProfileRequest request, CancellationToken ct = default)
     {
-        using var req = new HttpRequestMessage(HttpMethod.Post, "api/profile/personal");
+        using var req = new HttpRequestMessage(HttpMethod.Post, "/api/v1/profile/personal");
         req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authState.AccessToken);
         req.Content = JsonContent.Create(request);
         var res = await http.SendAsync(req, ct);
@@ -28,7 +28,7 @@ public class ProfileApiClient(HttpClient http, AuthStateService authState) : IPr
         content.Add(fileContent, "file", file.FileName);
         content.Add(new StringContent(type.ToString()), "documentType");
 
-        using var req = new HttpRequestMessage(HttpMethod.Post, "api/profile/documents");
+        using var req = new HttpRequestMessage(HttpMethod.Post, "/api/v1/profile/documents");
         req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authState.AccessToken);
         req.Content = content;
         var res = await http.SendAsync(req, ct);
@@ -38,7 +38,7 @@ public class ProfileApiClient(HttpClient http, AuthStateService authState) : IPr
 
     public async Task SavePaymentConfigAsync(PaymentConfigRequest request, CancellationToken ct = default)
     {
-        using var req = new HttpRequestMessage(HttpMethod.Post, "api/profile/payment-config");
+        using var req = new HttpRequestMessage(HttpMethod.Post, "/api/v1/profile/payment-config");
         req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authState.AccessToken);
         req.Content = JsonContent.Create(request);
         var res = await http.SendAsync(req, ct);

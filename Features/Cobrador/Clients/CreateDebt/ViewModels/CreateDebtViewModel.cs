@@ -265,7 +265,8 @@ public partial class CreateDebtViewModel(ICollectorDebtService debtService) : Ob
         try
         {
             await debtService.CreateAsync(ClientId, request);
-            await Application.Current!.MainPage!.Navigation.PopAsync();
+            if (App.CurrentNavigation is { } navigation)
+                await navigation.PopAsync();
         }
         catch (ApiException ex)
         {
@@ -283,7 +284,10 @@ public partial class CreateDebtViewModel(ICollectorDebtService debtService) : Ob
 
     [RelayCommand]
     async Task BackAsync()
-        => await Application.Current!.MainPage!.Navigation.PopAsync();
+    {
+        if (App.CurrentNavigation is { } navigation)
+            await navigation.PopAsync();
+    }
 
     public void LoadClientContext(ClientSummary client)
     {
@@ -314,7 +318,8 @@ public partial class CreateDebtViewModel(ICollectorDebtService debtService) : Ob
         if (page.BindingContext is CalendarPickerViewModel vm)
             vm.Load(title, initialDate, minimumDate, onSelect);
 
-        await Application.Current!.MainPage!.Navigation.PushModalAsync(page);
+        if (App.CurrentNavigation is { } navigation)
+            await navigation.PushModalAsync(page);
     }
 
     private void EnsureDatesForPeriodicity()
@@ -411,9 +416,9 @@ public partial class CreateDebtViewModel(ICollectorDebtService debtService) : Ob
         _isApplyingPreview = true;
         try
         {
-            StartDate = response.StartDate.ToDateTime(TimeOnly.MinValue);
-            FirstPaymentDate = response.FirstPaymentDate.ToDateTime(TimeOnly.MinValue);
-            DueDate = response.DueDate.ToDateTime(TimeOnly.MinValue);
+            StartDate = response.StartDate.Date;
+            FirstPaymentDate = response.FirstPaymentDate.Date;
+            DueDate = response.DueDate.Date;
         }
         finally
         {
@@ -454,6 +459,9 @@ public partial class CreateDebtViewModel(ICollectorDebtService debtService) : Ob
         if (string.IsNullOrWhiteSpace(ClientId))
             return null;
 
+        if (string.IsNullOrWhiteSpace(Description))
+            return null;
+
         var totalAmount = ParseMoney(Amount);
         if (totalAmount is null || totalAmount <= 0)
             return null;
@@ -470,6 +478,7 @@ public partial class CreateDebtViewModel(ICollectorDebtService debtService) : Ob
         }
 
         return new CollectorDebtPreviewRequest(
+            Description.Trim(),
             totalAmount.Value,
             Periodicidad,
             CalculationMode,
@@ -478,7 +487,8 @@ public partial class CreateDebtViewModel(ICollectorDebtService debtService) : Ob
             DateOnly.FromDateTime(IsUnica ? StartDate : DueDate),
             paymentAmount,
             ParsePercent(InterestRate),
-            ParsePercent(MoratoryRate));
+            ParsePercent(MoratoryRate),
+            string.IsNullOrWhiteSpace(Notes) ? null : Notes.Trim());
     }
 
     private CollectorDebtCreateRequest? BuildCreateRequest()

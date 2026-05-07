@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Paynest"
+             x:Class="Paynest.SectionHeaderView">
+    <Grid ColumnDefinitions="*,Auto" Padding="2,10,2,4">
+        <Label
+            Style="{StaticResource AppSectionTitle}"
+            FontSize="18"
+            Text="{Binding Source={RelativeSource AncestorType={x:Type local:SectionHeaderView}}, Path=TitleText}" />
+        <Label
+            Grid.Column="1"
+            Style="{StaticResource AppCaption}"
+            Text="{Binding Source={RelativeSource AncestorType={x:Type local:SectionHeaderView}}, Path=MetaText}"
+            VerticalOptions="Center" />
+    </Grid>
+</ContentView>

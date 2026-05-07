@@ -51,7 +51,7 @@ public partial class ComprobanteViewerViewModel : ObservableObject
         var page = Application.Current?.Windows.FirstOrDefault()?.Page;
         if (page is null) return;
 
-        bool ok = await page.DisplayAlert(
+        bool ok = await page.DisplayAlertAsync(
             "Aprobar pago",
             "¿Confirmas que el comprobante es válido y el pago es correcto?",
             "Aprobar",
@@ -69,7 +69,7 @@ public partial class ComprobanteViewerViewModel : ObservableObject
         var page = Application.Current?.Windows.FirstOrDefault()?.Page;
         if (page is null) return;
 
-        bool ok = await page.DisplayAlert(
+        bool ok = await page.DisplayAlertAsync(
             "Rechazar comprobante",
             "¿Seguro que quieres rechazar este comprobante? El pago quedará como pendiente.",
             "Rechazar",

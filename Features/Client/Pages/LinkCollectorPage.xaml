@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Paynest"
+             x:Class="Paynest.LinkCollectorPage"
+             Title="Vincular cobrador"
+             BackgroundColor="{StaticResource AppBg}">
+    <ScrollView>
+        <VerticalStackLayout x:Name="RootLayout" Padding="20,16,20,96" Spacing="{StaticResource Space16}">
+            <Label Style="{StaticResource AppPageTitle}" Text="Vincular cobrador" SemanticProperties.HeadingLevel="Level1" />
+            <Label Style="{StaticResource AppCaption}" Text="Escribe el codigo PAY que te compartio tu cobrador para ver tus deudas y pagos." />
+
+            <Border
+                BackgroundColor="{StaticResource AppSurfaceAlt}"
+                Stroke="#D8E9DE"
+                StrokeShape="RoundRectangle 18"
+                Padding="16">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                    <Border
+                        BackgroundColor="#DDEFE5"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 18"
+                        HeightRequest="52"
+                        WidthRequest="52">
+                        <Label Text="PAY" TextColor="{StaticResource GreenPrimary}" FontAttributes="Bold" FontSize="13" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+                    </Border>
+                    <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
+                        <Label Text="Codigo del cobrador" TextColor="{StaticResource GreenPrimary}" FontAttributes="Bold" FontSize="14" />
+                        <Label Style="{StaticResource AppCaption}" Text="Debe verse como PAY-X7XTM5." />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <Border Style="{StaticResource AppCardBorder}">
+                <VerticalStackLayout Spacing="{StaticResource Space16}">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Style="{StaticResource AppCaption}" Text="Codigo" />
+                        <Entry
+                            Text="{Binding CollectorCode}"
+                            Placeholder="PAY-X7XTM5"
+                            TextTransform="Uppercase"
+                            ClearButtonVisibility="WhileEditing"
+                            Keyboard="Text"
+                            ReturnType="Done"
+                            SemanticProperties.Description="Codigo de cobrador para vincular tu cuenta" />
+                    </VerticalStackLayout>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <Button
+                            Text="Pegar codigo"
+                            Style="{StaticResource AppSecondaryButton}"
+                            Command="{Binding PasteCommand}"
+                            SemanticProperties.Description="Pegar codigo de cobrador desde el portapapeles" />
+                        <Button
+                            Grid.Column="1"
+                            Text="Escanear QR"
+                            Style="{StaticResource AppSecondaryButton}"
+                            Command="{Binding ScanCommand}"
+                            SemanticProperties.Description="Escanear codigo QR del cobrador" />
+                    </Grid>
+
+                    <Border
+                        IsVisible="{Binding HasError}"
+                        BackgroundColor="{StaticResource DangerBg}"
+                        Stroke="{StaticResource DangerFg}"
+                        StrokeShape="RoundRectangle 12"
+                        Padding="12,10">
+                        <Label Text="{Binding ErrorMessage}" TextColor="{StaticResource DangerFg}" FontSize="13" />
+                    </Border>
+
+                    <Border
+                        IsVisible="{Binding HasSuccess}"
+                        BackgroundColor="{StaticResource SuccessBg}"
+                        Stroke="{StaticResource SuccessFg}"
+                        StrokeShape="RoundRectangle 12"
+                        Padding="12,10">
+                        <Label Text="{Binding SuccessMessage}" TextColor="{StaticResource SuccessFg}" FontAttributes="Bold" FontSize="13" />
+                    </Border>
+
+                    <local:ActionButtonView
+                        Text="{Binding LinkButtonText}"
+                        IsBusy="{Binding IsBusy}"
+                        IsActionEnabled="{Binding IsNotBusy}"
+                        SemanticDescription="Vincular cobrador a mi cuenta"
+                        Clicked="OnLinkClicked" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border
+                BackgroundColor="{StaticResource AppSurface}"
+                Stroke="{StaticResource AppBorder}"
+                StrokeShape="RoundRectangle 16"
+                Padding="14">
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="Despues de vincularte" FontAttributes="Bold" FontSize="16" TextColor="{StaticResource TextPrimary}" />
+                    <Label Style="{StaticResource AppCaption}" Text="Actualizaremos Inicio, Calendario y Recibos para mostrar los datos que el cobrador tenga registrados para ti." />
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

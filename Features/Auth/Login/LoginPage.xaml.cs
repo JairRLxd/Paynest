@@ -7,4 +7,15 @@ public partial class LoginPage : ContentPage
         InitializeComponent();
         BindingContext = viewModel;
     }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        MainThread.BeginInvokeOnMainThread(() => EmailEntry.Focus());
+    }
+
+    private void OnEmailCompleted(object sender, EventArgs e)
+    {
+        PasswordEntry.Focus();
+    }
 }

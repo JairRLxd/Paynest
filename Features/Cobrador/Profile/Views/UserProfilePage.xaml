@@ -26,14 +26,46 @@
             </Grid>
         </Border>
 
-        <!-- Contenido placeholder -->
-        <VerticalStackLayout Grid.Row="1" VerticalOptions="Center" Spacing="12" Padding="32">
-            <Label Text="👤" FontSize="52" HorizontalOptions="Center"/>
-            <Label Text="Próximamente" FontFamily="OpenSansSemibold" FontSize="20"
-                   TextColor="{StaticResource GreenPrimary}" HorizontalOptions="Center"/>
-            <Label Text="Aquí podrás ver tu perfil, métodos de pago y ajustes de cuenta."
-                   TextColor="{StaticResource TextSecondary}" FontSize="14"
-                   HorizontalOptions="Center" HorizontalTextAlignment="Center" LineHeight="1.4"/>
+        <VerticalStackLayout Grid.Row="1" Spacing="18" Padding="24,28,24,32">
+            <Border BackgroundColor="White"
+                    Stroke="#E2E8E4"
+                    StrokeShape="RoundRectangle 22"
+                    Padding="20">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Cuenta de cobrador"
+                           FontFamily="OpenSansSemibold"
+                           FontSize="18"
+                           TextColor="{StaticResource TextPrimary}"/>
+                    <Label x:Name="UserNameLabel"
+                           Text="Cobrador"
+                           FontSize="15"
+                           TextColor="{StaticResource TextSecondary}"/>
+                    <Label Text="Desde aquí puedes cerrar sesión de forma segura."
+                           FontSize="13"
+                           TextColor="{StaticResource TextSecondary}"
+                           LineHeight="1.35"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <Button Text="Cerrar sesión"
+                    Clicked="OnLogoutClicked"
+                    BackgroundColor="#FFF1F3"
+                    BorderColor="#F04438"
+                    BorderWidth="1.5"
+                    TextColor="#D92D20"
+                    FontFamily="OpenSansSemibold"
+                    FontSize="16"
+                    CornerRadius="24"
+                    HeightRequest="54"/>
+
+            <VerticalStackLayout VerticalOptions="CenterAndExpand" Spacing="12" Padding="8,30">
+                <Label Text="👤" FontSize="52" HorizontalOptions="Center"/>
+                <Label Text="Perfil en progreso" FontFamily="OpenSansSemibold" FontSize="20"
+                       TextColor="{StaticResource GreenPrimary}" HorizontalOptions="Center"/>
+                <Label Text="Aquí podrás ver tu perfil, métodos de pago y ajustes de cuenta."
+                       TextColor="{StaticResource TextSecondary}" FontSize="14"
+                       HorizontalOptions="Center" HorizontalTextAlignment="Center" LineHeight="1.4"/>
+            </VerticalStackLayout>
         </VerticalStackLayout>
 
     </Grid>

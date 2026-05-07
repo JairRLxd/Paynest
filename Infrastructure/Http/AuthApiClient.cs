@@ -1,3 +1,4 @@
+﻿#nullable enable
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -33,12 +34,18 @@ public class AuthApiClient : IAuthService
     public Task<AuthResponse> RegisterAsync(RegisterRequest request, CancellationToken ct = default)
         => PostAsync<AuthResponse>($"{BasePath}/register", request, ct);
 
-    public Task<AuthResponse> RefreshAsync(CancellationToken ct = default)
-        => PostAsync<AuthResponse>($"{BasePath}/refresh", body: null, ct);
+    public Task<AuthResponse> RefreshAsync(string refreshToken, CancellationToken ct = default)
+        => PostAsync<AuthResponse>($"{BasePath}/refresh", new RefreshTokenRequest(refreshToken), ct);
 
-    public async Task LogoutAsync(CancellationToken ct = default)
+    public async Task LogoutAsync(string? refreshToken = null, CancellationToken ct = default)
     {
         var req = new HttpRequestMessage(HttpMethod.Post, $"{BasePath}/logout");
+        if (!string.IsNullOrWhiteSpace(refreshToken))
+            req.Content = new StringContent(
+                JsonSerializer.Serialize(new RefreshTokenRequest(refreshToken), JsonOpts),
+                Encoding.UTF8,
+                "application/json");
+
         var res = await _http.SendAsync(req, ct);
         if (!res.IsSuccessStatusCode)
             await ThrowAuthExceptionAsync(res, $"{BasePath}/logout", ct);
@@ -210,4 +217,6 @@ public class AuthApiClient : IAuthService
         Detail: $"La API devolvió HTTP {status}.",
         Instance: string.Empty
     );
+
+    private sealed record RefreshTokenRequest(string RefreshToken);
 }

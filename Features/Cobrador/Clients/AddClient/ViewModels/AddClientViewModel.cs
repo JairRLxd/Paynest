@@ -20,15 +20,46 @@ public partial class AddClientViewModel : ObservableObject
 
         var collectorId = _authState.CurrentUser?.Id ?? "anonymous_collector";
         CollectorCode = _collectorInviteService.GetOrCreateCollectorCode(collectorId);
+        InviteStatusText = "Preparando codigo...";
         RefreshQrCode();
     }
 
     [ObservableProperty] private string _collectorCode = string.Empty;
     [ObservableProperty] private ImageSource? _qrCodeImage;
+    [ObservableProperty] private string _inviteStatusText = string.Empty;
+    [ObservableProperty] private bool _isLoadingInvite;
     [ObservableProperty] private string _fullName = string.Empty;
     [ObservableProperty] private string _phoneNumber = string.Empty;
     [ObservableProperty] private string _amount = string.Empty;
     [ObservableProperty] private string _notes = string.Empty;
+
+    public async Task LoadInviteAsync(CancellationToken cancellationToken = default)
+    {
+        if (IsLoadingInvite)
+            return;
+
+        try
+        {
+            IsLoadingInvite = true;
+            var invite = await _collectorInviteService.GetInviteAsync(cancellationToken);
+            if (!string.IsNullOrWhiteSpace(invite.CollectorCode))
+            {
+                CollectorCode = invite.CollectorCode;
+            }
+
+            InviteStatusText = invite.IsLocalFallback
+                ? "Codigo temporal local. Se sincronizara cuando backend exponga la invitacion."
+                : "Codigo oficial listo para compartir.";
+        }
+        catch
+        {
+            InviteStatusText = "No pudimos actualizar el codigo. Puedes usar el codigo mostrado por ahora.";
+        }
+        finally
+        {
+            IsLoadingInvite = false;
+        }
+    }
 
     [RelayCommand]
     async Task BackAsync()
@@ -48,6 +79,16 @@ public partial class AddClientViewModel : ObservableObject
     {
         await Clipboard.Default.SetTextAsync(CollectorCode);
         await ShowMessageAsync("Código copiado", "Tu código de cobrador ya está en el portapapeles.");
+    }
+
+    [RelayCommand]
+    async Task ShareCodeAsync()
+    {
+        await Share.Default.RequestAsync(new ShareTextRequest
+        {
+            Title = "Codigo de cobrador Paynest",
+            Text = $"Usa este codigo para vincularte conmigo en Paynest: {CollectorCode}"
+        });
     }
 
     [RelayCommand]

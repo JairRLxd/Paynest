@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+﻿<?xml version="1.0" encoding="UTF-8" ?>
 <?xaml-comp compile="true" ?>
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -18,7 +18,7 @@
     <Color x:Key="White">#FFFFFF</Color>
     <Color x:Key="Black">#000000</Color>
 
-    <!-- Legacy aliases (Styles.xaml los referencia) -->
+    <!-- Legacy aliases (Styles.xaml references these) -->
     <Color x:Key="Primary">#2A6349</Color>
     <Color x:Key="Light">#B8DCC9</Color>
     <Color x:Key="Dark">#1A3D2C</Color>
@@ -26,17 +26,46 @@
     <Color x:Key="MidGray">#9E9E9E</Color>
     <Color x:Key="DarkGray">#505050</Color>
 
-    <SolidColorBrush x:Key="GreenPrimaryBrush"  Color="{StaticResource GreenPrimary}"/>
-    <SolidColorBrush x:Key="GreenAccentBrush"   Color="{StaticResource GreenAccent}"/>
-    <SolidColorBrush x:Key="InputBorderBrush"   Color="{StaticResource InputBorder}"/>
-    <SolidColorBrush x:Key="ErrorBrush"         Color="{StaticResource Error}"/>
-    <SolidColorBrush x:Key="PrimaryBrush"       Color="{StaticResource GreenPrimary}"/>
-    <SolidColorBrush x:Key="LightBrush"         Color="{StaticResource Light}"/>
-    <SolidColorBrush x:Key="DarkBrush"          Color="{StaticResource Dark}"/>
-    <SolidColorBrush x:Key="WhiteBrush"         Color="{StaticResource White}"/>
-    <SolidColorBrush x:Key="BlackBrush"         Color="{StaticResource Black}"/>
-    <SolidColorBrush x:Key="LightGrayBrush"     Color="{StaticResource LightGray}"/>
-    <SolidColorBrush x:Key="MidGrayBrush"       Color="{StaticResource MidGray}"/>
-    <SolidColorBrush x:Key="DarkGrayBrush"      Color="{StaticResource DarkGray}"/>
+    <SolidColorBrush x:Key="GreenPrimaryBrush" Color="{StaticResource GreenPrimary}"/>
+    <SolidColorBrush x:Key="GreenAccentBrush" Color="{StaticResource GreenAccent}"/>
+    <SolidColorBrush x:Key="InputBorderBrush" Color="{StaticResource InputBorder}"/>
+    <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource Error}"/>
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource GreenPrimary}"/>
+    <SolidColorBrush x:Key="LightBrush" Color="{StaticResource Light}"/>
+    <SolidColorBrush x:Key="DarkBrush" Color="{StaticResource Dark}"/>
+    <SolidColorBrush x:Key="WhiteBrush" Color="{StaticResource White}"/>
+    <SolidColorBrush x:Key="BlackBrush" Color="{StaticResource Black}"/>
+    <SolidColorBrush x:Key="LightGrayBrush" Color="{StaticResource LightGray}"/>
+    <SolidColorBrush x:Key="MidGrayBrush" Color="{StaticResource MidGray}"/>
+    <SolidColorBrush x:Key="DarkGrayBrush" Color="{StaticResource DarkGray}"/>
+
+    <!-- Client UI tokens aligned with the login/freelancer palette -->
+    <Color x:Key="AppBg">#F2F0EB</Color>
+    <Color x:Key="AppSurface">#FFFFFF</Color>
+    <Color x:Key="AppSurfaceAlt">#EBF5EF</Color>
+    <Color x:Key="AppTextPrimary">#1C1C1E</Color>
+    <Color x:Key="AppTextSecondary">#6B6B6B</Color>
+    <Color x:Key="AppBorder">#D8D5CE</Color>
+    <Color x:Key="AppAccent">#2A6349</Color>
+    <Color x:Key="SuccessBg">#EBF5EF</Color>
+    <Color x:Key="SuccessFg">#2A6349</Color>
+    <Color x:Key="WarningBg">#FEF3C7</Color>
+    <Color x:Key="WarningFg">#92400E</Color>
+    <Color x:Key="DangerBg">#FEE2E2</Color>
+    <Color x:Key="DangerFg">#991B1B</Color>
+    <Color x:Key="AppBgDark">#F2F0EB</Color>
+    <Color x:Key="AppSurfaceDark">#FFFFFF</Color>
+    <Color x:Key="AppTextPrimaryDark">#1C1C1E</Color>
+    <Color x:Key="AppTextSecondaryDark">#6B6B6B</Color>
+    <Color x:Key="AppBorderDark">#D8D5CE</Color>
+    <Color x:Key="AppAccentDark">#2A6349</Color>
+    <Color x:Key="TabBarBgDark">#F2F0EB</Color>
+    <Color x:Key="TabBarActiveDark">#2A6349</Color>
+    <Color x:Key="TabBarInactiveDark">#7A766E</Color>
+    <Color x:Key="TabBarInactiveLight">#7A766E</Color>
+    <Color x:Key="TabBarBgLight">#F2F0EB</Color>
+    <Color x:Key="TabBarActiveLight">#2A6349</Color>
+    <Color x:Key="TabBarAccentLight">#FFFFFF</Color>
+    <Color x:Key="TabBarAccentDark">#FFFFFF</Color>
 
 </ResourceDictionary>

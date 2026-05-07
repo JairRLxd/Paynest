@@ -17,7 +17,7 @@ public class CollectorCollectionsApiClient(HttpClient http, AuthStateService aut
 
     private async Task<CollectorCollectionsResponse> GetAuthorizedAsync(string accessToken, CancellationToken ct)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Get, "api/collector/collections");
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/api/v1/collector/collections");
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 

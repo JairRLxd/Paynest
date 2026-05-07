@@ -12,16 +12,16 @@ namespace Paynest.Infrastructure.Http;
 public class CollectorClientApiClient(HttpClient http, AuthStateService authState) : ICollectorClientService
 {
     public Task<CollectorClientListResponse> GetClientsAsync(CancellationToken ct = default)
-        => SendAsync<CollectorClientListResponse>(HttpMethod.Get, "api/collector/clients", body: null, ct);
+        => SendAsync<CollectorClientListResponse>(HttpMethod.Get, "/api/v1/collector/clients", body: null, ct);
 
     public Task<CollectorClientDetailResponse> GetClientDetailAsync(string clientId, CancellationToken ct = default)
-        => SendAsync<CollectorClientDetailResponse>(HttpMethod.Get, $"api/collector/clients/{clientId}", body: null, ct);
+        => SendAsync<CollectorClientDetailResponse>(HttpMethod.Get, $"/api/v1/collector/clients/{clientId}", body: null, ct);
 
     public Task<CollectorClientFinancialSummaryResponse> GetFinancialSummaryAsync(string clientId, CancellationToken ct = default)
-        => SendAsync<CollectorClientFinancialSummaryResponse>(HttpMethod.Get, $"api/collector/clients/{clientId}/financial-summary", body: null, ct);
+        => SendAsync<CollectorClientFinancialSummaryResponse>(HttpMethod.Get, $"/api/v1/collector/clients/{clientId}/financial-summary", body: null, ct);
 
     public async Task UpdateClientAsync(string clientId, UpdateClientRequest request, CancellationToken ct = default)
-        => await SendAsync<object>(HttpMethod.Put, $"api/collector/clients/{clientId}", request, ct);
+        => await SendAsync<object>(HttpMethod.Put, $"/api/v1/collector/clients/{clientId}", request, ct);
 
     private Task<T> SendAsync<T>(HttpMethod method, string path, object? body, CancellationToken ct)
         => authState.CallProtectedAsync(

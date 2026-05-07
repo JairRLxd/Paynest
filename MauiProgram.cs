@@ -3,22 +3,25 @@ using Microsoft.Extensions.Logging;
 using Paynest.Core.Interfaces;
 using Paynest.Features.Auth.Login;
 using Paynest.Features.Auth.Register;
-using Paynest.Features.Cobrador.Clients.ViewModels;
-using Paynest.Features.Cobrador.Clients.Views;
+using Paynest.Features.Client.Api;
+using Paynest.Features.Client.Application;
+using Paynest.Features.Client.Repositories;
 using Paynest.Features.Cobrador.Clients.AddClient.ViewModels;
 using Paynest.Features.Cobrador.Clients.AddClient.Views;
 using Paynest.Features.Cobrador.Clients.ClientPicker.ViewModels;
 using Paynest.Features.Cobrador.Clients.ClientPicker.Views;
+using Paynest.Features.Cobrador.Clients.ComprobanteViewer.ViewModels;
+using Paynest.Features.Cobrador.Clients.ComprobanteViewer.Views;
 using Paynest.Features.Cobrador.Clients.CreateDebt.ViewModels;
 using Paynest.Features.Cobrador.Clients.CreateDebt.Views;
 using Paynest.Features.Cobrador.Clients.Detail.ViewModels;
 using Paynest.Features.Cobrador.Clients.Detail.Views;
 using Paynest.Features.Cobrador.Clients.Edit.ViewModels;
 using Paynest.Features.Cobrador.Clients.Edit.Views;
-using Paynest.Features.Cobrador.Clients.ComprobanteViewer.ViewModels;
-using Paynest.Features.Cobrador.Clients.ComprobanteViewer.Views;
 using Paynest.Features.Cobrador.Clients.RegisterPayment.ViewModels;
 using Paynest.Features.Cobrador.Clients.RegisterPayment.Views;
+using Paynest.Features.Cobrador.Clients.ViewModels;
+using Paynest.Features.Cobrador.Clients.Views;
 using Paynest.Features.Cobrador.Collections.ViewModels;
 using Paynest.Features.Cobrador.Collections.Views;
 using Paynest.Features.Cobrador.Home.ViewModels;
@@ -49,16 +52,21 @@ public static class MauiProgram
             .UseMauiApp<App>()
             .ConfigureFonts(fonts =>
             {
-                fonts.AddFont("OpenSans-Regular.ttf",  "OpenSansRegular");
+                fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
-        // ── HTTP ──────────────────────────────────────────────────────────────
         var cookieContainer = new CookieContainer();
         var handler = new HttpClientHandler { CookieContainer = cookieContainer };
         var httpClient = new HttpClient(handler) { BaseAddress = apiBaseUri };
 
         builder.Services.AddSingleton(httpClient);
+        builder.Services.AddSingleton<IAuthService, AuthApiClient>();
+        builder.Services.AddSingleton<AuthStateService>();
+        builder.Services.AddSingleton<CollectorPaymentSettings>();
+        builder.Services.AddSingleton<ClientDataRefreshService>();
+        builder.Services.AddSingleton<ReceiptActionService>();
+
         builder.Services.AddSingleton<ICollectorInviteService, CollectorInviteService>();
         builder.Services.AddSingleton<ICollectorDebtService, CollectorDebtApiClient>();
         builder.Services.AddSingleton<ICollectorPaymentService, CollectorPaymentApiClient>();
@@ -66,24 +74,27 @@ public static class MauiProgram
         builder.Services.AddSingleton<ICollectorClientService, CollectorClientApiClient>();
         builder.Services.AddSingleton<ICollectorDashboardService, CollectorDashboardApiClient>();
         builder.Services.AddSingleton<IDocumentImageProcessor, DocumentImageProcessor>();
-        builder.Services.AddSingleton<IAuthService, AuthApiClient>();
         builder.Services.AddSingleton<IProfileService, ProfileApiClient>();
         builder.Services.AddSingleton<PostalCodeClient>();
 
-        // ── Auth state ────────────────────────────────────────────────────────
-        builder.Services.AddSingleton<AuthStateService>();
-        builder.Services.AddSingleton<CollectorPaymentSettings>();
+        builder.Services.AddSingleton<IDebtApiClient, HttpDebtApiClient>();
+        builder.Services.AddSingleton<IClientDebtRepository, DebtApiRepository>();
+        builder.Services.AddSingleton<GetClientDashboardUseCase>();
+        builder.Services.AddSingleton<GetGroupInstallmentsUseCase>();
+        builder.Services.AddSingleton<GetMonthlyInstallmentsUseCase>();
+        builder.Services.AddSingleton<GetPaidReceiptsUseCase>();
+        builder.Services.AddSingleton<SetCurrentGroupUseCase>();
+        builder.Services.AddSingleton<MarkInstallmentAsPaidUseCase>();
+        builder.Services.AddSingleton<IClientDebtService, ClientDebtService>();
 
-        // ── Splash ────────────────────────────────────────────────────────────
+        builder.Services.AddTransient<AppShell>();
         builder.Services.AddTransient<SplashPage>();
-
-        // ── Módulo Auth ───────────────────────────────────────────────────────
         builder.Services.AddTransient<LoginViewModel>();
         builder.Services.AddTransient<LoginPage>();
         builder.Services.AddTransient<RegisterViewModel>();
         builder.Services.AddTransient<RegisterPage>();
+        builder.Services.AddTransient<LinkCollectorPage>();
 
-        // ── Módulo Onboarding ─────────────────────────────────────────────────
         builder.Services.AddSingleton<OnboardingSession>();
         builder.Services.AddTransient<CompleteProfileViewModel>();
         builder.Services.AddTransient<CompleteProfilePage>();
@@ -92,8 +103,6 @@ public static class MauiProgram
         builder.Services.AddTransient<PaymentSetupViewModel>();
         builder.Services.AddTransient<PaymentSetupPage>();
 
-        // ── Módulo Cobrador ───────────────────────────────────────────────────
-        builder.Services.AddTransient<AppShell>();
         builder.Services.AddTransient<HomeViewModel>();
         builder.Services.AddTransient<HomePage>();
         builder.Services.AddTransient<ClientsViewModel>();
@@ -112,6 +121,8 @@ public static class MauiProgram
         builder.Services.AddTransient<ComprobanteViewerPage>();
         builder.Services.AddTransient<CreateDebtViewModel>();
         builder.Services.AddTransient<CreateDebtPage>();
+        builder.Services.AddTransient<CalendarPickerViewModel>();
+        builder.Services.AddTransient<CalendarPickerPage>();
         builder.Services.AddTransient<CollectionsViewModel>();
         builder.Services.AddTransient<CollectionsPage>();
         builder.Services.AddTransient<SchedulePage>();

@@ -64,26 +64,47 @@
                                        FontSize="36"
                                        FontFamily="OpenSansSemibold"
                                        TextColor="White"/>
-                                <Label Text="Válido para todos tus clientes"
-                                       HorizontalTextAlignment="Center"
-                                       FontSize="14"
-                                       TextColor="#DDEFE5"/>
-                            </VerticalStackLayout>
-                        </Grid>
+	                                <Label Text="Válido para todos tus clientes"
+	                                       HorizontalTextAlignment="Center"
+	                                       FontSize="14"
+	                                       TextColor="#DDEFE5"/>
+	                                <ActivityIndicator IsRunning="{Binding IsLoadingInvite}"
+	                                                   IsVisible="{Binding IsLoadingInvite}"
+	                                                   Color="White"
+	                                                   HorizontalOptions="Center"/>
+	                            </VerticalStackLayout>
+	                        </Grid>
 
-                        <Button Margin="18,20,18,20"
-                                Text="Copiar código"
-                                Command="{Binding CopyCodeCommand}"
-                                BackgroundColor="White"
-                                BorderColor="{StaticResource GreenPrimary}"
-                                BorderWidth="2"
-                                TextColor="{StaticResource GreenPrimary}"
-                                FontFamily="OpenSansSemibold"
-                                FontSize="15"
-                                CornerRadius="18"
-                                HeightRequest="58"/>
-                    </VerticalStackLayout>
-                </Border>
+	                        <VerticalStackLayout Padding="18,18,18,20" Spacing="10">
+	                            <Label Text="{Binding InviteStatusText}"
+	                                   FontSize="12"
+	                                   TextColor="{StaticResource TextSecondary}"
+	                                   HorizontalTextAlignment="Center"
+	                                   LineBreakMode="WordWrap"/>
+	                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+	                                <Button Text="Copiar"
+	                                        Command="{Binding CopyCodeCommand}"
+	                                        BackgroundColor="White"
+	                                        BorderColor="{StaticResource GreenPrimary}"
+	                                        BorderWidth="2"
+	                                        TextColor="{StaticResource GreenPrimary}"
+	                                        FontFamily="OpenSansSemibold"
+	                                        FontSize="15"
+	                                        CornerRadius="18"
+	                                        HeightRequest="54"/>
+	                                <Button Grid.Column="1"
+	                                        Text="Compartir"
+	                                        Command="{Binding ShareCodeCommand}"
+	                                        BackgroundColor="{StaticResource GreenPrimary}"
+	                                        TextColor="White"
+	                                        FontFamily="OpenSansSemibold"
+	                                        FontSize="15"
+	                                        CornerRadius="18"
+	                                        HeightRequest="54"/>
+	                            </Grid>
+	                        </VerticalStackLayout>
+	                    </VerticalStackLayout>
+	                </Border>
 
                 <Border BackgroundColor="White"
                         Stroke="#E7ECE8"

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Paynest"
+             x:Class="Paynest.ActionButtonView">
+    <Grid>
+        <Button
+            x:Name="ActionButton"
+            Style="{StaticResource AppPrimaryButton}"
+            Text="{Binding Source={RelativeSource AncestorType={x:Type local:ActionButtonView}}, Path=Text}"
+            IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type local:ActionButtonView}}, Path=IsActionEnabled}"
+            SemanticProperties.Description="{Binding Source={RelativeSource AncestorType={x:Type local:ActionButtonView}}, Path=SemanticDescription}"
+            Clicked="OnActionButtonClicked" />
+        <ActivityIndicator
+            IsVisible="{Binding Source={RelativeSource AncestorType={x:Type local:ActionButtonView}}, Path=IsBusy}"
+            IsRunning="{Binding Source={RelativeSource AncestorType={x:Type local:ActionButtonView}}, Path=IsBusy}"
+            Color="{StaticResource White}"
+            HorizontalOptions="End"
+            VerticalOptions="Center"
+            Margin="0,0,16,0"
+            InputTransparent="True" />
+    </Grid>
+</ContentView>

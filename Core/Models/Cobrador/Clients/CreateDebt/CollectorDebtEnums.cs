@@ -5,9 +5,10 @@ namespace Paynest.Core.Models.Cobrador.Clients.CreateDebt;
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum Periodicidad
 {
-    Weekly,
-    Biweekly,
-    Monthly
+    Unica,
+    Semanal,
+    Quincenal,
+    Mensual
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]

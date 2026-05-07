@@ -72,6 +72,7 @@
                         </DataTrigger>
                     </Border.Triggers>
                     <Entry
+                        x:Name="FirstNameEntry"
                         Placeholder="Juan"
                         Text="{Binding FirstName}"
                         Keyboard="Text"
@@ -79,7 +80,8 @@
                         PlaceholderColor="{StaticResource TextPlaceholder}"
                         TextColor="{StaticResource TextPrimary}"
                         Margin="8,0"
-                        ReturnType="Next"/>
+                        ReturnType="Next"
+                        Completed="OnFullNameCompleted"/>
                 </Border>
 
                 <HorizontalStackLayout
@@ -197,14 +199,20 @@
                         </DataTrigger>
                     </Border.Triggers>
                     <Entry
+                        x:Name="EmailEntry"
                         Placeholder="tu@correo.mx"
-                        Text="{Binding Email}"
+                        Text="{Binding Email, Mode=TwoWay}"
                         Keyboard="Email"
+                        IsTextPredictionEnabled="False"
+                        IsSpellCheckEnabled="False"
+                        TextTransform="None"
+                        ClearButtonVisibility="WhileEditing"
                         BackgroundColor="Transparent"
                         PlaceholderColor="{StaticResource TextPlaceholder}"
                         TextColor="{StaticResource TextPrimary}"
                         Margin="8,0"
-                        ReturnType="Next"/>
+                        ReturnType="Next"
+                        Completed="OnEmailCompleted"/>
                 </Border>
 
                 <HorizontalStackLayout
@@ -238,6 +246,7 @@
                     </Border.Triggers>
                     <Grid ColumnDefinitions="*, 44" Padding="8,0,0,0">
                         <Entry
+                            x:Name="PasswordEntry"
                             Grid.Column="0"
                             Placeholder="Mínimo 12 caracteres"
                             Text="{Binding Password}"
@@ -245,7 +254,8 @@
                             BackgroundColor="Transparent"
                             PlaceholderColor="{StaticResource TextPlaceholder}"
                             TextColor="{StaticResource TextPrimary}"
-                            ReturnType="Next"/>
+                            ReturnType="Next"
+                            Completed="OnPasswordCompleted"/>
                         <ImageButton
                             Grid.Column="1"
                             Source="{Binding EyeIconSource}"
@@ -289,6 +299,7 @@
                     </Border.Triggers>
                     <Grid ColumnDefinitions="*, 44" Padding="8,0,0,0">
                         <Entry
+                            x:Name="PasswordConfirmEntry"
                             Grid.Column="0"
                             Placeholder="Repite tu contraseña"
                             Text="{Binding PasswordConfirm}"
@@ -296,7 +307,8 @@
                             BackgroundColor="Transparent"
                             PlaceholderColor="{StaticResource TextPlaceholder}"
                             TextColor="{StaticResource TextPrimary}"
-                            ReturnType="Done"/>
+                            ReturnType="Go"
+                            ReturnCommand="{Binding RegisterCommand}" />
                         <ImageButton
                             Grid.Column="1"
                             Source="{Binding EyeConfirmIconSource}"

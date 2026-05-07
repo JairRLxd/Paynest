@@ -175,7 +175,8 @@ public partial class CompleteProfileViewModel(
             );
 
             var next = MauiProgram.Services.GetRequiredService<IdentityVerificationPage>();
-            await Application.Current!.MainPage!.Navigation.PushAsync(next);
+            if (App.CurrentNavigation is { } navigation)
+                await navigation.PushAsync(next);
         }
         catch (Exception ex)
         {
@@ -187,11 +188,11 @@ public partial class CompleteProfileViewModel(
     async Task BackAsync()
     {
         var loginPage = MauiProgram.Services.GetRequiredService<Features.Auth.Login.LoginPage>();
-        Application.Current!.MainPage = new NavigationPage(loginPage)
+        App.SetRootPage(new NavigationPage(loginPage)
         {
             BarBackgroundColor = Colors.Transparent,
             BackgroundColor    = Color.FromArgb("#F2F0EB")
-        };
+        });
     }
 
     // ── Validación ──────────────────────────────────────────────────────────

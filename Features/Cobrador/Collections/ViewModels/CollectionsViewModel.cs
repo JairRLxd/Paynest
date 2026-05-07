@@ -189,6 +189,6 @@ public partial class CollectionsViewModel : ObservableObject
     private static async Task ShowAlertAsync(string title, string msg)
     {
         if (Application.Current?.Windows.FirstOrDefault()?.Page is Page p)
-            await p.DisplayAlert(title, msg, "Entendido");
+            await p.DisplayAlertAsync(title, msg, "Entendido");
     }
 }

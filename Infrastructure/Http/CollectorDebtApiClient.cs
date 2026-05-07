@@ -12,19 +12,19 @@ namespace Paynest.Infrastructure.Http;
 public class CollectorDebtApiClient(HttpClient http, AuthStateService authState) : ICollectorDebtService
 {
     public Task<CollectorDebtPreviewResponse> PreviewAsync(string clientId, CollectorDebtPreviewRequest request, CancellationToken ct = default)
-        => SendAsync<CollectorDebtPreviewResponse>(HttpMethod.Post, $"api/collector/clients/{clientId}/debts/preview", request, ct);
+        => SendAsync<CollectorDebtPreviewResponse>(HttpMethod.Post, $"/api/v1/collector/clients/{clientId}/debts/preview", request, ct);
 
     public Task<CollectorDebtDetailResponse> CreateAsync(string clientId, CollectorDebtCreateRequest request, CancellationToken ct = default)
-        => SendAsync<CollectorDebtDetailResponse>(HttpMethod.Post, $"api/collector/clients/{clientId}/debts", request, ct);
+        => SendAsync<CollectorDebtDetailResponse>(HttpMethod.Post, $"/api/v1/collector/clients/{clientId}/debts", request, ct);
 
     public Task<CollectorDebtDetailResponse> GetDebtAsync(string clientId, string debtId, CancellationToken ct = default)
-        => SendAsync<CollectorDebtDetailResponse>(HttpMethod.Get, $"api/collector/clients/{clientId}/debts/{debtId}", body: null, ct);
+        => SendAsync<CollectorDebtDetailResponse>(HttpMethod.Get, $"/api/v1/collector/clients/{clientId}/debts/{debtId}", body: null, ct);
 
     public Task<CollectorDebtOpenSummaryResponse> GetOpenSummaryAsync(string clientId, CancellationToken ct = default)
-        => SendAsync<CollectorDebtOpenSummaryResponse>(HttpMethod.Get, $"api/collector/clients/{clientId}/debts/open-summary", body: null, ct);
+        => SendAsync<CollectorDebtOpenSummaryResponse>(HttpMethod.Get, $"/api/v1/collector/clients/{clientId}/debts/open-summary", body: null, ct);
 
     public async Task<IReadOnlyList<PendingCollectorDebtResponse>> GetPendingAsync(CancellationToken ct = default)
-        => await SendAsync<List<PendingCollectorDebtResponse>>(HttpMethod.Get, "api/collector/debts/pending", body: null, ct) ?? [];
+        => await SendAsync<List<PendingCollectorDebtResponse>>(HttpMethod.Get, "/api/v1/collector/debts/pending", body: null, ct) ?? [];
 
     private Task<T> SendAsync<T>(HttpMethod method, string path, object? body, CancellationToken ct)
         => authState.CallProtectedAsync(
