@@ -19,6 +19,8 @@ public partial class CreateDebtViewModel(ICollectorDebtService debtService) : Ob
     private CancellationTokenSource? _previewCts;
     private bool _isApplyingPreview;
 
+    public Func<Task>? OnDebtCreated { get; set; }
+
     [ObservableProperty] private string _clientId = string.Empty;
 
     [ObservableProperty]
@@ -265,6 +267,9 @@ public partial class CreateDebtViewModel(ICollectorDebtService debtService) : Ob
         try
         {
             await debtService.CreateAsync(ClientId, request);
+            if (OnDebtCreated is not null)
+                await OnDebtCreated();
+
             if (App.CurrentNavigation is { } navigation)
                 await navigation.PopAsync();
         }

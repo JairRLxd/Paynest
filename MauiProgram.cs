@@ -5,7 +5,9 @@ using Paynest.Features.Auth.Login;
 using Paynest.Features.Auth.Register;
 using Paynest.Features.Client.Api;
 using Paynest.Features.Client.Application;
+using Paynest.Features.Client.Mocks;
 using Paynest.Features.Client.Repositories;
+using Paynest.Features.Cobrador.Mocks;
 using Paynest.Features.Cobrador.Clients.AddClient.ViewModels;
 using Paynest.Features.Cobrador.Clients.AddClient.Views;
 using Paynest.Features.Cobrador.Clients.ClientPicker.ViewModels;
@@ -67,17 +69,32 @@ public static class MauiProgram
         builder.Services.AddSingleton<ClientDataRefreshService>();
         builder.Services.AddSingleton<ReceiptActionService>();
 
-        builder.Services.AddSingleton<ICollectorInviteService, CollectorInviteService>();
-        builder.Services.AddSingleton<ICollectorDebtService, CollectorDebtApiClient>();
-        builder.Services.AddSingleton<ICollectorPaymentService, CollectorPaymentApiClient>();
-        builder.Services.AddSingleton<ICollectorCollectionsService, CollectorCollectionsApiClient>();
-        builder.Services.AddSingleton<ICollectorClientService, CollectorClientApiClient>();
-        builder.Services.AddSingleton<ICollectorDashboardService, CollectorDashboardApiClient>();
+        // MOCK_SWAP_POINT: cambiar PaynestUseMocks=false y eliminar Features/*/Mocks para backend real puro.
+        if (ApiConstants.UseMocks)
+        {
+            builder.Services.AddSingleton<ICollectorInviteService, MockCollectorInviteService>();
+            builder.Services.AddSingleton<ICollectorDebtService, MockCollectorDebtService>();
+            builder.Services.AddSingleton<ICollectorPaymentService, MockCollectorPaymentService>();
+            builder.Services.AddSingleton<ICollectorCollectionsService, MockCollectorCollectionsService>();
+            builder.Services.AddSingleton<ICollectorClientService, MockCollectorClientService>();
+            builder.Services.AddSingleton<ICollectorDashboardService, MockCollectorDashboardService>();
+            builder.Services.AddSingleton<IDebtApiClient, MockDebtApiClient>();
+        }
+        else
+        {
+            builder.Services.AddSingleton<ICollectorInviteService, CollectorInviteService>();
+            builder.Services.AddSingleton<ICollectorDebtService, CollectorDebtApiClient>();
+            builder.Services.AddSingleton<ICollectorPaymentService, CollectorPaymentApiClient>();
+            builder.Services.AddSingleton<ICollectorCollectionsService, CollectorCollectionsApiClient>();
+            builder.Services.AddSingleton<ICollectorClientService, CollectorClientApiClient>();
+            builder.Services.AddSingleton<ICollectorDashboardService, CollectorDashboardApiClient>();
+            builder.Services.AddSingleton<IDebtApiClient, HttpDebtApiClient>();
+        }
+
         builder.Services.AddSingleton<IDocumentImageProcessor, DocumentImageProcessor>();
         builder.Services.AddSingleton<IProfileService, ProfileApiClient>();
         builder.Services.AddSingleton<PostalCodeClient>();
 
-        builder.Services.AddSingleton<IDebtApiClient, HttpDebtApiClient>();
         builder.Services.AddSingleton<IClientDebtRepository, DebtApiRepository>();
         builder.Services.AddSingleton<GetClientDashboardUseCase>();
         builder.Services.AddSingleton<GetGroupInstallmentsUseCase>();

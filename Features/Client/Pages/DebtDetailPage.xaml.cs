@@ -140,7 +140,7 @@ public partial class DebtDetailPage : ContentPage, IQueryAttributable
 		PaymentSuccessBalanceLabel.Text = string.IsNullOrWhiteSpace(balanceText) ? "Actualizado" : balanceText;
 
 		PaymentSuccessOverlay.Opacity = 0;
-		PaymentSuccessPanel.TranslationY = 360;
+		PaymentSuccessPanel.TranslationY = 520;
 		PaymentSuccessOverlay.IsVisible = true;
 		await Task.WhenAll(
 			PaymentSuccessOverlay.FadeToAsync(1, 150),
@@ -159,7 +159,7 @@ public partial class DebtDetailPage : ContentPage, IQueryAttributable
 
 		_paymentSuccessCompletion = null;
 		await Task.WhenAll(
-			PaymentSuccessPanel.TranslateToAsync(0, 360, 180, Easing.CubicIn),
+			PaymentSuccessPanel.TranslateToAsync(0, 520, 180, Easing.CubicIn),
 			PaymentSuccessOverlay.FadeToAsync(0, 160));
 		PaymentSuccessOverlay.IsVisible = false;
 		completion.TrySetResult(action);
@@ -269,7 +269,7 @@ public partial class DebtDetailPage : ContentPage, IQueryAttributable
 		PaymentSheetAfterLabel.TextColor = canPay ? Color.FromArgb("#2A6349") : Color.FromArgb("#991B1B");
 
 		PaymentSheetOverlay.Opacity = 0;
-		PaymentSheetPanel.TranslationY = 360;
+		PaymentSheetPanel.TranslationY = 520;
 		PaymentSheetOverlay.IsVisible = true;
 		await Task.WhenAll(
 			PaymentSheetOverlay.FadeToAsync(1, 150),
@@ -288,7 +288,7 @@ public partial class DebtDetailPage : ContentPage, IQueryAttributable
 
 		_paymentSheetCompletion = null;
 		await Task.WhenAll(
-			PaymentSheetPanel.TranslateToAsync(0, 360, 180, Easing.CubicIn),
+			PaymentSheetPanel.TranslateToAsync(0, 520, 180, Easing.CubicIn),
 			PaymentSheetOverlay.FadeToAsync(0, 160));
 		PaymentSheetOverlay.IsVisible = false;
 		completion.TrySetResult(result);

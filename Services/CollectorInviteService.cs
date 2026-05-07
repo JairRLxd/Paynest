@@ -26,7 +26,7 @@ public class CollectorInviteService(HttpClient http, AuthStateService authState)
                 if (response.IsSuccessStatusCode)
                 {
                     var invite = await response.Content.ReadFromJsonAsync<CollectorInviteDto>(cancellationToken: ct);
-                    if (!string.IsNullOrWhiteSpace(invite?.CollectorCode))
+                    if (!string.IsNullOrWhiteSpace(invite?.EffectiveCode))
                     {
                         return invite;
                     }
@@ -41,6 +41,7 @@ public class CollectorInviteService(HttpClient http, AuthStateService authState)
             return new CollectorInviteDto
             {
                 CollectorId = collectorId,
+                Code = GetOrCreateCollectorCode(collectorId),
                 CollectorCode = GetOrCreateCollectorCode(collectorId),
                 CreatedAt = DateTime.UtcNow,
                 Status = "local",

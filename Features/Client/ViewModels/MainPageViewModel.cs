@@ -261,8 +261,10 @@ public sealed class MainPageViewModel : BaseViewModel
 		public GroupCardItem(DebtGroup group)
 		{
 			Id = group.Id;
-			Name = group.Name;
-			FreelancerName = $"Freelancer: {group.FreelancerName}";
+			Name = string.IsNullOrWhiteSpace(group.Name) ? "Deuda activa" : group.Name;
+			FreelancerName = string.IsNullOrWhiteSpace(group.FreelancerName)
+				? "Freelancer: Sin asignar"
+				: $"Freelancer: {group.FreelancerName}";
 			FrequencyText = $"Frecuencia: {ToDisplayText(group.Frequency)}";
 			PendingAmountText = group.PendingAmount.ToString("C");
 		}

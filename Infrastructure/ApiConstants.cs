@@ -8,13 +8,17 @@ public static class ApiConstants
 {
     private const string DefaultFallbackBaseUrl = "https://example.invalid";
     private const string AndroidEmulatorMetadataKey = "PaynestAndroidEmulatorBaseUrl";
-    private const string IosSimulatorMetadataKey = "PaynestiOSSimulatorBaseUrl";
-    private const string PhysicalDeviceMetadataKey = "PaynestPhysicalDeviceBaseUrl";
-    private const string FallbackMetadataKey = "PaynestBaseUrl";
+	    private const string IosSimulatorMetadataKey = "PaynestiOSSimulatorBaseUrl";
+	    private const string PhysicalDeviceMetadataKey = "PaynestPhysicalDeviceBaseUrl";
+	    private const string FallbackMetadataKey = "PaynestBaseUrl";
+	    private const string UseMocksMetadataKey = "PaynestUseMocks";
 
     public static string BaseUrl => ResolveBaseUrl();
 
-    public static Uri BaseUri => new(BaseUrl, UriKind.Absolute);
+	    public static Uri BaseUri => new(BaseUrl, UriKind.Absolute);
+
+	    // MOCK_SWAP_POINT: poner PaynestUseMocks=false para usar solo backend real.
+	    public static bool UseMocks => bool.TryParse(ReadMetadata(UseMocksMetadataKey), out var enabled) && enabled;
 
     public static string ResolveBaseUrl()
     {

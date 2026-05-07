@@ -188,66 +188,17 @@
                     </Label>
                 </Grid>
 
-                <!-- Visita 1 -->
                 <Border BackgroundColor="White" StrokeThickness="0"
-                        StrokeShape="RoundRectangle 16" Padding="14,12" Margin="0,0,0,8">
-                    <Grid ColumnDefinitions="48,*,Auto" ColumnSpacing="12">
-                        <Border Grid.Column="0" BackgroundColor="#E53935" StrokeThickness="0"
-                                StrokeShape="Ellipse" HeightRequest="40" WidthRequest="40"
-                                VerticalOptions="Center">
-                            <Label Text="MG" TextColor="White" FontSize="13"
-                                   FontFamily="OpenSansSemibold"
-                                   HorizontalOptions="Center" VerticalOptions="Center"/>
-                        </Border>
-                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
-                            <Label Text="María García" FontFamily="OpenSansSemibold"
-                                   FontSize="14" TextColor="{StaticResource TextPrimary}"/>
-                            <Label Text="10:00 am" TextColor="{StaticResource TextSecondary}"
-                                   FontSize="12"/>
-                        </VerticalStackLayout>
-                        <VerticalStackLayout Grid.Column="2" VerticalOptions="Center"
-                                            HorizontalOptions="End" Spacing="4">
-                            <Label Text="$500" FontFamily="OpenSansSemibold" FontSize="14"
-                                   TextColor="{StaticResource TextPrimary}"
-                                   HorizontalTextAlignment="End"/>
-                            <Border BackgroundColor="#FFF3E0" StrokeThickness="0"
-                                    StrokeShape="RoundRectangle 6" Padding="8,2">
-                                <Label Text="Pendiente" TextColor="#E65100"
-                                       FontSize="11" FontFamily="OpenSansSemibold"/>
-                            </Border>
-                        </VerticalStackLayout>
-                    </Grid>
-                </Border>
-
-                <!-- Visita 2 -->
-                <Border BackgroundColor="White" StrokeThickness="0"
-                        StrokeShape="RoundRectangle 16" Padding="14,12" Margin="0,0,0,8">
-                    <Grid ColumnDefinitions="48,*,Auto" ColumnSpacing="12">
-                        <Border Grid.Column="0" BackgroundColor="#1565C0" StrokeThickness="0"
-                                StrokeShape="Ellipse" HeightRequest="40" WidthRequest="40"
-                                VerticalOptions="Center">
-                            <Label Text="JH" TextColor="White" FontSize="13"
-                                   FontFamily="OpenSansSemibold"
-                                   HorizontalOptions="Center" VerticalOptions="Center"/>
-                        </Border>
-                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
-                            <Label Text="Juan Hernández" FontFamily="OpenSansSemibold"
-                                   FontSize="14" TextColor="{StaticResource TextPrimary}"/>
-                            <Label Text="11:30 am" TextColor="{StaticResource TextSecondary}"
-                                   FontSize="12"/>
-                        </VerticalStackLayout>
-                        <VerticalStackLayout Grid.Column="2" VerticalOptions="Center"
-                                            HorizontalOptions="End" Spacing="4">
-                            <Label Text="$1,200" FontFamily="OpenSansSemibold" FontSize="14"
-                                   TextColor="{StaticResource TextPrimary}"
-                                   HorizontalTextAlignment="End"/>
-                            <Border BackgroundColor="#FFF3E0" StrokeThickness="0"
-                                    StrokeShape="RoundRectangle 6" Padding="8,2">
-                                <Label Text="Pendiente" TextColor="#E65100"
-                                       FontSize="11" FontFamily="OpenSansSemibold"/>
-                            </Border>
-                        </VerticalStackLayout>
-                    </Grid>
+                        StrokeShape="RoundRectangle 16" Padding="18,16" Margin="0,0,0,8">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Sin visitas programadas"
+                               FontFamily="OpenSansSemibold"
+                               FontSize="14"
+                               TextColor="{StaticResource TextPrimary}"/>
+                        <Label Text="Cuando agenda tenga datos reales, aparecerán aquí."
+                               FontSize="12"
+                               TextColor="{StaticResource TextSecondary}"/>
+                    </VerticalStackLayout>
                 </Border>
 
             </VerticalStackLayout>

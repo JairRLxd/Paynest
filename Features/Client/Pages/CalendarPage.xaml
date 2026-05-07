@@ -21,7 +21,10 @@
 	</ContentPage.Resources>
 	<VerticalStackLayout x:Name="RootLayout" Padding="{StaticResource PagePadding}" Spacing="{StaticResource Space16}">
 		<Label Style="{StaticResource AppPageTitle}" Text="Vencimientos" SemanticProperties.HeadingLevel="Level1" />
-		<DatePicker Date="{Binding SelectedDate}" SemanticProperties.Description="Selector de mes y año para filtrar vencimientos" />
+		<DatePicker
+			Date="{Binding SelectedDate}"
+			TextColor="{StaticResource TextPrimary}"
+			SemanticProperties.Description="Selector de mes y año para filtrar vencimientos" />
 		<Label Style="{StaticResource AppCaption}" Text="{Binding FilterText}" />
 		<ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
 			<HorizontalStackLayout Spacing="8">

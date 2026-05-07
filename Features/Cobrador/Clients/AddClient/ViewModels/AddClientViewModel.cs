@@ -10,6 +10,7 @@ public partial class AddClientViewModel : ObservableObject
     private readonly AuthStateService _authState;
     private readonly ICollectorInviteService _collectorInviteService;
     private byte[]? _qrBytes;
+    private string _qrPayload = string.Empty;
 
     public AddClientViewModel(
         AuthStateService authState,
@@ -42,9 +43,11 @@ public partial class AddClientViewModel : ObservableObject
         {
             IsLoadingInvite = true;
             var invite = await _collectorInviteService.GetInviteAsync(cancellationToken);
-            if (!string.IsNullOrWhiteSpace(invite.CollectorCode))
+            if (!string.IsNullOrWhiteSpace(invite.EffectiveCode))
             {
-                CollectorCode = invite.CollectorCode;
+                CollectorCode = invite.EffectiveCode;
+                _qrPayload = invite.EffectiveQrPayload;
+                RefreshQrCode();
             }
 
             InviteStatusText = invite.IsLocalFallback
@@ -105,7 +108,8 @@ public partial class AddClientViewModel : ObservableObject
             return;
         }
 
-        _qrBytes = _collectorInviteService.GenerateQrPng(CollectorCode);
+        var payload = string.IsNullOrWhiteSpace(_qrPayload) ? CollectorCode : _qrPayload;
+        _qrBytes = _collectorInviteService.GenerateQrPng(payload);
         QrCodeImage = ImageSource.FromStream(() => new MemoryStream(_qrBytes, writable: false));
     }
 

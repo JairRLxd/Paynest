@@ -5,9 +5,10 @@
 			 x:Class="Paynest.NotificationsPage"
 			 Title="Notificaciones"
 			 BackgroundColor="{StaticResource AppBg}">
-	<VerticalStackLayout x:Name="RootLayout" Padding="{StaticResource PagePadding}" Spacing="{StaticResource Space16}">
-		<Label Style="{StaticResource AppPageTitle}" Text="Recordatorios de vencimiento" SemanticProperties.HeadingLevel="Level1" />
-		<Label Style="{StaticResource AppCaption}" Text="Define cómo quieres recibir avisos para no atrasarte." />
+	<ScrollView>
+		<VerticalStackLayout x:Name="RootLayout" Padding="20,16,20,96" Spacing="{StaticResource Space16}">
+			<Label Style="{StaticResource AppPageTitle}" Text="Recordatorios de vencimiento" SemanticProperties.HeadingLevel="Level1" />
+			<Label Style="{StaticResource AppCaption}" Text="Define cómo quieres recibir avisos para no atrasarte." />
 
 		<Border
 			BackgroundColor="{StaticResource AppSurfaceAlt}"
@@ -63,7 +64,12 @@
 						<Label FontAttributes="Bold" FontSize="16" Text="Hora del recordatorio" />
 						<Label Style="{StaticResource AppCaption}" Text="{Binding ReminderTimeText}" />
 					</VerticalStackLayout>
-					<TimePicker Grid.Column="1" Time="{Binding ReminderTime}" VerticalOptions="Center" SemanticProperties.Description="Seleccionar hora para los recordatorios" />
+					<TimePicker
+						Grid.Column="1"
+						Time="{Binding ReminderTime}"
+						TextColor="{StaticResource TextPrimary}"
+						VerticalOptions="Center"
+						SemanticProperties.Description="Seleccionar hora para los recordatorios" />
 				</Grid>
 				<BoxView HeightRequest="1" Color="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}" />
 				<Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
@@ -101,5 +107,6 @@
 			IsActionEnabled="{Binding IsNotSaving}"
 			SemanticDescription="Guardar la configuración de notificaciones de vencimiento"
 			Clicked="OnSaveClicked" />
-	</VerticalStackLayout>
+		</VerticalStackLayout>
+	</ScrollView>
 </ContentPage>

@@ -95,7 +95,7 @@
 			</Grid.GestureRecognizers>
 			<Border
 				x:Name="PaymentSheetPanel"
-				Margin="12"
+				Margin="16,0,16,104"
 				Padding="18"
 				BackgroundColor="{AppThemeBinding Light={StaticResource AppSurface}, Dark={StaticResource AppSurfaceDark}}"
 				Stroke="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}"
@@ -178,7 +178,7 @@
 			</Grid.GestureRecognizers>
 			<Border
 				x:Name="PaymentSuccessPanel"
-				Margin="12"
+				Margin="16,0,16,104"
 				Padding="18"
 				BackgroundColor="{AppThemeBinding Light={StaticResource AppSurface}, Dark={StaticResource AppSurfaceDark}}"
 				Stroke="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}"

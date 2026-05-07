@@ -27,17 +27,15 @@ public sealed class HttpDebtApiClient(HttpClient httpClient, AuthStateService au
     {
         return _authState.CallProtectedAsync(async token =>
         {
-            return await ExecuteWithRetryAsync("/api/v1/client/debts", async ct =>
+            return await ExecuteWithRetryAsync("client debts", async ct =>
             {
-                using var req = new HttpRequestMessage(HttpMethod.Get, "/api/v1/client/debts");
-                req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-                using var res = await _http.SendAsync(req, ct);
-                await EnsureSuccessOrAuthAsync(res, "/api/v1/client/debts", ct);
-
-                var json = await res.Content.ReadAsStringAsync(ct);
-                var data = JsonSerializer.Deserialize<List<DebtGroupDto>>(json, JsonOpts) ?? [];
-                return (IReadOnlyList<DebtGroupDto>)data;
+                var json = await GetJsonFromAnyAsync(token, ct, "/api/v1/client/debts", "/api/client/debts");
+                var debts = ParseDebtGroups(json);
+                _logger.LogWarning(
+                    "CLIENT_DEBTS_DIAGNOSTIC count={Count} bodyPreview={BodyPreview}",
+                    debts.Count,
+                    PreviewJson(json));
+                return debts;
             }, cancellationToken);
         }, cancellationToken);
     }
@@ -47,17 +45,18 @@ public sealed class HttpDebtApiClient(HttpClient httpClient, AuthStateService au
         return _authState.CallProtectedAsync(async token =>
         {
             var path = $"/api/v1/client/debts/{Uri.EscapeDataString(groupId)}/installments";
-            return await ExecuteWithRetryAsync(path, async ct =>
+            var v1DetailPath = $"/api/v1/client/debts/{Uri.EscapeDataString(groupId)}";
+            var legacyDetailPath = $"/api/client/debts/{Uri.EscapeDataString(groupId)}";
+            return await ExecuteWithRetryAsync("client debt installments", async ct =>
             {
-                using var req = new HttpRequestMessage(HttpMethod.Get, path);
-                req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-                using var res = await _http.SendAsync(req, ct);
-                await EnsureSuccessOrAuthAsync(res, path, ct);
-
-                var json = await res.Content.ReadAsStringAsync(ct);
-                var data = JsonSerializer.Deserialize<List<InstallmentDto>>(json, JsonOpts) ?? [];
-                return (IReadOnlyList<InstallmentDto>)data;
+                var json = await GetJsonFromAnyAsync(token, ct, path, v1DetailPath, legacyDetailPath);
+                var installments = ParseInstallments(groupId, json);
+                _logger.LogWarning(
+                    "CLIENT_INSTALLMENTS_DIAGNOSTIC debtId={DebtId} count={Count} bodyPreview={BodyPreview}",
+                    groupId,
+                    installments.Count,
+                    PreviewJson(json));
+                return installments;
             }, cancellationToken);
         }, cancellationToken);
     }
@@ -100,17 +99,10 @@ public sealed class HttpDebtApiClient(HttpClient httpClient, AuthStateService au
     {
         return _authState.CallProtectedAsync(async token =>
         {
-            return await ExecuteWithRetryAsync("/api/v1/client/receipts", async ct =>
+            return await ExecuteWithRetryAsync("client receipts", async ct =>
             {
-                using var req = new HttpRequestMessage(HttpMethod.Get, "/api/v1/client/receipts");
-                req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-                using var res = await _http.SendAsync(req, ct);
-                await EnsureSuccessOrAuthAsync(res, "/api/v1/client/receipts", ct);
-
-                var json = await res.Content.ReadAsStringAsync(ct);
-                var data = JsonSerializer.Deserialize<List<ReceiptDto>>(json, JsonOpts) ?? [];
-                return (IReadOnlyList<ReceiptDto>)data;
+                var json = await GetJsonFromAnyAsync(token, ct, "/api/v1/client/receipts", "/api/v1/client/payments", "/api/client/payments");
+                return ParseReceipts(json);
             }, cancellationToken);
         }, cancellationToken);
     }
@@ -120,12 +112,9 @@ public sealed class HttpDebtApiClient(HttpClient httpClient, AuthStateService au
         return _authState.CallProtectedAsync(async token =>
         {
             var path = $"/api/v1/client/receipts/{Uri.EscapeDataString(receiptId)}";
-            return await ExecuteWithRetryAsync(path, async ct =>
+            return await ExecuteWithRetryAsync("client receipt detail", async ct =>
             {
-                using var req = new HttpRequestMessage(HttpMethod.Get, path);
-                req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-                using var res = await _http.SendAsync(req, ct);
+                using var res = await SendAuthorizedAsync(HttpMethod.Get, path, token, ct);
                 if (res.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
                     return null;
@@ -133,7 +122,7 @@ public sealed class HttpDebtApiClient(HttpClient httpClient, AuthStateService au
 
                 await EnsureSuccessOrAuthAsync(res, path, ct);
                 var json = await res.Content.ReadAsStringAsync(ct);
-                return JsonSerializer.Deserialize<ReceiptDto>(json, JsonOpts);
+                return ParseReceipt(json);
             }, cancellationToken);
         }, cancellationToken);
     }
@@ -271,19 +260,75 @@ public sealed class HttpDebtApiClient(HttpClient httpClient, AuthStateService au
         return _authState.CallProtectedAsync(async token =>
         {
             const string path = "/api/v1/client/collectors/link";
-            return await ExecuteWithRetryAsync(path, async ct =>
+            const string fallbackPath = "/api/client/collectors/link";
+            return await ExecuteWithRetryAsync("client collector link", async ct =>
             {
-                using var req = new HttpRequestMessage(HttpMethod.Post, path);
-                req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                req.Content = JsonContent.Create(request, options: JsonOpts);
+                using var res = await SendAuthorizedJsonAsync(HttpMethod.Post, path, token, request, ct);
+                if (ShouldFallback(res))
+                {
+                    using var fallbackRes = await SendAuthorizedJsonAsync(HttpMethod.Post, fallbackPath, token, request, ct);
+                    await EnsureSuccessOrAuthAsync(fallbackRes, fallbackPath, ct);
 
-                using var res = await _http.SendAsync(req, ct);
+                    var fallbackJson = await fallbackRes.Content.ReadAsStringAsync(ct);
+                    return JsonSerializer.Deserialize<LinkCollectorResponseDto>(fallbackJson, JsonOpts) ?? new LinkCollectorResponseDto();
+                }
+
                 await EnsureSuccessOrAuthAsync(res, path, ct);
-
                 var json = await res.Content.ReadAsStringAsync(ct);
                 return JsonSerializer.Deserialize<LinkCollectorResponseDto>(json, JsonOpts) ?? new LinkCollectorResponseDto();
             }, cancellationToken);
         }, cancellationToken);
+    }
+
+    private async Task<string> GetJsonFromAnyAsync(
+        string token,
+        CancellationToken ct,
+        params string[] paths)
+    {
+        for (var i = 0; i < paths.Length; i++)
+        {
+            var path = paths[i];
+            using var res = await SendAuthorizedAsync(HttpMethod.Get, path, token, ct);
+            if (ShouldFallback(res) && i < paths.Length - 1)
+            {
+                continue;
+            }
+
+            await EnsureSuccessOrAuthAsync(res, path, ct);
+            return await res.Content.ReadAsStringAsync(ct);
+        }
+
+        return string.Empty;
+    }
+
+    private Task<HttpResponseMessage> SendAuthorizedAsync(
+        HttpMethod method,
+        string path,
+        string token,
+        CancellationToken ct)
+    {
+        var req = new HttpRequestMessage(method, path);
+        req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        return _http.SendAsync(req, ct);
+    }
+
+    private Task<HttpResponseMessage> SendAuthorizedJsonAsync<T>(
+        HttpMethod method,
+        string path,
+        string token,
+        T body,
+        CancellationToken ct)
+    {
+        var req = new HttpRequestMessage(method, path);
+        req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        req.Content = JsonContent.Create(body, options: JsonOpts);
+        return _http.SendAsync(req, ct);
+    }
+
+    private static bool ShouldFallback(HttpResponseMessage response)
+    {
+        return response.StatusCode is System.Net.HttpStatusCode.NotFound
+            or System.Net.HttpStatusCode.MethodNotAllowed;
     }
 
     private async Task<T> ExecuteWithRetryAsync<T>(
@@ -324,6 +369,315 @@ public sealed class HttpDebtApiClient(HttpClient httpClient, AuthStateService au
     private static bool IsTransient(Exception ex)
     {
         return ex is TaskCanceledException || ex is TimeoutException || ex is HttpRequestException;
+    }
+
+    private static string PreviewJson(string json)
+    {
+        if (string.IsNullOrWhiteSpace(json))
+        {
+            return "<empty>";
+        }
+
+        var compact = string.Join(' ', json.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
+        return compact.Length <= 700 ? compact : compact[..700];
+    }
+
+    private static IReadOnlyList<DebtGroupDto> ParseDebtGroups(string json)
+    {
+        if (string.IsNullOrWhiteSpace(json))
+        {
+            return [];
+        }
+
+        using var doc = JsonDocument.Parse(json);
+        if (doc.RootElement.ValueKind == JsonValueKind.Array)
+        {
+            return ParseDebtGroupArray(doc.RootElement);
+        }
+
+        if (!TryGetArray(doc.RootElement, out var debts, "debts", "items", "data"))
+        {
+            return [];
+        }
+
+        return ParseDebtGroupArray(debts);
+    }
+
+    private static IReadOnlyList<InstallmentDto> ParseInstallments(string groupId, string json)
+    {
+        if (string.IsNullOrWhiteSpace(json))
+        {
+            return [];
+        }
+
+        using var doc = JsonDocument.Parse(json);
+        if (doc.RootElement.ValueKind == JsonValueKind.Array)
+        {
+            return ParseInstallmentArray(groupId, doc.RootElement);
+        }
+
+        if (!TryGetArray(doc.RootElement, out var schedule, "schedule", "installments", "items", "data"))
+        {
+            return [];
+        }
+
+        return ParseInstallmentArray(groupId, schedule);
+    }
+
+    private static IReadOnlyList<DebtGroupDto> ParseDebtGroupArray(JsonElement debts)
+    {
+        return debts.EnumerateArray()
+            .Select(x => new DebtGroupDto
+            {
+                Id = ReadString(x, "debtId", "id", "_id"),
+                Name = ReadString(x, "description", "name", "title"),
+                FreelancerName = ReadString(x, "collectorName", "freelancerName"),
+                TotalAmount = ReadDecimal(x, "totalAmount", "principalAmount", "amount"),
+                PendingAmount = ReadDecimal(x, "remainingAmount", "totalOutstandingAmount", "pendingAmount", "outstandingAmount", "remainingBalance"),
+                Frequency = ReadString(x, "periodicity", "frequency")
+            })
+            .Where(x => !string.IsNullOrWhiteSpace(x.Id))
+            .ToList();
+    }
+
+    private static IReadOnlyList<InstallmentDto> ParseInstallmentArray(string groupId, JsonElement installments)
+    {
+        return installments.EnumerateArray()
+            .Select(x =>
+            {
+                var number = ReadInt(x, "number", "installmentNumber");
+                var isPaid = ReadBool(x, "isPaid");
+                var isOverdue = ReadBool(x, "isOverdue");
+                var status = ReadString(x, "status");
+                if (string.IsNullOrWhiteSpace(status))
+                    status = isPaid ? "paid" : isOverdue ? "overdue" : "pending";
+
+                return new InstallmentDto
+                {
+                    Id = ReadString(x, "installmentId", "id", "_id") is { Length: > 0 } id ? id : $"{groupId}:{number}",
+                    GroupId = ReadString(x, "groupId", "debtId") is { Length: > 0 } parsedGroupId ? parsedGroupId : groupId,
+                    Title = number > 0 ? $"Cuota {number}" : ReadString(x, "title", "description"),
+                    DueDate = ReadDateTime(x, "dueDate") ?? DateTime.Today,
+                    Amount = ReadDecimal(x, "totalDueAmount", "remainingAmount", "amount", "scheduledAmount"),
+                    Status = status
+                };
+            })
+            .ToList();
+    }
+
+    private static IReadOnlyList<ReceiptDto> ParseReceipts(string json)
+    {
+        if (string.IsNullOrWhiteSpace(json))
+        {
+            return [];
+        }
+
+        using var doc = JsonDocument.Parse(json);
+        if (doc.RootElement.ValueKind == JsonValueKind.Array)
+        {
+            return JsonSerializer.Deserialize<List<ReceiptDto>>(json, JsonOpts) ?? [];
+        }
+
+        if (TryGetArray(doc.RootElement, out var payments, "items", "payments", "data"))
+        {
+            return payments.EnumerateArray().Select(PaymentToReceipt).ToList();
+        }
+
+        if (TryGetArray(doc.RootElement, out var receipts, "receipts"))
+        {
+            return receipts.EnumerateArray().Select(ReceiptElementToDto).ToList();
+        }
+
+        return [];
+    }
+
+    private static ReceiptDto? ParseReceipt(string json)
+    {
+        if (string.IsNullOrWhiteSpace(json))
+        {
+            return null;
+        }
+
+        using var doc = JsonDocument.Parse(json);
+        return ReceiptElementToDto(doc.RootElement);
+    }
+
+    private static ReceiptDto ReceiptElementToDto(JsonElement element)
+    {
+        return new ReceiptDto
+        {
+            Id = ReadString(element, "receiptId", "id"),
+            InstallmentId = ReadString(element, "installmentId"),
+            GroupId = ReadString(element, "groupId", "debtId"),
+            Title = ReadString(element, "title", "description"),
+            Amount = ReadDecimal(element, "amount", "totalAmount"),
+            PaidAt = ReadDateTime(element, "paidAt", "createdAt") ?? DateTime.Today,
+            Folio = ReadString(element, "folio", "reference"),
+            FileUrl = ReadNullableString(element, "fileUrl", "downloadUrl")
+        };
+    }
+
+    private static ReceiptDto PaymentToReceipt(JsonElement element)
+    {
+        var paymentId = ReadString(element, "paymentId", "id");
+        var allocation = TryGetProperty(element, "allocations", out var allocations) &&
+                         allocations.ValueKind == JsonValueKind.Array &&
+                         allocations.GetArrayLength() > 0
+            ? allocations[0]
+            : default;
+
+        var debtId = allocation.ValueKind == JsonValueKind.Object
+            ? ReadString(allocation, "debtId")
+            : ReadString(element, "debtId");
+        var installmentNumber = allocation.ValueKind == JsonValueKind.Object
+            ? ReadInt(allocation, "installmentNumber")
+            : ReadInt(element, "installmentNumber");
+
+        return new ReceiptDto
+        {
+            Id = paymentId,
+            InstallmentId = installmentNumber > 0 ? $"{debtId}:{installmentNumber}" : string.Empty,
+            GroupId = debtId,
+            Title = installmentNumber > 0 ? $"Pago de cuota {installmentNumber}" : "Pago registrado",
+            Amount = ReadDecimal(element, "amount"),
+            PaidAt = ReadDateTime(element, "paidAt", "createdAt") ?? DateTime.Today,
+            Folio = ReadString(element, "folio", "reference") is { Length: > 0 } folio ? folio : paymentId,
+            FileUrl = ReadNullableString(element, "fileUrl", "proofUrl")
+        };
+    }
+
+    private static bool TryGetProperty(JsonElement element, string propertyName, out JsonElement value)
+    {
+        foreach (var property in element.EnumerateObject())
+        {
+            if (string.Equals(property.Name, propertyName, StringComparison.OrdinalIgnoreCase))
+            {
+                value = property.Value;
+                return true;
+            }
+        }
+
+        value = default;
+        return false;
+    }
+
+    private static bool TryGetArray(JsonElement element, out JsonElement value, params string[] names)
+    {
+        foreach (var name in names)
+        {
+            if (TryGetProperty(element, name, out value) && value.ValueKind == JsonValueKind.Array)
+            {
+                return true;
+            }
+        }
+
+        value = default;
+        return false;
+    }
+
+    private static string ReadString(JsonElement element, params string[] names)
+        => ReadNullableString(element, names) ?? string.Empty;
+
+    private static string? ReadNullableString(JsonElement element, params string[] names)
+    {
+        foreach (var name in names)
+        {
+            if (!TryGetProperty(element, name, out var value) || value.ValueKind is JsonValueKind.Null or JsonValueKind.Undefined)
+            {
+                continue;
+            }
+
+            return value.ValueKind == JsonValueKind.String ? value.GetString() : value.ToString();
+        }
+
+        return null;
+    }
+
+    private static decimal ReadDecimal(JsonElement element, params string[] names)
+    {
+        foreach (var name in names)
+        {
+            if (!TryGetProperty(element, name, out var value))
+            {
+                continue;
+            }
+
+            if (value.ValueKind == JsonValueKind.Number && value.TryGetDecimal(out var number))
+            {
+                return number;
+            }
+
+            if (value.ValueKind == JsonValueKind.String && decimal.TryParse(value.GetString(), out var parsed))
+            {
+                return parsed;
+            }
+        }
+
+        return 0m;
+    }
+
+    private static int ReadInt(JsonElement element, params string[] names)
+    {
+        foreach (var name in names)
+        {
+            if (!TryGetProperty(element, name, out var value))
+            {
+                continue;
+            }
+
+            if (value.ValueKind == JsonValueKind.Number && value.TryGetInt32(out var number))
+            {
+                return number;
+            }
+
+            if (value.ValueKind == JsonValueKind.String && int.TryParse(value.GetString(), out var parsed))
+            {
+                return parsed;
+            }
+        }
+
+        return 0;
+    }
+
+    private static bool ReadBool(JsonElement element, params string[] names)
+    {
+        foreach (var name in names)
+        {
+            if (!TryGetProperty(element, name, out var value))
+            {
+                continue;
+            }
+
+            if (value.ValueKind is JsonValueKind.True or JsonValueKind.False)
+            {
+                return value.GetBoolean();
+            }
+
+            if (value.ValueKind == JsonValueKind.String && bool.TryParse(value.GetString(), out var parsed))
+            {
+                return parsed;
+            }
+        }
+
+        return false;
+    }
+
+    private static DateTime? ReadDateTime(JsonElement element, params string[] names)
+    {
+        foreach (var name in names)
+        {
+            if (!TryGetProperty(element, name, out var value))
+            {
+                continue;
+            }
+
+            if (value.ValueKind == JsonValueKind.String && DateTime.TryParse(value.GetString(), out var parsed))
+            {
+                return parsed;
+            }
+        }
+
+        return null;
     }
 
     private static PayInstallmentResponseDto ParsePayResponse(string json)

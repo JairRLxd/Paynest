@@ -90,12 +90,25 @@
 					<VerticalStackLayout Spacing="{StaticResource Space12}">
 						<VerticalStackLayout Spacing="6">
 							<Label Style="{StaticResource AppCaption}" Text="Concepto" />
-							<Entry Placeholder="Ej. Abono de prueba" Text="{Binding Description}" ClearButtonVisibility="WhileEditing" SemanticProperties.Description="Concepto del abono de saldo" />
+							<Entry
+								Placeholder="Ej. Abono de prueba"
+								Text="{Binding Description}"
+								TextColor="{StaticResource TextPrimary}"
+								PlaceholderColor="{StaticResource TextPlaceholder}"
+								ClearButtonVisibility="WhileEditing"
+								SemanticProperties.Description="Concepto del abono de saldo" />
 						</VerticalStackLayout>
 
 						<VerticalStackLayout Spacing="6">
 							<Label Style="{StaticResource AppCaption}" Text="Monto" />
-							<Entry x:Name="AmountEntry" Placeholder="$0.00" Keyboard="Numeric" Text="{Binding AmountInput}" SemanticProperties.Description="Monto a abonar al saldo Paynest" />
+							<Entry
+								x:Name="AmountEntry"
+								Placeholder="$0.00"
+								Keyboard="Numeric"
+								Text="{Binding AmountInput}"
+								TextColor="{StaticResource TextPrimary}"
+								PlaceholderColor="{StaticResource TextPlaceholder}"
+								SemanticProperties.Description="Monto a abonar al saldo Paynest" />
 						</VerticalStackLayout>
 
 						<Border

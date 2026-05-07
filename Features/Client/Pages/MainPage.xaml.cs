@@ -31,14 +31,13 @@ public partial class MainPage : ContentPage
 		await PageMotion.StaggerInAsync(RootLayout.Children.OfType<View>());
 	}
 
-	private async void OnGroupSelectionChanged(object sender, SelectionChangedEventArgs e)
+	private async void OnGroupTapped(object sender, TappedEventArgs e)
 	{
-		if (e.CurrentSelection.FirstOrDefault() is not MainPageViewModel.GroupCardItem selected)
+		if (sender is not BindableObject { BindingContext: MainPageViewModel.GroupCardItem selected })
 		{
 			return;
 		}
 
-		((CollectionView)sender!).SelectedItem = null;
 		await Shell.Current.GoToAsync($"{nameof(DebtDetailPage)}?groupId={Uri.EscapeDataString(selected.Id)}");
 	}
 

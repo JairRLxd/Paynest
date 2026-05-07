@@ -239,7 +239,9 @@ public partial class ClientDetailViewModel : ObservableObject
                 ClientId, Name, Initials, AvatarColor,
                 RegisteredAt, TotalDebt, StatusLabel,
                 Color.FromArgb("#F3F4F6"), StatusColor));
+            vm.OnDebtCreated = () => LoadDetailAsync(ClientId);
         }
+
         if (App.CurrentNavigation is { } navigation)
             await navigation.PushAsync(page);
     }

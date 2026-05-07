@@ -10,8 +10,14 @@ public interface ICollectorInviteService
 public sealed class CollectorInviteDto
 {
     public string CollectorId { get; init; } = string.Empty;
+    public string Code { get; init; } = string.Empty;
     public string CollectorCode { get; init; } = string.Empty;
+    public string QrPayload { get; init; } = string.Empty;
+    public DateTime? ExpiresAt { get; init; }
     public DateTime CreatedAt { get; init; }
     public string Status { get; init; } = "active";
     public bool IsLocalFallback { get; init; }
+
+    public string EffectiveCode => !string.IsNullOrWhiteSpace(Code) ? Code : CollectorCode;
+    public string EffectiveQrPayload => !string.IsNullOrWhiteSpace(QrPayload) ? QrPayload : EffectiveCode;
 }

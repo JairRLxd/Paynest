@@ -24,9 +24,10 @@
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
 		<ApplicationVersion>1</ApplicationVersion>
 		<PaynestBaseUrl Condition="'$(PaynestBaseUrl)' == ''">https://example.invalid</PaynestBaseUrl>
-		<PaynestAndroidEmulatorBaseUrl Condition="'$(PaynestAndroidEmulatorBaseUrl)' == ''">http://10.0.2.2:5080</PaynestAndroidEmulatorBaseUrl>
-		<PaynestiOSSimulatorBaseUrl Condition="'$(PaynestiOSSimulatorBaseUrl)' == ''">http://localhost:5080</PaynestiOSSimulatorBaseUrl>
-		<PaynestPhysicalDeviceBaseUrl Condition="'$(PaynestPhysicalDeviceBaseUrl)' == ''">$(PaynestBaseUrl)</PaynestPhysicalDeviceBaseUrl>
+			<PaynestAndroidEmulatorBaseUrl Condition="'$(PaynestAndroidEmulatorBaseUrl)' == ''">http://10.0.2.2:5080</PaynestAndroidEmulatorBaseUrl>
+			<PaynestiOSSimulatorBaseUrl Condition="'$(PaynestiOSSimulatorBaseUrl)' == ''">http://localhost:5080</PaynestiOSSimulatorBaseUrl>
+			<PaynestPhysicalDeviceBaseUrl Condition="'$(PaynestPhysicalDeviceBaseUrl)' == ''">$(PaynestBaseUrl)</PaynestPhysicalDeviceBaseUrl>
+			<PaynestUseMocks Condition="'$(PaynestUseMocks)' == ''">false</PaynestUseMocks>
 
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">14.0</SupportedOSPlatformVersion>
@@ -81,10 +82,14 @@
 			<_Parameter1>PaynestiOSSimulatorBaseUrl</_Parameter1>
 			<_Parameter2>$(PaynestiOSSimulatorBaseUrl)</_Parameter2>
 		</AssemblyAttribute>
-		<AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
-			<_Parameter1>PaynestPhysicalDeviceBaseUrl</_Parameter1>
-			<_Parameter2>$(PaynestPhysicalDeviceBaseUrl)</_Parameter2>
-		</AssemblyAttribute>
-	</ItemGroup>
+			<AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+				<_Parameter1>PaynestPhysicalDeviceBaseUrl</_Parameter1>
+				<_Parameter2>$(PaynestPhysicalDeviceBaseUrl)</_Parameter2>
+			</AssemblyAttribute>
+			<AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+				<_Parameter1>PaynestUseMocks</_Parameter1>
+				<_Parameter2>$(PaynestUseMocks)</_Parameter2>
+			</AssemblyAttribute>
+		</ItemGroup>
 
 </Project>

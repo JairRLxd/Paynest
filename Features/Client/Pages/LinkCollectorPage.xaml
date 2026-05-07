@@ -38,6 +38,8 @@
                         <Entry
                             Text="{Binding CollectorCode}"
                             Placeholder="PAY-X7XTM5"
+                            TextColor="{StaticResource TextPrimary}"
+                            PlaceholderColor="{StaticResource TextPlaceholder}"
                             TextTransform="Uppercase"
                             ClearButtonVisibility="WhileEditing"
                             Keyboard="Text"

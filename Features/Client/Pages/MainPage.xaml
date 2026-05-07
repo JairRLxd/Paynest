@@ -30,8 +30,7 @@
 				</local:PageStateContainer.LoadingContent>
 
 				<local:PageStateContainer.ContentBody>
-					<RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
-						<VerticalStackLayout Spacing="{StaticResource Space16}">
+					<VerticalStackLayout Spacing="{StaticResource Space16}">
 							<Border Style="{StaticResource AppCardBorder}" Margin="{StaticResource CardItemMargin}">
 								<Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="12" RowSpacing="14">
 									<local:SummaryMetricView TitleText="Pendiente total" ValueText="{Binding TotalPendingText}" ValueFontSize="23" />
@@ -72,31 +71,46 @@
 							</Border>
 
 							<Label Style="{StaticResource AppSectionTitle}" Text="Deudas activas" />
-							<CollectionView x:Name="GroupsCollection" ItemsSource="{Binding Groups}" SelectionMode="Single" SelectionChanged="OnGroupSelectionChanged" SemanticProperties.Description="Lista de deudas activas, toca una deuda para ver su detalle">
-								<CollectionView.ItemTemplate>
+							<VerticalStackLayout
+								BindableLayout.ItemsSource="{Binding Groups}"
+								SemanticProperties.Description="Lista de deudas activas, toca una deuda para ver su detalle">
+								<BindableLayout.ItemTemplate>
 									<DataTemplate>
 										<Border Style="{StaticResource AppCardBorder}" Margin="{StaticResource CardItemMargin}">
+											<Border.GestureRecognizers>
+												<TapGestureRecognizer Tapped="OnGroupTapped" />
+											</Border.GestureRecognizers>
 											<VerticalStackLayout Spacing="10">
 												<Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
-													<Label FontAttributes="Bold" FontSize="20" Text="{Binding Name}" LineBreakMode="TailTruncation" />
+													<Label
+														FontAttributes="Bold"
+														FontSize="20"
+														Text="{Binding Name}"
+														TextColor="{StaticResource TextPrimary}"
+														LineBreakMode="TailTruncation" />
 													<Label Grid.Column="1" Text="›" FontSize="28" TextColor="{StaticResource AppAccent}" VerticalOptions="Center" />
 												</Grid>
 												<Label Style="{StaticResource AppCaption}" Text="{Binding FreelancerName}" LineBreakMode="TailTruncation" />
 												<Label Style="{StaticResource AppCaption}" Text="{Binding FrequencyText}" />
 												<Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
 													<Label Style="{StaticResource AppCaption}" Text="Pendiente" VerticalOptions="Center" />
-													<Label Grid.Column="1" Style="{StaticResource AppAmountText}" Text="{Binding PendingAmountText}" LineBreakMode="TailTruncation" />
+													<Label
+														Grid.Column="1"
+														Style="{StaticResource AppAmountText}"
+														Text="{Binding PendingAmountText}"
+														TextColor="{StaticResource TextPrimary}"
+														LineBreakMode="TailTruncation" />
 												</Grid>
 												<Label Text="Ver detalle" FontAttributes="Bold" FontSize="13" TextColor="{StaticResource AppAccent}" />
 											</VerticalStackLayout>
 										</Border>
 									</DataTemplate>
-								</CollectionView.ItemTemplate>
-							</CollectionView>
+								</BindableLayout.ItemTemplate>
+							</VerticalStackLayout>
 
 							<Label Style="{StaticResource AppSectionTitle}" Text="Próximos pagos" />
-							<CollectionView ItemsSource="{Binding UpcomingInstallments}" SelectionMode="None">
-								<CollectionView.ItemTemplate>
+							<VerticalStackLayout BindableLayout.ItemsSource="{Binding UpcomingInstallments}">
+								<BindableLayout.ItemTemplate>
 									<DataTemplate>
 										<local:InstallmentCardView
 											TitleText="{Binding Title}"
@@ -107,10 +121,9 @@
 											StatusBackground="{Binding StatusBg}"
 											StatusForeground="{Binding StatusFg}" />
 									</DataTemplate>
-								</CollectionView.ItemTemplate>
-							</CollectionView>
+								</BindableLayout.ItemTemplate>
+							</VerticalStackLayout>
 						</VerticalStackLayout>
-					</RefreshView>
 				</local:PageStateContainer.ContentBody>
 
 				<local:PageStateContainer.EmptyContent>

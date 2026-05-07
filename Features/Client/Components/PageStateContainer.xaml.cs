@@ -43,6 +43,12 @@ public partial class PageStateContainer : ContentView
         ApplyState();
     }
 
+    protected override void OnBindingContextChanged()
+    {
+        base.OnBindingContextChanged();
+        ApplyHostedBindingContext();
+    }
+
     public ScreenState State
     {
         get => (ScreenState)GetValue(StateProperty);
@@ -79,6 +85,7 @@ public partial class PageStateContainer : ContentView
         ContentHost.Content = ContentBody;
         EmptyHost.Content = EmptyContent;
         ErrorHost.Content = ErrorContent;
+        ApplyHostedBindingContext();
     }
 
     private void ApplyState()
@@ -87,6 +94,18 @@ public partial class PageStateContainer : ContentView
         ContentHost.IsVisible = State == ScreenState.Content;
         EmptyHost.IsVisible = State == ScreenState.Empty;
         ErrorHost.IsVisible = State == ScreenState.Error;
+    }
+
+    private void ApplyHostedBindingContext()
+    {
+        if (LoadingContent is not null)
+            LoadingContent.BindingContext = BindingContext;
+        if (ContentBody is not null)
+            ContentBody.BindingContext = BindingContext;
+        if (EmptyContent is not null)
+            EmptyContent.BindingContext = BindingContext;
+        if (ErrorContent is not null)
+            ErrorContent.BindingContext = BindingContext;
     }
 
     private static void OnBindablePropertyChanged(BindableObject bindable, object oldValue, object newValue)

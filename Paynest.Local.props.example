@@ -9,7 +9,10 @@
     <!-- Celular fisico: usa la IP LAN actual de tu computadora -->
     <PaynestPhysicalDeviceBaseUrl>http://192.168.0.145:5080</PaynestPhysicalDeviceBaseUrl>
 
-    <!-- Fallback general si no se puede resolver un caso especifico -->
-    <PaynestBaseUrl>http://192.168.0.145:5080</PaynestBaseUrl>
-  </PropertyGroup>
-</Project>
+	    <!-- Fallback general si no se puede resolver un caso especifico -->
+	    <PaynestBaseUrl>http://192.168.0.145:5080</PaynestBaseUrl>
+
+	    <!-- MOCK_SWAP_POINT: usa true solo para desarrollo UI sin backend completo -->
+	    <PaynestUseMocks>false</PaynestUseMocks>
+	  </PropertyGroup>
+	</Project>
