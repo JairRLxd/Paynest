@@ -4,6 +4,7 @@
 			 xmlns:local="clr-namespace:Paynest"
 			 x:Class="Paynest.DebtDetailPage"
 			 Title="Detalle de deuda"
+			 Shell.TabBarIsVisible="False"
 			 BackgroundColor="{StaticResource AppBg}">
 	<Grid>
 		<ScrollView>
@@ -95,8 +96,9 @@
 			</Grid.GestureRecognizers>
 			<Border
 				x:Name="PaymentSheetPanel"
-				Margin="16,0,16,104"
+				Margin="16,0,16,24"
 				Padding="18"
+				MaximumHeightRequest="520"
 				BackgroundColor="{AppThemeBinding Light={StaticResource AppSurface}, Dark={StaticResource AppSurfaceDark}}"
 				Stroke="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}"
 				StrokeShape="RoundRectangle 16"
@@ -106,66 +108,68 @@
 				<Border.GestureRecognizers>
 					<TapGestureRecognizer />
 				</Border.GestureRecognizers>
-				<VerticalStackLayout Spacing="14">
-					<Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-						<VerticalStackLayout Spacing="2">
-							<Label Text="Confirmar pago" FontAttributes="Bold" FontSize="20" />
-							<Label x:Name="PaymentSheetTitleLabel" Style="{StaticResource AppCaption}" Text="Cuota" />
-						</VerticalStackLayout>
+				<ScrollView>
+					<VerticalStackLayout Spacing="14">
+						<Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+							<VerticalStackLayout Spacing="2">
+								<Label Text="Confirmar pago" FontAttributes="Bold" FontSize="20" TextColor="{StaticResource TextPrimary}" />
+								<Label x:Name="PaymentSheetTitleLabel" Style="{StaticResource AppCaption}" Text="Cuota" />
+							</VerticalStackLayout>
+							<Button
+								Grid.Column="1"
+								Text="×"
+								FontSize="20"
+								WidthRequest="42"
+								HeightRequest="42"
+								Padding="0"
+								BackgroundColor="{StaticResource Divider}"
+								TextColor="{StaticResource TextSecondary}"
+								SemanticProperties.Description="Cerrar confirmación de pago"
+								Clicked="OnPaymentSheetDismissClicked" />
+						</Grid>
+
+						<Border
+							x:Name="PaymentSheetStatusBadge"
+							StrokeThickness="0"
+							StrokeShape="RoundRectangle 12"
+							Padding="12,8"
+							BackgroundColor="{StaticResource AppSurfaceAlt}">
+							<Label x:Name="PaymentSheetStatusLabel" Text="Pago con Saldo Paynest" TextColor="{StaticResource GreenPrimary}" FontAttributes="Bold" />
+						</Border>
+
+						<Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="11">
+							<Label Style="{StaticResource AppCaption}" Text="Monto de la cuota" />
+							<Label x:Name="PaymentSheetAmountLabel" Grid.Column="1" FontAttributes="Bold" Text="$0.00" TextColor="{StaticResource TextPrimary}" />
+
+							<Label Grid.Row="1" Style="{StaticResource AppCaption}" Text="Saldo disponible" />
+							<Label x:Name="PaymentSheetBalanceLabel" Grid.Row="1" Grid.Column="1" FontAttributes="Bold" Text="$0.00" TextColor="{StaticResource TextPrimary}" />
+
+							<Label x:Name="PaymentSheetAfterTitleLabel" Grid.Row="2" Style="{StaticResource AppCaption}" Text="Saldo después del pago" />
+							<Label x:Name="PaymentSheetAfterLabel" Grid.Row="2" Grid.Column="1" FontAttributes="Bold" Text="$0.00" />
+
+							<BoxView Grid.Row="3" Grid.ColumnSpan="2" HeightRequest="1" Color="{StaticResource AppBorder}" />
+						</Grid>
+
+						<Label
+							x:Name="PaymentSheetMessageLabel"
+							Style="{StaticResource AppCaption}"
+							Text="Revisa el monto antes de confirmar."
+							LineBreakMode="WordWrap" />
+
 						<Button
-							Grid.Column="1"
-							Text="×"
-							FontSize="20"
-							WidthRequest="42"
-							HeightRequest="42"
-							Padding="0"
-							BackgroundColor="{StaticResource Divider}"
-							TextColor="{StaticResource TextSecondary}"
-							SemanticProperties.Description="Cerrar confirmación de pago"
+							x:Name="PaymentSheetPrimaryButton"
+							Style="{StaticResource AppPrimaryButton}"
+							Text="Pagar con Saldo Paynest"
+							SemanticProperties.Description="Confirmar pago con Saldo Paynest"
+							Clicked="OnPaymentSheetPrimaryClicked" />
+						<Button
+							x:Name="PaymentSheetSecondaryButton"
+							Style="{StaticResource AppSecondaryButton}"
+							Text="Cancelar"
+							SemanticProperties.Description="Cancelar pago y cerrar confirmación"
 							Clicked="OnPaymentSheetDismissClicked" />
-					</Grid>
-
-					<Border
-						x:Name="PaymentSheetStatusBadge"
-						StrokeThickness="0"
-						StrokeShape="RoundRectangle 12"
-						Padding="12,8"
-						BackgroundColor="{StaticResource AppSurfaceAlt}">
-						<Label x:Name="PaymentSheetStatusLabel" Text="Pago con Saldo Paynest" TextColor="{StaticResource GreenPrimary}" FontAttributes="Bold" />
-					</Border>
-
-					<Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="11">
-						<Label Style="{StaticResource AppCaption}" Text="Monto de la cuota" />
-						<Label x:Name="PaymentSheetAmountLabel" Grid.Column="1" FontAttributes="Bold" Text="$0.00" />
-
-						<Label Grid.Row="1" Style="{StaticResource AppCaption}" Text="Saldo disponible" />
-						<Label x:Name="PaymentSheetBalanceLabel" Grid.Row="1" Grid.Column="1" FontAttributes="Bold" Text="$0.00" />
-
-						<Label x:Name="PaymentSheetAfterTitleLabel" Grid.Row="2" Style="{StaticResource AppCaption}" Text="Saldo después del pago" />
-						<Label x:Name="PaymentSheetAfterLabel" Grid.Row="2" Grid.Column="1" FontAttributes="Bold" Text="$0.00" />
-
-						<BoxView Grid.Row="3" Grid.ColumnSpan="2" HeightRequest="1" Color="{StaticResource AppBorder}" />
-					</Grid>
-
-					<Label
-						x:Name="PaymentSheetMessageLabel"
-						Style="{StaticResource AppCaption}"
-						Text="Revisa el monto antes de confirmar."
-						LineBreakMode="WordWrap" />
-
-					<Button
-						x:Name="PaymentSheetPrimaryButton"
-						Style="{StaticResource AppPrimaryButton}"
-						Text="Pagar con Saldo Paynest"
-						SemanticProperties.Description="Confirmar pago con Saldo Paynest"
-						Clicked="OnPaymentSheetPrimaryClicked" />
-					<Button
-						x:Name="PaymentSheetSecondaryButton"
-						Style="{StaticResource AppSecondaryButton}"
-						Text="Cancelar"
-						SemanticProperties.Description="Cancelar pago y cerrar confirmación"
-						Clicked="OnPaymentSheetDismissClicked" />
-				</VerticalStackLayout>
+					</VerticalStackLayout>
+				</ScrollView>
 			</Border>
 		</Grid>
 
@@ -178,8 +182,9 @@
 			</Grid.GestureRecognizers>
 			<Border
 				x:Name="PaymentSuccessPanel"
-				Margin="16,0,16,104"
+				Margin="16,0,16,24"
 				Padding="18"
+				MaximumHeightRequest="520"
 				BackgroundColor="{AppThemeBinding Light={StaticResource AppSurface}, Dark={StaticResource AppSurfaceDark}}"
 				Stroke="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}"
 				StrokeShape="RoundRectangle 16"

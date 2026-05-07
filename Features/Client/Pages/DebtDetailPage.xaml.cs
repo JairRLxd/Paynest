@@ -57,7 +57,12 @@ public partial class DebtDetailPage : ContentPage, IQueryAttributable
 
 		try
 		{
-			await _viewModel.PayInstallmentAsync(installmentId, _requestCts?.Token ?? CancellationToken.None);
+			var paid = await _viewModel.PayInstallmentAsync(installmentId, _requestCts?.Token ?? CancellationToken.None);
+			if (!paid)
+			{
+				UiFeedback.ShowShort("No pudimos aplicar el pago. Actualiza e intenta de nuevo.");
+				return;
+			}
 		}
 		catch (HttpRequestException ex) when (ex.Message.Contains("Saldo insuficiente", StringComparison.OrdinalIgnoreCase))
 		{

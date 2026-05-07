@@ -90,6 +90,7 @@ public sealed class HttpDebtApiClient(HttpClient httpClient, AuthStateService au
                     return new PayInstallmentResponseDto { Success = true };
                 }
 
+                _logger.LogWarning("CLIENT_PAY_DIAGNOSTIC installmentId={InstallmentId} bodyPreview={BodyPreview}", installmentId, PreviewJson(json));
                 return ParsePayResponse(json);
             }, cancellationToken);
         }, cancellationToken);
@@ -695,7 +696,25 @@ public sealed class HttpDebtApiClient(HttpClient httpClient, AuthStateService au
                 return new PayInstallmentResponseDto();
             }
 
-            return JsonSerializer.Deserialize<PayInstallmentResponseDto>(json, JsonOpts) ?? new PayInstallmentResponseDto();
+            var parsed = JsonSerializer.Deserialize<PayInstallmentResponseDto>(json, JsonOpts);
+            if (parsed is null)
+            {
+                return new PayInstallmentResponseDto();
+            }
+
+            if (parsed.Success || parsed.Wallet is not null || parsed.Payment is not null || parsed.Receipt is not null || parsed.Movement is not null)
+            {
+                return new PayInstallmentResponseDto
+                {
+                    Success = true,
+                    Wallet = parsed.Wallet,
+                    Payment = parsed.Payment,
+                    Receipt = parsed.Receipt,
+                    Movement = parsed.Movement
+                };
+            }
+
+            return parsed;
         }
         catch
         {
