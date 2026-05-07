@@ -10,24 +10,6 @@ public static class CollectionSyncHelper
 		Func<TItem, TKey> keySelector)
 		where TKey : notnull
 	{
-		if (target.Count == source.Count)
-		{
-			var equals = true;
-			for (var i = 0; i < target.Count; i++)
-			{
-				if (!EqualityComparer<TKey>.Default.Equals(keySelector(target[i]), keySelector(source[i])))
-				{
-					equals = false;
-					break;
-				}
-			}
-
-			if (equals)
-			{
-				return false;
-			}
-		}
-
 		target.Clear();
 		for (var i = 0; i < source.Count; i++)
 		{

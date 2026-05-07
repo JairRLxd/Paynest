@@ -103,8 +103,9 @@
 				Stroke="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}"
 				StrokeShape="RoundRectangle 16"
 				Shadow="{StaticResource AppCardShadow}"
-				VerticalOptions="End"
-				TranslationY="360">
+				HorizontalOptions="Fill"
+				VerticalOptions="Center"
+				TranslationY="48">
 				<Border.GestureRecognizers>
 					<TapGestureRecognizer />
 				</Border.GestureRecognizers>
@@ -189,8 +190,9 @@
 				Stroke="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}"
 				StrokeShape="RoundRectangle 16"
 				Shadow="{StaticResource AppCardShadow}"
-				VerticalOptions="End"
-				TranslationY="360">
+				HorizontalOptions="Fill"
+				VerticalOptions="Center"
+				TranslationY="48">
 				<Border.GestureRecognizers>
 					<TapGestureRecognizer />
 				</Border.GestureRecognizers>

@@ -124,7 +124,8 @@ public partial class CollectionsViewModel : ObservableObject
     // ── Comandos ───────────────────────────────────────────────────────────
 
     [RelayCommand]
-    async Task RefreshAsync() => await LoadAsync();
+    public Task RefreshAsync()
+        => LoadAsync();
 
     [RelayCommand]
     async Task SelectDebtAsync(CollectionDebtItem debt)

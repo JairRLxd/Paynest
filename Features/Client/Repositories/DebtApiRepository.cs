@@ -238,6 +238,7 @@ public sealed class DebtApiRepository : IClientDebtRepository
 	{
 		_groupsCache = null;
 		_installmentsCache.Clear();
+		_currentGroup = null;
 	}
 
 	private void EnsureCurrentGroup(IReadOnlyList<DebtGroup> groups)
@@ -248,9 +249,14 @@ public sealed class DebtApiRepository : IClientDebtRepository
 			return;
 		}
 
-		if (_currentGroup is not null && groups.Any(g => g.Id == _currentGroup.Id))
+		if (_currentGroup is not null)
 		{
-			return;
+			var refreshedCurrent = groups.FirstOrDefault(g => g.Id == _currentGroup.Id);
+			if (refreshedCurrent is not null)
+			{
+				_currentGroup = refreshedCurrent;
+				return;
+			}
 		}
 
 		_currentGroup = groups[0];

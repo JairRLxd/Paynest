@@ -94,7 +94,15 @@ public partial class ClientDetailViewModel : ObservableObject
         };
 
         DebtHistory.Clear();
-        _ = LoadDetailAsync(client.Id);
+        _ = RefreshAsync();
+    }
+
+    public async Task RefreshAsync(CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(ClientId) || IsLoadingDetail)
+            return;
+
+        await LoadDetailAsync(ClientId, ct);
     }
 
     private async Task LoadDetailAsync(string clientId, CancellationToken ct = default)
@@ -178,7 +186,7 @@ public partial class ClientDetailViewModel : ObservableObject
         };
 
         return new ClientDebtItem(
-            Title:            payment.Method,
+            Title:            ToDisplayMethod(payment.Method),
             DateText:         payment.PaidAt.ToString("d MMM yyyy"),
             Amount:           $"${payment.Amount:N2}",
             Status:           status,
@@ -188,6 +196,16 @@ public partial class ClientDetailViewModel : ObservableObject
             StatusBackground: statusBg,
             StatusTextColor:  statusText);
     }
+
+    private static string ToDisplayMethod(string method)
+        => method.Trim().ToLowerInvariant() switch
+        {
+            "wallet" or "paynestwallet" or "paynest_wallet" => "Saldo Paynest",
+            "cash" => "Efectivo",
+            "transfer" => "Transferencia",
+            "card" => "Tarjeta",
+            _ => string.IsNullOrWhiteSpace(method) ? "Pago" : method
+        };
 
     // ── Comandos ───────────────────────────────────────────────────────────────
 
