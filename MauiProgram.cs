@@ -38,6 +38,7 @@ using Paynest.Features.Splash;
 using Paynest.Infrastructure;
 using Paynest.Infrastructure.Http;
 using Paynest.Services;
+using ZXing.Net.Maui.Controls;
 
 namespace Paynest;
 
@@ -52,6 +53,7 @@ public static class MauiProgram
 
         builder
             .UseMauiApp<App>()
+            .UseBarcodeReader()
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");

@@ -57,7 +57,7 @@
                             Grid.Column="1"
                             Text="Escanear QR"
                             Style="{StaticResource AppSecondaryButton}"
-                            Command="{Binding ScanCommand}"
+                            Clicked="OnScanClicked"
                             SemanticProperties.Description="Escanear codigo QR del cobrador" />
                     </Grid>
 

@@ -19,12 +19,10 @@ public sealed class LinkCollectorPageViewModel : BaseViewModel
 		_refreshService = refreshService;
 		LinkCommand = new Command(async () => await LinkAsync(), () => IsNotBusy);
 		PasteCommand = new Command(async () => await PasteAsync());
-		ScanCommand = new Command(async () => await ShowScanPlaceholderAsync());
 	}
 
 	public Command LinkCommand { get; }
 	public Command PasteCommand { get; }
-	public Command ScanCommand { get; }
 
 	public string CollectorCode
 	{
@@ -81,7 +79,7 @@ public sealed class LinkCollectorPageViewModel : BaseViewModel
 			return false;
 		}
 
-		var normalizedCode = NormalizeCollectorCode(CollectorCode);
+		var normalizedCode = ExtractCollectorCode(CollectorCode);
 		if (string.IsNullOrWhiteSpace(normalizedCode))
 		{
 			ErrorMessage = "Ingresa el codigo que te compartio tu cobrador.";
@@ -124,24 +122,37 @@ public sealed class LinkCollectorPageViewModel : BaseViewModel
 		var text = await Clipboard.Default.GetTextAsync();
 		if (!string.IsNullOrWhiteSpace(text))
 		{
-			CollectorCode = NormalizeCollectorCode(text);
+			ApplyScannedOrPastedCode(text);
 		}
 	}
 
-	private static async Task ShowScanPlaceholderAsync()
+	public void ApplyScannedOrPastedCode(string rawValue)
 	{
-		if (Shell.Current is not null)
+		CollectorCode = ExtractCollectorCode(rawValue);
+	}
+
+	private static string ExtractCollectorCode(string value)
+	{
+		var trimmed = value.Trim();
+		if (Uri.TryCreate(trimmed, UriKind.Absolute, out var uri))
 		{
-			await Shell.Current.DisplayAlertAsync(
-				"Escanear QR",
-				"El escaneo queda preparado para cuando agreguemos el lector de QR. Por ahora pega o escribe el codigo.",
-				"OK");
+			var fromQuery = uri.Query.TrimStart('?')
+				.Split('&', StringSplitOptions.RemoveEmptyEntries)
+				.Select(part => part.Split('=', 2))
+				.FirstOrDefault(parts =>
+					parts.Length == 2 &&
+					string.Equals(parts[0], "collectorCode", StringComparison.OrdinalIgnoreCase));
+			if (fromQuery is { Length: 2 })
+			{
+				trimmed = Uri.UnescapeDataString(fromQuery[1]);
+			}
+			else
+			{
+				trimmed = uri.Segments.LastOrDefault()?.Trim('/') ?? trimmed;
+			}
 		}
-	}
 
-	private static string NormalizeCollectorCode(string value)
-	{
-		var code = value.Trim().ToUpperInvariant().Replace(" ", string.Empty);
+		var code = trimmed.ToUpperInvariant().Replace(" ", string.Empty);
 		if (string.IsNullOrWhiteSpace(code))
 		{
 			return string.Empty;

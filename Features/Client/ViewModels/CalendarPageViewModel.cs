@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Windows.Input;
 using Paynest.Models;
 using Paynest.Services;
@@ -7,6 +8,7 @@ namespace Paynest.Features.Client.ViewModels;
 
 public sealed class CalendarPageViewModel : BaseViewModel
 {
+	private static readonly CultureInfo EsMxCulture = CultureInfo.GetCultureInfo("es-MX");
 	private const string CalendarFilterPreferenceKey = "client.calendar.status_filter";
 	private const string CalendarSelectedMonthPreferenceKey = "client.calendar.selected_month";
 	private readonly IClientDebtService _service;
@@ -106,7 +108,7 @@ public sealed class CalendarPageViewModel : BaseViewModel
 		{
 			var month = SelectedDate.Month;
 			var year = SelectedDate.Year;
-			FilterText = $"Mostrando: {SelectedDate:MMMM yyyy}";
+			FilterText = $"Mostrando: {SelectedDate.ToString("MMMM yyyy", EsMxCulture)}";
 
 			var groups = await _service.GetGroupsAsync(cancellationToken);
 			var installmentTasks = groups
@@ -124,7 +126,10 @@ public sealed class CalendarPageViewModel : BaseViewModel
 				.Where(x => x.Installment.DueDate.Month == month && x.Installment.DueDate.Year == year)
 				.OrderBy(x => x.Installment.DueDate)
 				.ToList();
-			var filteredInstallments = ApplyStatusFilter(monthlyInstallments).ToList();
+			var sourceInstallments = _statusFilter == CalendarStatusFilter.All
+				? allInstallments.OrderBy(x => x.Installment.DueDate).ToList()
+				: monthlyInstallments;
+			var filteredInstallments = ApplyStatusFilter(sourceInstallments).ToList();
 
 			var nextInstallments = filteredInstallments
 				.Select(item => new CalendarInstallmentItem(item.Group.Name, item.Installment))
@@ -137,7 +142,13 @@ public sealed class CalendarPageViewModel : BaseViewModel
 		}
 		catch (OperationCanceledException)
 		{
-			// Navegación o refresh cancelado deliberadamente.
+			if (!cancellationToken.IsCancellationRequested)
+			{
+				InstallmentSections.Clear();
+				HasError = true;
+				ErrorMessage = "La solicitud tardó demasiado. Intenta nuevamente.";
+				State = ScreenState.Error;
+			}
 		}
 		catch (Exception)
 		{

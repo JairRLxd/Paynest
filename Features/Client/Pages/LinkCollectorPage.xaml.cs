@@ -35,4 +35,10 @@ public partial class LinkCollectorPage : ContentPage
 		await DisplayAlertAsync("Cobrador vinculado", "Ya puedes consultar la informacion que tu cobrador tenga registrada.", "OK");
 		await Shell.Current.GoToAsync("//main");
 	}
+
+	private async void OnScanClicked(object sender, EventArgs e)
+	{
+		var scannerPage = new QrScannerPage(code => _viewModel.ApplyScannedOrPastedCode(code));
+		await Navigation.PushModalAsync(new NavigationPage(scannerPage));
+	}
 }

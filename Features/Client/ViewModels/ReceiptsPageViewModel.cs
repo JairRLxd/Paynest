@@ -23,6 +23,7 @@ public sealed class ReceiptsPageViewModel : BaseViewModel
 	}
 
 	public ObservableCollection<ReceiptSection> ReceiptSections { get; } = [];
+	public ObservableCollection<ReceiptItem> Receipts { get; } = [];
 
 	public string GroupText
 	{
@@ -30,7 +31,7 @@ public sealed class ReceiptsPageViewModel : BaseViewModel
 		private set => SetProperty(ref _groupText, value);
 	}
 
-	public bool HasItems => ReceiptSections.Count > 0;
+	public bool HasItems => Receipts.Count > 0;
 	public bool HasError
 	{
 		get => _hasError;
@@ -66,21 +67,39 @@ public sealed class ReceiptsPageViewModel : BaseViewModel
 			var nextReceipts = receipts.Select(r => new ReceiptItem(r)).ToList();
 			var nextSections = BuildSections(nextReceipts);
 			ReceiptSections.Clear();
+			Receipts.Clear();
 			foreach (var section in nextSections)
 			{
 				ReceiptSections.Add(section);
 			}
+			foreach (var receipt in nextReceipts.OrderByDescending(x => x.PaidDate))
+			{
+				Receipts.Add(receipt);
+			}
 			HasError = false;
 			ErrorMessage = string.Empty;
-			State = ReceiptSections.Count == 0 ? ScreenState.Empty : ScreenState.Content;
+			State = Receipts.Count == 0 ? ScreenState.Empty : ScreenState.Content;
 		}
 		catch (OperationCanceledException)
 		{
-			// Navegación o refresh cancelado deliberadamente.
+			if (cancellationToken.IsCancellationRequested)
+			{
+				// A cancellation triggered by navigation/refresh should not leave the screen in Loading.
+				State = Receipts.Count == 0 ? ScreenState.Empty : ScreenState.Content;
+			}
+			else
+			{
+				ReceiptSections.Clear();
+				Receipts.Clear();
+				HasError = true;
+				ErrorMessage = "La solicitud tardó demasiado. Intenta nuevamente.";
+				State = ScreenState.Error;
+			}
 		}
 		catch (Exception)
 		{
 			ReceiptSections.Clear();
+			Receipts.Clear();
 			HasError = true;
 			ErrorMessage = "No fue posible cargar tus recibos por ahora. Reintenta en unos segundos.";
 			State = ScreenState.Error;

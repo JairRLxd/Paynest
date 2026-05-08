@@ -132,7 +132,11 @@ public sealed class MainPageViewModel : BaseViewModel
 		}
 		catch (OperationCanceledException)
 		{
-			// Navegación cambió de pantalla; no tratamos esto como error.
+			if (!cancellationToken.IsCancellationRequested)
+			{
+				ErrorMessage = "La solicitud tardó demasiado. Intenta nuevamente.";
+				State = ScreenState.Error;
+			}
 		}
 		catch (Exception)
 		{

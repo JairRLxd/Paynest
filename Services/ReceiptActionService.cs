@@ -1,4 +1,5 @@
 #nullable enable
+using System.Net.Http.Headers;
 using Paynest.Models;
 
 namespace Paynest.Services;
@@ -13,10 +14,17 @@ public sealed class ReceiptActionResult
 public sealed class ReceiptActionService
 {
 	private readonly IClientDebtService _debtService;
+	private readonly HttpClient _httpClient;
+	private readonly AuthStateService _authState;
 
-	public ReceiptActionService(IClientDebtService debtService)
+	public ReceiptActionService(
+		IClientDebtService debtService,
+		HttpClient httpClient,
+		AuthStateService authState)
 	{
 		_debtService = debtService;
+		_httpClient = httpClient;
+		_authState = authState;
 	}
 
 	public async Task<ReceiptActionResult> OpenReceiptAsync(string receiptId, CancellationToken cancellationToken = default)
@@ -27,8 +35,17 @@ public sealed class ReceiptActionService
 			return resolved;
 		}
 
-		await Launcher.OpenAsync(new Uri(resolved.Url));
-		return resolved;
+		var localPath = await DownloadReceiptFileAsync(receiptId, resolved.Url, cancellationToken);
+		if (string.IsNullOrWhiteSpace(localPath))
+		{
+			return ReceiptUnavailable("No se pudo abrir el recibo por ahora.");
+		}
+
+		await Launcher.OpenAsync(new OpenFileRequest
+		{
+			File = new ReadOnlyFile(localPath)
+		});
+		return new ReceiptActionResult { Success = true, Url = resolved.Url };
 	}
 
 	public async Task<ReceiptActionResult> DownloadReceiptAsync(string receiptId, CancellationToken cancellationToken = default)
@@ -39,8 +56,17 @@ public sealed class ReceiptActionService
 			return resolved;
 		}
 
-		await Launcher.OpenAsync(new Uri(resolved.Url));
-		return resolved;
+		var localPath = await DownloadReceiptFileAsync(receiptId, resolved.Url, cancellationToken);
+		if (string.IsNullOrWhiteSpace(localPath))
+		{
+			return ReceiptUnavailable("No se pudo descargar el recibo por ahora.");
+		}
+
+		await Launcher.OpenAsync(new OpenFileRequest
+		{
+			File = new ReadOnlyFile(localPath)
+		});
+		return new ReceiptActionResult { Success = true, Url = resolved.Url };
 	}
 
 	public async Task<ReceiptActionResult> ShareReceiptAsync(string receiptId, CancellationToken cancellationToken = default)
@@ -51,12 +77,18 @@ public sealed class ReceiptActionService
 			return resolved;
 		}
 
-		await Share.Default.RequestAsync(new ShareTextRequest
+		var localPath = await DownloadReceiptFileAsync(receiptId, resolved.Url, cancellationToken);
+		if (string.IsNullOrWhiteSpace(localPath))
 		{
-			Uri = resolved.Url,
+			return ReceiptUnavailable("No se pudo preparar el recibo para compartir.");
+		}
+
+		await Share.Default.RequestAsync(new ShareFileRequest
+		{
+			File = new ShareFile(localPath),
 			Title = "Compartir recibo"
 		});
-		return resolved;
+		return new ReceiptActionResult { Success = true, Url = resolved.Url };
 	}
 
 	public async Task<ReceiptActionResult> OpenPaymentReceiptAsync(PayInstallmentResult? paymentResult, CancellationToken cancellationToken = default)
@@ -116,6 +148,40 @@ public sealed class ReceiptActionService
 		return string.IsNullOrWhiteSpace(receipt.FileUrl)
 			? await _debtService.GetReceiptDownloadUrlAsync(receiptId, cancellationToken)
 			: receipt.FileUrl;
+	}
+
+	private async Task<string?> DownloadReceiptFileAsync(string receiptId, string remoteUrl, CancellationToken cancellationToken)
+	{
+		if (!Uri.TryCreate(remoteUrl, UriKind.Absolute, out var uri))
+		{
+			return null;
+		}
+
+		return await _authState.CallProtectedAsync(async token =>
+		{
+			using var req = new HttpRequestMessage(HttpMethod.Get, uri);
+			req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+			using var res = await _httpClient.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+			res.EnsureSuccessStatusCode();
+
+			var bytes = await res.Content.ReadAsByteArrayAsync(cancellationToken);
+			if (bytes.Length == 0)
+			{
+				return null;
+			}
+
+			var folder = Path.Combine(FileSystem.CacheDirectory, "receipts");
+			Directory.CreateDirectory(folder);
+			var filePath = Path.Combine(folder, BuildReceiptFileName(receiptId));
+			await File.WriteAllBytesAsync(filePath, bytes, cancellationToken);
+			return filePath;
+		}, cancellationToken);
+	}
+
+	private static string BuildReceiptFileName(string receiptId)
+	{
+		var safe = string.Join("_", receiptId.Split(Path.GetInvalidFileNameChars(), StringSplitOptions.RemoveEmptyEntries));
+		return $"{(string.IsNullOrWhiteSpace(safe) ? "recibo" : safe)}.pdf";
 	}
 
 	private static ReceiptActionResult ReceiptUnavailable(string message)
