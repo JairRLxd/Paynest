@@ -4,11 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:Paynest"
-    xmlns:home="clr-namespace:Paynest.Features.Cobrador.Home.Views"
-    xmlns:clients="clr-namespace:Paynest.Features.Cobrador.Clients.Views"
-    xmlns:collections="clr-namespace:Paynest.Features.Cobrador.Collections.Views"
-    xmlns:schedule="clr-namespace:Paynest.Features.Cobrador.Schedule.Views"
-    xmlns:profile="clr-namespace:Paynest.Features.Cobrador.Profile.Views"
+    xmlns:cobrador="clr-namespace:Paynest.Features.Cobrador.Pages"
     Shell.FlyoutBehavior="Disabled"
     Shell.BackgroundColor="{StaticResource GreenPrimary}"
     Shell.ForegroundColor="{StaticResource White}"
@@ -92,31 +88,31 @@
             Title="Inicio"
             Icon="tab_home.svg"
             Route="collector_home"
-            ContentTemplate="{DataTemplate home:HomePage}" />
+            ContentTemplate="{DataTemplate cobrador:HomePage}" />
 
         <ShellContent
             Title="Clientes"
             Icon="tab_clients.svg"
             Route="clients"
-            ContentTemplate="{DataTemplate clients:ClientsPage}" />
+            ContentTemplate="{DataTemplate cobrador:ClientsPage}" />
 
         <ShellContent
             Title="Cobros"
             Icon="tab_collections.svg"
             Route="collections"
-            ContentTemplate="{DataTemplate collections:CollectionsPage}" />
+            ContentTemplate="{DataTemplate cobrador:CollectionsPage}" />
 
         <ShellContent
             Title="Agenda"
             Icon="tab_schedule.svg"
             Route="schedule"
-            ContentTemplate="{DataTemplate schedule:SchedulePage}" />
+            ContentTemplate="{DataTemplate cobrador:SchedulePage}" />
 
         <ShellContent
             Title="Perfil"
             Icon="tab_profile.svg"
             Route="profile"
-            ContentTemplate="{DataTemplate profile:UserProfilePage}" />
+            ContentTemplate="{DataTemplate cobrador:UserProfilePage}" />
     </TabBar>
 
     <MenuItem x:Name="SwitchGroupMenuItem" Text="Cambiar deuda activa" Clicked="OnSwitchGroupClicked" />

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Paynest.Features.Cobrador.Pages.ComprobanteViewerPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Paynest.Features.Cobrador.ViewModels"
+    x:DataType="vm:ComprobanteViewerViewModel"
+    Shell.NavBarIsVisible="False"
+    BackgroundColor="{StaticResource PageBackground}">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- ── Top bar ───────────────────────────────────────────────────────── -->
+        <Grid Grid.Row="0" ColumnDefinitions="44,*" Padding="16,52,16,10">
+            <Border Grid.Column="0" BackgroundColor="Transparent" StrokeThickness="0"
+                    HeightRequest="40" WidthRequest="40">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding BackCommand}"/>
+                </Border.GestureRecognizers>
+                <Label Text="‹" FontSize="30" TextColor="{StaticResource GreenPrimary}"
+                       HorizontalOptions="Center" VerticalOptions="Center"/>
+            </Border>
+            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="1">
+                <Label Text="{Binding ClientNameUpper}"
+                       FontSize="11" FontFamily="OpenSansSemibold" CharacterSpacing="1.5"
+                       TextColor="{StaticResource GreenPrimary}"/>
+                <Label Text="Comprobante de pago"
+                       FontSize="24" FontFamily="OpenSansSemibold"
+                       TextColor="{StaticResource TextPrimary}"/>
+            </VerticalStackLayout>
+        </Grid>
+
+        <!-- ── Contenido ─────────────────────────────────────────────────────── -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,0,16,20" Spacing="14">
+
+                <!-- Resumen de la deuda -->
+                <Border BackgroundColor="{StaticResource White}"
+                        Stroke="#DDE5DF" StrokeThickness="1"
+                        StrokeShape="RoundRectangle 20" Padding="16,14">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout Grid.Column="0" Spacing="4">
+                            <Label Text="{Binding DebtTitle}"
+                                   FontSize="16" FontFamily="OpenSansSemibold"
+                                   TextColor="{StaticResource TextPrimary}"/>
+                            <HorizontalStackLayout Spacing="3" VerticalOptions="Center">
+                                <Label Text="$" FontSize="13" FontFamily="OpenSansSemibold"
+                                       TextColor="{StaticResource GreenPrimary}"
+                                       VerticalOptions="End" Margin="0,0,0,2"/>
+                                <Label Text="{Binding Amount}"
+                                       FontSize="22" FontFamily="OpenSansSemibold"
+                                       TextColor="{StaticResource GreenPrimary}"/>
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                        <Border Grid.Column="1"
+                                BackgroundColor="{Binding StatusBadgeBg}"
+                                StrokeThickness="0" StrokeShape="RoundRectangle 10"
+                                Padding="12,5" VerticalOptions="Center">
+                            <Label Text="{Binding StatusLabel}"
+                                   FontSize="12" FontFamily="OpenSansSemibold"
+                                   TextColor="{Binding StatusColor}"/>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- Comprobante adjunto -->
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Comprobante adjunto"
+                           FontSize="14" FontFamily="OpenSansSemibold"
+                           TextColor="{StaticResource TextPrimary}"/>
+
+                    <!-- Sin comprobante -->
+                    <Border IsVisible="{Binding HasNoProof}"
+                            BackgroundColor="#F0F5F2"
+                            Stroke="#D9E4DC" StrokeThickness="1"
+                            StrokeShape="RoundRectangle 16"
+                            HeightRequest="200" Padding="20">
+                        <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center"
+                                             Spacing="12">
+                            <Label Text="📎" FontSize="40" HorizontalOptions="Center"/>
+                            <Label Text="El cliente aún no ha subido el comprobante de pago."
+                                   FontSize="13" TextColor="#8AA69A"
+                                   HorizontalTextAlignment="Center"/>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Con comprobante -->
+                    <Border IsVisible="{Binding HasProof}"
+                            Stroke="#DDE5DF" StrokeThickness="1"
+                            StrokeShape="RoundRectangle 16"
+                            Padding="0" HeightRequest="260">
+                        <Image Source="{Binding ProofImageSource}" Aspect="AspectFill"/>
+                    </Border>
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- ── Botones de acción ─────────────────────────────────────────────── -->
+        <Grid Grid.Row="2" Padding="16,10,16,36" ColumnDefinitions="*,12,*">
+            <Button Grid.Column="0"
+                    Text="Rechazar"
+                    Command="{Binding RejectCommand}"
+                    BackgroundColor="White"
+                    BorderColor="#F04438" BorderWidth="1.5"
+                    TextColor="#F04438"
+                    FontFamily="OpenSansSemibold" FontSize="15"
+                    CornerRadius="28" HeightRequest="52"/>
+            <Button Grid.Column="2"
+                    Text="Aprobar"
+                    Command="{Binding ApproveCommand}"
+                    BackgroundColor="{StaticResource GreenPrimary}"
+                    TextColor="White"
+                    FontFamily="OpenSansSemibold" FontSize="15"
+                    CornerRadius="28" HeightRequest="52"/>
+        </Grid>
+
+    </Grid>
+</ContentPage>

@@ -1,10 +1,4 @@
-﻿using Paynest.Features.Cobrador.Clients.AddClient.Views;
-using Paynest.Features.Cobrador.Clients.ClientPicker.Views;
-using Paynest.Features.Cobrador.Clients.ComprobanteViewer.Views;
-using Paynest.Features.Cobrador.Clients.CreateDebt.Views;
-using Paynest.Features.Cobrador.Clients.Detail.Views;
-using Paynest.Features.Cobrador.Clients.Edit.Views;
-using Paynest.Features.Cobrador.Clients.RegisterPayment.Views;
+﻿using Paynest.Features.Cobrador.Pages;
 using Paynest.Services;
 #if ANDROID
 using Android.Widget;

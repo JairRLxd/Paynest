@@ -10,14 +10,19 @@ namespace Paynest.Infrastructure.Http;
 
 public class CollectorCollectionsApiClient(HttpClient http, AuthStateService authState) : ICollectorCollectionsService
 {
-    public Task<CollectorCollectionsResponse> GetCollectionsAsync(CancellationToken ct = default)
+    public Task<CollectorCollectionsDashboardResponse> GetDashboardAsync(CancellationToken ct = default)
         => authState.CallProtectedAsync(
-            token => GetAuthorizedAsync(token, ct),
+            token => GetAuthorizedAsync<CollectorCollectionsDashboardResponse>("/api/v1/collector/collections/dashboard", token, ct),
             ct);
 
-    private async Task<CollectorCollectionsResponse> GetAuthorizedAsync(string accessToken, CancellationToken ct)
+    public Task<CollectorCollectionsListResponse> GetCollectionsAsync(string filter, CancellationToken ct = default)
+        => authState.CallProtectedAsync(
+            token => GetAuthorizedAsync<CollectorCollectionsListResponse>($"/api/v1/collector/collections?filter={Uri.EscapeDataString(filter)}", token, ct),
+            ct);
+
+    private async Task<T> GetAuthorizedAsync<T>(string path, string accessToken, CancellationToken ct)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Get, "/api/v1/collector/collections");
+        using var request = new HttpRequestMessage(HttpMethod.Get, path);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -25,7 +30,7 @@ public class CollectorCollectionsApiClient(HttpClient http, AuthStateService aut
         if (!response.IsSuccessStatusCode)
             throw await CreateApiExceptionAsync(response, "No pudimos cargar los cobros.", ct);
 
-        var result = await response.Content.ReadFromJsonAsync<CollectorCollectionsResponse>(cancellationToken: ct);
+        var result = await response.Content.ReadFromJsonAsync<T>(cancellationToken: ct);
         return result!;
     }
 

@@ -35,6 +35,14 @@ public sealed class DebtDetailPageViewModel : BaseViewModel
 	public string LastPaidInstallmentId { get; private set; } = string.Empty;
 	public PayInstallmentResult? LastPaymentResult { get; private set; }
 	public string LastPaymentBalanceText => LastPaymentResult?.WalletBalance is decimal balance ? balance.ToString("C") : string.Empty;
+	public string LastPaymentMethodText => LastPaymentResult?.PaymentMethod?.Trim().ToLowerInvariant() switch
+	{
+		"cash"                                                                          => "Efectivo",
+		"transfer"                                                                      => "Transferencia",
+		"card" or "wallet" or "paynestwallet" or "paynest_wallet" or "paynest_card"    => "Tarjeta Paynest",
+		{ Length: > 0 } other                                                           => other,
+		_                                                                               => "Tarjeta Paynest"
+	};
 	public bool IsAllPaidStateVisible
 	{
 		get => _isAllPaidStateVisible;
@@ -97,6 +105,7 @@ public sealed class DebtDetailPageViewModel : BaseViewModel
 				LastPaymentResult = result;
 				RaisePropertyChanged(nameof(LastPaymentResult));
 				RaisePropertyChanged(nameof(LastPaymentBalanceText));
+				RaisePropertyChanged(nameof(LastPaymentMethodText));
 				MarkInstallmentAsPaidLocally(installmentId);
 				await Task.Delay(650, cancellationToken);
 				await ReloadAsync(cancellationToken);

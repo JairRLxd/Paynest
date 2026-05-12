@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Paynest.Features.Cobrador.Pages.ClientsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Paynest.Features.Cobrador.ViewModels"
+    xmlns:models="clr-namespace:Paynest.Features.Cobrador.Models"
+    x:Name="ClientsRoot"
+    x:DataType="vm:ClientsViewModel"
+    Shell.NavBarIsVisible="False"
+    BackgroundColor="{StaticResource PageBackground}">
+
+    <Grid RowDefinitions="*">
+        <CollectionView ItemsSource="{Binding Clients}"
+                        SelectionMode="None"
+                        Margin="0">
+            <CollectionView.Header>
+                <VerticalStackLayout Padding="24,52,24,24" Spacing="0">
+
+                    <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,16">
+                        <Label Grid.Column="0" Text="Clientes"
+                               FontFamily="OpenSansSemibold" FontSize="30"
+                               TextColor="{StaticResource TextPrimary}"
+                               VerticalOptions="Center"/>
+                        <Border Grid.Column="1" BackgroundColor="{StaticResource GreenPrimary}"
+                                StrokeThickness="0" StrokeShape="RoundRectangle 16"
+                                Padding="14,10" VerticalOptions="Center">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding AddClientCommand}"/>
+                            </Border.GestureRecognizers>
+                            <HorizontalStackLayout Spacing="6">
+                                <Label Text="＋" TextColor="White" FontSize="16"
+                                       FontFamily="OpenSansSemibold" VerticalOptions="Center"/>
+                                <Label Text="Nuevo" TextColor="White" FontSize="14"
+                                       FontFamily="OpenSansSemibold" VerticalOptions="Center"/>
+                            </HorizontalStackLayout>
+                        </Border>
+                    </Grid>
+
+                    <Border BackgroundColor="White"
+                            Stroke="#EBEBEB" StrokeThickness="1"
+                            StrokeShape="RoundRectangle 16"
+                            Margin="0,0,0,12" Padding="0">
+                        <Grid ColumnDefinitions="48,*" HeightRequest="48">
+                            <Label Grid.Column="0" Text="🔍" FontSize="17"
+                                   HorizontalOptions="Center" VerticalOptions="Center"/>
+                            <Entry Grid.Column="1" Text="{Binding SearchText}"
+                                   Placeholder="Buscar cliente..."
+                                   PlaceholderColor="{StaticResource TextPlaceholder}"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   BackgroundColor="Transparent"
+                                   VerticalOptions="Center"/>
+                        </Grid>
+                    </Border>
+
+                    <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,12">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="Tu cartera"
+                                   FontFamily="OpenSansSemibold"
+                                   FontSize="16"
+                                   TextColor="{StaticResource TextPrimary}"/>
+                            <Label Text="{Binding VisibleCountSummary}"
+                                   FontSize="12"
+                                   TextColor="{StaticResource TextSecondary}"/>
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <ScrollView Orientation="Horizontal"
+                                HorizontalScrollBarVisibility="Never"
+                                Margin="0,0,0,14">
+                        <HorizontalStackLayout Spacing="8" Padding="0,0,24,0">
+                            <Border BackgroundColor="{Binding AllFilterBg}"
+                                    Stroke="{StaticResource InputBorderBrush}" StrokeThickness="1.5"
+                                    StrokeShape="RoundRectangle 20" Padding="16,8">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectFilterCommand}" CommandParameter="Todos"/>
+                                </Border.GestureRecognizers>
+                                <Label Text="Todos" FontFamily="OpenSansSemibold" FontSize="13" TextColor="{Binding AllFilterText}"/>
+                            </Border>
+
+                            <Border BackgroundColor="{Binding PendienteFilterBg}"
+                                    Stroke="{StaticResource InputBorderBrush}" StrokeThickness="1.5"
+                                    StrokeShape="RoundRectangle 20" Padding="16,8">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectFilterCommand}" CommandParameter="Pendiente"/>
+                                </Border.GestureRecognizers>
+                                <Label Text="Pendiente" FontFamily="OpenSansSemibold" FontSize="13" TextColor="{Binding PendienteFilterText}"/>
+                            </Border>
+
+                            <Border BackgroundColor="{Binding VencidoFilterBg}"
+                                    Stroke="{StaticResource InputBorderBrush}" StrokeThickness="1.5"
+                                    StrokeShape="RoundRectangle 20" Padding="16,8">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectFilterCommand}" CommandParameter="Vencido"/>
+                                </Border.GestureRecognizers>
+                                <Label Text="Vencidos" FontFamily="OpenSansSemibold" FontSize="13" TextColor="{Binding VencidoFilterText}"/>
+                            </Border>
+
+                            <Border BackgroundColor="{Binding AlDiaFilterBg}"
+                                    Stroke="{StaticResource InputBorderBrush}" StrokeThickness="1.5"
+                                    StrokeShape="RoundRectangle 20" Padding="16,8">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectFilterCommand}" CommandParameter="Al día"/>
+                                </Border.GestureRecognizers>
+                                <Label Text="Al día" FontFamily="OpenSansSemibold" FontSize="13" TextColor="{Binding AlDiaFilterText}"/>
+                            </Border>
+
+                            <Border BackgroundColor="{Binding ParcialFilterBg}"
+                                    Stroke="{StaticResource InputBorderBrush}" StrokeThickness="1.5"
+                                    StrokeShape="RoundRectangle 20" Padding="16,8">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectFilterCommand}" CommandParameter="Parcial"/>
+                                </Border.GestureRecognizers>
+                                <Label Text="Parcial" FontFamily="OpenSansSemibold" FontSize="13" TextColor="{Binding ParcialFilterText}"/>
+                            </Border>
+                        </HorizontalStackLayout>
+                    </ScrollView>
+                    <ActivityIndicator IsRunning="{Binding IsLoading}"
+                                       IsVisible="{Binding IsLoading}"
+                                       Color="{StaticResource GreenPrimary}"
+                                       HorizontalOptions="Center"
+                                       Margin="0,10,0,6"/>
+
+                    <VerticalStackLayout IsVisible="{Binding IsEmpty}"
+                                         HorizontalOptions="Center"
+                                         Spacing="8"
+                                         Margin="0,12,0,12">
+                        <Label Text="Sin clientes para mostrar"
+                               FontSize="14" FontFamily="OpenSansSemibold"
+                               TextColor="{StaticResource TextSecondary}"
+                               HorizontalTextAlignment="Center"/>
+                        <Label Text="Prueba otro filtro o agrega un cliente nuevo."
+                               FontSize="12" TextColor="{StaticResource TextSecondary}"
+                               HorizontalTextAlignment="Center"/>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </CollectionView.Header>
+
+            <CollectionView.EmptyView>
+                <Grid HeightRequest="1"/>
+            </CollectionView.EmptyView>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:ClientSummary">
+                    <Grid Padding="24,0,24,12">
+                        <Border BackgroundColor="White"
+                                Stroke="#E6ECE7"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 18"
+                                Padding="14,14">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={x:Reference ClientsRoot}, Path=BindingContext.OpenClientDetailCommand}"
+                                    CommandParameter="{Binding .}"/>
+                            </Border.GestureRecognizers>
+
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                <Border Grid.Column="0"
+                                        BackgroundColor="{Binding AvatarColor}"
+                                        StrokeThickness="0" StrokeShape="Ellipse"
+                                        HeightRequest="42" WidthRequest="42"
+                                        VerticalOptions="Start">
+                                    <Label Text="{Binding Initials}"
+                                           TextColor="White" FontSize="13"
+                                           FontFamily="OpenSansSemibold"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"/>
+                                </Border>
+
+                                <VerticalStackLayout Grid.Column="1" Spacing="4">
+                                    <Label Text="{Binding Name}"
+                                           FontFamily="OpenSansSemibold" FontSize="15"
+                                           TextColor="{StaticResource TextPrimary}"/>
+                                    <Label Text="{Binding DateText}"
+                                           TextColor="{StaticResource TextSecondary}"
+                                           FontSize="12"/>
+                                    <Border BackgroundColor="{Binding StatusBgColor}"
+                                            StrokeThickness="0"
+                                            StrokeShape="RoundRectangle 999"
+                                            Padding="10,4"
+                                            HorizontalOptions="Start">
+                                        <Label Text="{Binding Status}"
+                                               TextColor="{Binding StatusTextColor}"
+                                               FontSize="11"
+                                               FontFamily="OpenSansSemibold"/>
+                                    </Border>
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout Grid.Column="2"
+                                                     HorizontalOptions="End"
+                                                     Spacing="4">
+                                    <Label Text="{Binding Amount}"
+                                           FontFamily="OpenSansSemibold" FontSize="16"
+                                           TextColor="{StaticResource TextPrimary}"
+                                           HorizontalTextAlignment="End"/>
+                                    <Label Text="Ver detalle →"
+                                           FontSize="12"
+                                           FontFamily="OpenSansSemibold"
+                                           TextColor="{StaticResource GreenPrimary}"
+                                           HorizontalTextAlignment="End"/>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

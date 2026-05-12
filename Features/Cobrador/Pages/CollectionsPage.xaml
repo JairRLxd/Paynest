@@ -1,0 +1,593 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Paynest.Features.Cobrador.Pages.CollectionsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Paynest.Features.Cobrador.ViewModels"
+    xmlns:models="clr-namespace:Paynest.Features.Cobrador.Models"
+    x:Name="thisPage"
+    x:DataType="vm:CollectionsViewModel"
+    Shell.NavBarIsVisible="False"
+    BackgroundColor="{StaticResource PageBackground}">
+
+    <Grid RowDefinitions="*">
+        <CollectionView ItemsSource="{Binding Sections}"
+                        SelectionMode="None"
+                        IsGrouped="True"
+                        ItemSizingStrategy="MeasureFirstItem"
+                        BackgroundColor="Transparent">
+            <CollectionView.Header>
+                <VerticalStackLayout Spacing="0">
+
+                    <Border BackgroundColor="{StaticResource GreenPrimary}"
+                            StrokeThickness="0">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="0,0,32,32"/>
+                        </Border.StrokeShape>
+
+                        <VerticalStackLayout Padding="20,52,20,22" Spacing="18">
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                                <VerticalStackLayout Spacing="4">
+                                    <Label Text="Centro de cobranza"
+                                           FontFamily="OpenSansSemibold"
+                                           FontSize="27"
+                                           TextColor="White"/>
+                                    <Label Text="Monitorea lo urgente, lo de hoy y lo que sigue en la semana."
+                                           FontSize="13"
+                                           TextColor="#CBE3D6"/>
+                                </VerticalStackLayout>
+
+                                <Border Grid.Column="1"
+                                        BackgroundColor="#1F4F37"
+                                        StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 18"
+                                        Padding="14,10"
+                                        VerticalOptions="Center">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding NewDebtCommand}"/>
+                                    </Border.GestureRecognizers>
+                                    <HorizontalStackLayout Spacing="6">
+                                        <Label Text="＋"
+                                               TextColor="White"
+                                               FontSize="16"
+                                               FontFamily="OpenSansSemibold"/>
+                                        <Label Text="Nueva"
+                                               TextColor="White"
+                                               FontSize="14"
+                                               FontFamily="OpenSansSemibold"/>
+                                    </HorizontalStackLayout>
+                                </Border>
+                            </Grid>
+
+                            <Grid ColumnDefinitions="*,10,*">
+                                <Border Grid.Column="0"
+                                        BackgroundColor="#1F4F37"
+                                        StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 18"
+                                        Padding="14,12">
+                                    <VerticalStackLayout Spacing="3">
+                                        <Label Text="PARA HOY"
+                                               TextColor="#B8DCC9"
+                                               FontSize="11"
+                                               CharacterSpacing="0.6"/>
+                                        <Label Text="{Binding CobrosHoyAmount}"
+                                               TextColor="White"
+                                               FontSize="24"
+                                               FontFamily="OpenSansSemibold"/>
+                                        <Label Text="{Binding CobrosHoyCount}"
+                                               TextColor="#B8DCC9"
+                                               FontSize="12"/>
+                                    </VerticalStackLayout>
+                                </Border>
+
+                                <Border Grid.Column="2"
+                                        BackgroundColor="#1F4F37"
+                                        StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 18"
+                                        Padding="14,12">
+                                    <VerticalStackLayout Spacing="3">
+                                        <Label Text="ESTA SEMANA"
+                                               TextColor="#B8DCC9"
+                                               FontSize="11"
+                                               CharacterSpacing="0.6"/>
+                                        <Label Text="{Binding CobrosSemanaAmount}"
+                                               TextColor="White"
+                                               FontSize="24"
+                                               FontFamily="OpenSansSemibold"/>
+                                        <Label Text="{Binding CobrosSemanaCount}"
+                                               TextColor="#B8DCC9"
+                                               FontSize="12"/>
+                                    </VerticalStackLayout>
+                                </Border>
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <VerticalStackLayout Padding="20,20,20,18" Spacing="0">
+                        <Grid ColumnDefinitions="*,12,*" Margin="0,0,0,12">
+                            <Border Grid.Column="0"
+                                    BackgroundColor="{StaticResource White}"
+                                    Stroke="#E4EBE6"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 18"
+                                    Padding="16,14">
+                                <VerticalStackLayout Spacing="4">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="CARTERA ACTIVA"
+                                               FontSize="10"
+                                               FontFamily="OpenSansSemibold"
+                                               CharacterSpacing="0.7"
+                                               TextColor="{StaticResource TextSecondary}"/>
+                                        <Border Grid.Column="1"
+                                                BackgroundColor="#EBF5EF"
+                                                StrokeThickness="0"
+                                                StrokeShape="RoundRectangle 7"
+                                                Padding="6,4">
+                                            <Label Text="▤"
+                                                   FontSize="11"
+                                                   TextColor="{StaticResource GreenPrimary}"/>
+                                        </Border>
+                                    </Grid>
+                                    <Label Text="{Binding TotalAdeudado}"
+                                           FontFamily="OpenSansSemibold"
+                                           FontSize="24"
+                                           TextColor="{StaticResource TextPrimary}"/>
+                                    <Label Text="{Binding TotalDeudas}"
+                                           FontSize="12"
+                                           TextColor="{StaticResource TextSecondary}"/>
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <Border Grid.Column="2"
+                                    BackgroundColor="{StaticResource White}"
+                                    Stroke="#E4EBE6"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 18"
+                                    Padding="16,14">
+                                <VerticalStackLayout Spacing="4">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="RIESGO"
+                                               FontSize="10"
+                                               FontFamily="OpenSansSemibold"
+                                               CharacterSpacing="0.7"
+                                               TextColor="{StaticResource TextSecondary}"/>
+                                        <Border Grid.Column="1"
+                                                BackgroundColor="#FFF1F3"
+                                                StrokeThickness="0"
+                                                StrokeShape="RoundRectangle 7"
+                                                Padding="6,4">
+                                            <Label Text="⚠"
+                                                   FontSize="11"
+                                                   TextColor="#F04438"/>
+                                        </Border>
+                                    </Grid>
+                                    <Label Text="{Binding VencidasCount}"
+                                           FontFamily="OpenSansSemibold"
+                                           FontSize="28"
+                                           TextColor="#F04438"/>
+                                    <Label Text="{Binding VencidasAmount}"
+                                           FontSize="12"
+                                           TextColor="{StaticResource TextSecondary}"/>
+                                </VerticalStackLayout>
+                            </Border>
+                        </Grid>
+
+                        <Border BackgroundColor="{StaticResource White}"
+                                Stroke="#E4EBE6"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 20"
+                                Padding="16,14"
+                                Margin="0,0,0,18">
+                            <VerticalStackLayout Spacing="10">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <VerticalStackLayout Spacing="2">
+                                        <Label Text="Vista operativa"
+                                               FontFamily="OpenSansSemibold"
+                                               FontSize="16"
+                                               TextColor="{StaticResource TextPrimary}"/>
+                                        <Label Text="Usa filtros por tiempo para priorizar tu jornada."
+                                               FontSize="12"
+                                               TextColor="{StaticResource TextSecondary}"/>
+                                    </VerticalStackLayout>
+                                    <Border Grid.Column="1"
+                                            BackgroundColor="#F7FAF7"
+                                            Stroke="#DCE5DF"
+                                            StrokeThickness="1"
+                                            StrokeShape="RoundRectangle 999"
+                                            Padding="10,5"
+                                            VerticalOptions="Center">
+                                        <Label Text="{Binding VisibleCountSummary}"
+                                               FontSize="11"
+                                               FontFamily="OpenSansSemibold"
+                                               TextColor="{StaticResource TextPrimary}"/>
+                                    </Border>
+                                </Grid>
+
+                                <ScrollView Orientation="Horizontal"
+                                            HorizontalScrollBarVisibility="Never">
+                                    <HorizontalStackLayout Spacing="10">
+                                        <Border BackgroundColor="{Binding AllFilterBg}"
+                                                Stroke="#DCE5DF"
+                                                StrokeThickness="1"
+                                                StrokeShape="RoundRectangle 16"
+                                                Padding="14,9">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding ShowAllCommand}"/>
+                                            </Border.GestureRecognizers>
+                                            <Label Text="Todos"
+                                                   FontSize="13"
+                                                   FontFamily="OpenSansSemibold"
+                                                   TextColor="{Binding AllFilterText}"/>
+                                        </Border>
+                                        <Border BackgroundColor="{Binding OverdueFilterBg}"
+                                                Stroke="#DCE5DF"
+                                                StrokeThickness="1"
+                                                StrokeShape="RoundRectangle 16"
+                                                Padding="14,9">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding ShowOverdueCommand}"/>
+                                            </Border.GestureRecognizers>
+                                            <Label Text="Vencidos"
+                                                   FontSize="13"
+                                                   FontFamily="OpenSansSemibold"
+                                                   TextColor="{Binding OverdueFilterText}"/>
+                                        </Border>
+                                        <Border BackgroundColor="{Binding TodayFilterBg}"
+                                                Stroke="#DCE5DF"
+                                                StrokeThickness="1"
+                                                StrokeShape="RoundRectangle 16"
+                                                Padding="14,9">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding ShowTodayCommand}"/>
+                                            </Border.GestureRecognizers>
+                                            <Label Text="Hoy"
+                                                   FontSize="13"
+                                                   FontFamily="OpenSansSemibold"
+                                                   TextColor="{Binding TodayFilterText}"/>
+                                        </Border>
+                                        <Border BackgroundColor="{Binding WeekFilterBg}"
+                                                Stroke="#DCE5DF"
+                                                StrokeThickness="1"
+                                                StrokeShape="RoundRectangle 16"
+                                                Padding="14,9">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding ShowThisWeekCommand}"/>
+                                            </Border.GestureRecognizers>
+                                            <Label Text="Semana"
+                                                   FontSize="13"
+                                                   FontFamily="OpenSansSemibold"
+                                                   TextColor="{Binding WeekFilterText}"/>
+                                        </Border>
+                                        <Border BackgroundColor="{Binding UpcomingFilterBg}"
+                                                Stroke="#DCE5DF"
+                                                StrokeThickness="1"
+                                                StrokeShape="RoundRectangle 16"
+                                                Padding="14,9">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding ShowUpcomingCommand}"/>
+                                            </Border.GestureRecognizers>
+                                            <Label Text="Próximos"
+                                                   FontSize="13"
+                                                   FontFamily="OpenSansSemibold"
+                                                   TextColor="{Binding UpcomingFilterText}"/>
+                                        </Border>
+                                        <Border BackgroundColor="{Binding NewFilterBg}"
+                                                Stroke="#DCE5DF"
+                                                StrokeThickness="1"
+                                                StrokeShape="RoundRectangle 16"
+                                                Padding="14,9">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding ShowNewCommand}"/>
+                                            </Border.GestureRecognizers>
+                                            <HorizontalStackLayout Spacing="5">
+                                                <Label Text="✦"
+                                                       FontSize="10"
+                                                       TextColor="{Binding NewFilterText}"
+                                                       VerticalOptions="Center"/>
+                                                <Label Text="Nuevos"
+                                                       FontSize="13"
+                                                       FontFamily="OpenSansSemibold"
+                                                       TextColor="{Binding NewFilterText}"/>
+                                            </HorizontalStackLayout>
+                                        </Border>
+                                    </HorizontalStackLayout>
+                                </ScrollView>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Grid ColumnDefinitions="*,12,*" Margin="0,0,0,12">
+                            <Border Grid.Column="0"
+                                    BackgroundColor="#F7FAF7"
+                                    Stroke="#DCE5DF"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 18"
+                                    Padding="14,12">
+                                <VerticalStackLayout Spacing="4">
+                                    <Label Text="COBRADO HOY"
+                                           FontSize="10"
+                                           FontFamily="OpenSansSemibold"
+                                           CharacterSpacing="0.6"
+                                           TextColor="{StaticResource TextSecondary}"/>
+                                    <Label Text="{Binding CobradoHoyAmount}"
+                                           FontSize="20"
+                                           FontFamily="OpenSansSemibold"
+                                           TextColor="{StaticResource TextPrimary}"/>
+                                    <Label Text="{Binding CobradoHoyCount}"
+                                           FontSize="12"
+                                           TextColor="{StaticResource TextSecondary}"/>
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <Border Grid.Column="2"
+                                    BackgroundColor="#F7FAF7"
+                                    Stroke="#DCE5DF"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 18"
+                                    Padding="14,12">
+                                <VerticalStackLayout Spacing="4">
+                                    <Label Text="COBRADO SEMANA"
+                                           FontSize="10"
+                                           FontFamily="OpenSansSemibold"
+                                           CharacterSpacing="0.6"
+                                           TextColor="{StaticResource TextSecondary}"/>
+                                    <Label Text="{Binding CobradoSemanaAmount}"
+                                           FontSize="20"
+                                           FontFamily="OpenSansSemibold"
+                                           TextColor="{StaticResource TextPrimary}"/>
+                                    <Label Text="{Binding CobradoSemanaCount}"
+                                           FontSize="12"
+                                           TextColor="{StaticResource TextSecondary}"/>
+                                </VerticalStackLayout>
+                            </Border>
+                        </Grid>
+
+                        <Border BackgroundColor="{StaticResource White}"
+                                Stroke="#E4EBE6"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 20"
+                                Padding="16,14"
+                                Margin="0,0,0,18">
+                            <VerticalStackLayout Spacing="12">
+                                <VerticalStackLayout Spacing="2">
+                                    <Label Text="Actividad reciente"
+                                           FontFamily="OpenSansSemibold"
+                                           FontSize="16"
+                                           TextColor="{StaticResource TextPrimary}"/>
+                                    <Label Text="{Binding RecentActivitySummary}"
+                                           FontSize="12"
+                                           TextColor="{StaticResource TextSecondary}"/>
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout IsVisible="{Binding HasRecentPayments}"
+                                                     BindableLayout.ItemsSource="{Binding RecentPayments}"
+                                                     Spacing="10">
+                                    <BindableLayout.ItemTemplate>
+                                        <DataTemplate x:DataType="models:CollectionRecentPaymentItem">
+                                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+                                                <Border BackgroundColor="{Binding AvatarColor}"
+                                                        StrokeThickness="0"
+                                                        StrokeShape="Ellipse"
+                                                        HeightRequest="34"
+                                                        WidthRequest="34"
+                                                        VerticalOptions="Start">
+                                                    <Label Text="{Binding Initials}"
+                                                           TextColor="White"
+                                                           FontSize="12"
+                                                           FontFamily="OpenSansSemibold"
+                                                           HorizontalOptions="Center"
+                                                           VerticalOptions="Center"/>
+                                                </Border>
+
+                                                <VerticalStackLayout Grid.Column="1" Spacing="1">
+                                                    <Label Text="{Binding ClientName}"
+                                                           FontSize="13"
+                                                           FontFamily="OpenSansSemibold"
+                                                           TextColor="{StaticResource TextPrimary}"/>
+                                                    <Label Text="{Binding NotesText}"
+                                                           FontSize="11"
+                                                           LineBreakMode="TailTruncation"
+                                                           TextColor="{StaticResource TextSecondary}"/>
+                                                    <Label Text="{Binding MethodLabel}"
+                                                           FontSize="11"
+                                                           TextColor="{StaticResource GreenPrimary}"/>
+                                                </VerticalStackLayout>
+
+                                                <VerticalStackLayout Grid.Column="2"
+                                                                     HorizontalOptions="End"
+                                                                     Spacing="1">
+                                                    <Label Text="{Binding AmountText}"
+                                                           FontSize="13"
+                                                           FontFamily="OpenSansSemibold"
+                                                           HorizontalTextAlignment="End"
+                                                           TextColor="{StaticResource TextPrimary}"/>
+                                                    <Label Text="{Binding RegisteredAtText}"
+                                                           FontSize="11"
+                                                           HorizontalTextAlignment="End"
+                                                           TextColor="{StaticResource TextSecondary}"/>
+                                                </VerticalStackLayout>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </BindableLayout.ItemTemplate>
+                                </VerticalStackLayout>
+
+                                <Label IsVisible="{Binding IsRecentPaymentsEmpty}"
+                                       Text="Aún no hay pagos registrados recientemente."
+                                       FontSize="12"
+                                       TextColor="{StaticResource TextSecondary}"/>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <ActivityIndicator IsRunning="{Binding IsLoading}"
+                                           IsVisible="{Binding IsLoading}"
+                                           Color="{StaticResource GreenPrimary}"
+                                           HorizontalOptions="Center"
+                                           Margin="0,10,0,6"/>
+
+                        <VerticalStackLayout IsVisible="{Binding IsEmpty}"
+                                             HorizontalOptions="Center"
+                                             Spacing="8"
+                                             Margin="0,10,0,12">
+                            <Label Text="Sin cobros para este filtro"
+                                   FontSize="14"
+                                   FontFamily="OpenSansSemibold"
+                                   TextColor="{StaticResource TextSecondary}"
+                                   HorizontalTextAlignment="Center"/>
+                            <Label Text="Prueba otra vista temporal o registra una deuda nueva."
+                                   FontSize="12"
+                                   TextColor="{StaticResource TextSecondary}"
+                                   HorizontalTextAlignment="Center"/>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </CollectionView.Header>
+
+            <CollectionView.EmptyView>
+                <Grid HeightRequest="1"/>
+            </CollectionView.EmptyView>
+
+            <CollectionView.GroupHeaderTemplate>
+                <DataTemplate x:DataType="models:CollectionDebtSection">
+                    <Grid Padding="20,0,20,10">
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+                            <BoxView WidthRequest="4"
+                                     HeightRequest="38"
+                                     CornerRadius="3"
+                                     Color="{Binding AccentColor}"
+                                     VerticalOptions="Center"/>
+                            <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                <Label Text="{Binding Title}"
+                                       FontFamily="OpenSansSemibold"
+                                       FontSize="16"
+                                       TextColor="{StaticResource TextPrimary}"/>
+                                <Label Text="{Binding Subtitle}"
+                                       FontSize="12"
+                                       TextColor="{StaticResource TextSecondary}"/>
+                            </VerticalStackLayout>
+                            <Border Grid.Column="2"
+                                    BackgroundColor="{StaticResource White}"
+                                    Stroke="#DCE5DF"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 12"
+                                    Padding="10,4"
+                                    VerticalOptions="Center">
+                                <Label Text="{Binding Count, StringFormat='{}{0}'}"
+                                       FontSize="12"
+                                       FontFamily="OpenSansSemibold"
+                                       TextColor="{StaticResource TextPrimary}"/>
+                            </Border>
+                        </Grid>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.GroupHeaderTemplate>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:CollectionDebtItem">
+                    <Grid Padding="20,0,20,10">
+                        <Border BackgroundColor="{StaticResource White}"
+                                Stroke="#E6ECE7"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 18"
+                                Padding="12,12">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={x:Reference thisPage}, Path=BindingContext.SelectDebtCommand}"
+                                    CommandParameter="{Binding}"/>
+                            </Border.GestureRecognizers>
+
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                                <Border Grid.Column="0"
+                                        BackgroundColor="{Binding AvatarColor}"
+                                        StrokeThickness="0"
+                                        StrokeShape="Ellipse"
+                                        HeightRequest="38"
+                                        WidthRequest="38"
+                                        VerticalOptions="Start">
+                                    <Label Text="{Binding Initials}"
+                                           TextColor="White"
+                                           FontSize="13"
+                                           FontFamily="OpenSansSemibold"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"/>
+                                </Border>
+
+                                <VerticalStackLayout Grid.Column="1" Spacing="8">
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                                        <VerticalStackLayout Spacing="1">
+                                            <Label Text="{Binding ClientName}"
+                                                   FontFamily="OpenSansSemibold"
+                                                   FontSize="14"
+                                                   TextColor="{StaticResource TextPrimary}"/>
+                                            <Label Text="{Binding Description}"
+                                                   FontSize="12"
+                                                   LineBreakMode="TailTruncation"
+                                                   TextColor="{StaticResource TextSecondary}"/>
+                                        </VerticalStackLayout>
+
+                                        <VerticalStackLayout Grid.Column="1"
+                                                             HorizontalOptions="End"
+                                                             Spacing="2">
+                                            <Label Text="{Binding DisplayAmount}"
+                                                   FontFamily="OpenSansSemibold"
+                                                   FontSize="16"
+                                                   TextColor="{StaticResource TextPrimary}"
+                                                   HorizontalTextAlignment="End"/>
+                                            <Label Text="{Binding DueText}"
+                                                   FontSize="12"
+                                                   TextColor="{StaticResource TextSecondary}"
+                                                   HorizontalTextAlignment="End"/>
+                                        </VerticalStackLayout>
+                                    </Grid>
+
+                                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+                                            <Border BackgroundColor="{Binding StatusBg}"
+                                                    StrokeThickness="0"
+                                                    StrokeShape="RoundRectangle 999"
+                                                    Padding="10,5"
+                                                    VerticalOptions="Center">
+                                            <Label Text="{Binding Status}"
+                                                   FontSize="11"
+                                                   FontFamily="OpenSansSemibold"
+                                                   TextColor="{Binding StatusText}"/>
+                                        </Border>
+
+                                        <HorizontalStackLayout Grid.Column="2"
+                                                               Spacing="8"
+                                                               VerticalOptions="Center">
+                                            <Label IsVisible="{Binding HasInterest}"
+                                                   Text="{Binding InterestAmount}"
+                                                   FontSize="11"
+                                                   FontFamily="OpenSansSemibold"
+                                                   TextColor="#F04438"
+                                                   VerticalOptions="Center"/>
+                                            <Border IsVisible="{Binding CanEdit}"
+                                                    BackgroundColor="#F0F5F2"
+                                                    StrokeThickness="0"
+                                                    StrokeShape="RoundRectangle 8"
+                                                    Padding="9,5"
+                                                    VerticalOptions="Center">
+                                                <Border.GestureRecognizers>
+                                                    <TapGestureRecognizer
+                                                        Command="{Binding Source={x:Reference thisPage}, Path=BindingContext.EditDebtCommand}"
+                                                        CommandParameter="{Binding}"/>
+                                                </Border.GestureRecognizers>
+                                                <Label Text="Editar"
+                                                       FontSize="11"
+                                                       FontFamily="OpenSansSemibold"
+                                                       TextColor="{StaticResource GreenPrimary}"/>
+                                            </Border>
+                                            <Label Text="Ver →"
+                                                   FontSize="11"
+                                                   FontFamily="OpenSansSemibold"
+                                                   TextColor="{StaticResource TextSecondary}"
+                                                   VerticalOptions="Center"/>
+                                        </HorizontalStackLayout>
+                                    </Grid>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

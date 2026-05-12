@@ -7,4 +7,5 @@ public sealed record RegisterPaymentResponse(
     string   Method,
     bool     IsTotalPayment,
     DateTime PaidAt,
-    string?  Notes);
+    string?  Notes,
+    string?  TicketUrl);

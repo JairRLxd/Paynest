@@ -11,6 +11,7 @@ namespace Paynest.Infrastructure.Http;
 
 public class CollectorDebtApiClient(HttpClient http, AuthStateService authState) : ICollectorDebtService
 {
+    private static readonly JsonSerializerOptions _jsonOpts = new(JsonSerializerDefaults.Web);
     public Task<CollectorDebtPreviewResponse> PreviewAsync(string clientId, CollectorDebtPreviewRequest request, CancellationToken ct = default)
         => SendAsync<CollectorDebtPreviewResponse>(HttpMethod.Post, $"/api/v1/collector/clients/{clientId}/debts/preview", request, ct);
 
@@ -19,6 +20,9 @@ public class CollectorDebtApiClient(HttpClient http, AuthStateService authState)
 
     public Task<CollectorDebtDetailResponse> GetDebtAsync(string clientId, string debtId, CancellationToken ct = default)
         => SendAsync<CollectorDebtDetailResponse>(HttpMethod.Get, $"/api/v1/collector/clients/{clientId}/debts/{debtId}", body: null, ct);
+
+    public Task<CollectorDebtDetailResponse> UpdateAsync(string clientId, string debtId, CollectorDebtCreateRequest request, CancellationToken ct = default)
+        => SendAsync<CollectorDebtDetailResponse>(HttpMethod.Put, $"/api/v1/collector/clients/{clientId}/debts/{debtId}", request, ct);
 
     public Task<CollectorDebtOpenSummaryResponse> GetOpenSummaryAsync(string clientId, CancellationToken ct = default)
         => SendAsync<CollectorDebtOpenSummaryResponse>(HttpMethod.Get, $"/api/v1/collector/clients/{clientId}/debts/open-summary", body: null, ct);
@@ -38,7 +42,7 @@ public class CollectorDebtApiClient(HttpClient http, AuthStateService authState)
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
         if (body is not null)
-            request.Content = JsonContent.Create(body);
+            request.Content = JsonContent.Create(body, options: _jsonOpts);
 
         var response = await http.SendAsync(request, ct);
         if (!response.IsSuccessStatusCode)

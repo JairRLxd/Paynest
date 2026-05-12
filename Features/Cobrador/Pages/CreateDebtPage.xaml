@@ -1,0 +1,575 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Paynest.Features.Cobrador.Pages.CreateDebtPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Paynest.Features.Cobrador.ViewModels"
+    x:DataType="vm:CreateDebtViewModel"
+    Shell.NavBarIsVisible="False"
+    NavigationPage.HasNavigationBar="False"
+    BackgroundColor="{StaticResource PageBackground}">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- ── Top bar ───────────────────────────────────────────────────── -->
+        <Grid Grid.Row="0" ColumnDefinitions="48,*" Padding="16,52,16,12"
+              BackgroundColor="{StaticResource PageBackground}">
+
+            <Border Grid.Column="0" BackgroundColor="Transparent" StrokeThickness="0"
+                    HeightRequest="40" WidthRequest="40" VerticalOptions="Start">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding BackCommand}"/>
+                </Border.GestureRecognizers>
+                <Label Text="‹" FontSize="30" TextColor="{StaticResource TextPrimary}"
+                       HorizontalOptions="Center" VerticalOptions="Center"/>
+            </Border>
+
+            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                <Label Text="{Binding ClientNameUpper}"
+                       IsVisible="{Binding HasClient}"
+                       TextColor="{StaticResource GreenPrimary}"
+                       FontSize="11" FontFamily="OpenSansSemibold" CharacterSpacing="1.2"/>
+                <Label Text="{Binding PageTitle}"
+                       TextColor="{StaticResource TextPrimary}"
+                       FontSize="28" FontFamily="OpenSansSemibold"/>
+            </VerticalStackLayout>
+
+        </Grid>
+
+        <!-- ── Contenido scrollable ──────────────────────────────────────── -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,0,16,16" Spacing="14">
+
+                <!-- Tarjeta del cliente (siempre tappable para seleccionar/cambiar) -->
+                <Border BackgroundColor="{StaticResource White}"
+                        StrokeThickness="0" StrokeShape="RoundRectangle 16"
+                        Padding="14,12">
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border"
+                                     Binding="{Binding HasClientError}" Value="True">
+                            <Setter Property="Stroke" Value="{StaticResource ErrorBrush}"/>
+                            <Setter Property="StrokeThickness" Value="1.5"/>
+                        </DataTrigger>
+                    </Border.Triggers>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding SelectClientCommand}"/>
+                    </Border.GestureRecognizers>
+
+                    <Grid>
+
+                        <!-- Sin cliente seleccionado -->
+                        <Grid ColumnDefinitions="50,*,Auto" ColumnSpacing="12"
+                              IsVisible="{Binding HasNoClient}">
+                            <Border Grid.Column="0"
+                                    BackgroundColor="#EBEBEB" StrokeThickness="0"
+                                    StrokeShape="Ellipse"
+                                    HeightRequest="44" WidthRequest="44"
+                                    VerticalOptions="Center">
+                                <Label Text="＋" FontSize="18" FontFamily="OpenSansSemibold"
+                                       TextColor="#999999"
+                                       HorizontalOptions="Center" VerticalOptions="Center"/>
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                                <Label Text="Seleccionar cliente"
+                                       FontFamily="OpenSansSemibold" FontSize="15"
+                                       TextColor="{StaticResource TextPrimary}"/>
+                                <Label Text="Toca para elegir o agregar uno nuevo"
+                                       FontSize="12" TextColor="{StaticResource TextSecondary}"/>
+                            </VerticalStackLayout>
+                            <Label Grid.Column="2" Text="›" FontSize="22"
+                                   TextColor="{StaticResource TextSecondary}"
+                                   VerticalOptions="Center" Margin="0,0,4,0"/>
+                        </Grid>
+
+                        <!-- Cliente seleccionado -->
+                        <Grid ColumnDefinitions="50,*,Auto" ColumnSpacing="12"
+                              IsVisible="{Binding HasClient}">
+                            <Border Grid.Column="0"
+                                    BackgroundColor="{Binding ClientAvatarColor}"
+                                    StrokeThickness="0" StrokeShape="Ellipse"
+                                    HeightRequest="44" WidthRequest="44"
+                                    VerticalOptions="Center">
+                                <Label Text="{Binding ClientInitials}" TextColor="White"
+                                       FontSize="16" FontFamily="OpenSansSemibold"
+                                       HorizontalOptions="Center" VerticalOptions="Center"/>
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                                <Label Text="{Binding ClientName}"
+                                       FontFamily="OpenSansSemibold" FontSize="15"
+                                       TextColor="{StaticResource TextPrimary}"/>
+                                <Label Text="{Binding ClientPhone}"
+                                       FontSize="13" TextColor="{StaticResource TextSecondary}"/>
+                            </VerticalStackLayout>
+                            <Border Grid.Column="2"
+                                    BackgroundColor="#FFF3E0" StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 10"
+                                    Padding="10,5" VerticalOptions="Center">
+                                <Label Text="{Binding ActiveDebtsLabel}"
+                                       FontSize="12" FontFamily="OpenSansSemibold"
+                                       TextColor="#E65100"/>
+                            </Border>
+                        </Grid>
+
+                    </Grid>
+                </Border>
+                <Label Text="{Binding ClientError}"
+                       IsVisible="{Binding HasClientError}"
+                       TextColor="{StaticResource Error}" FontSize="11" Margin="2,4,0,0"/>
+
+                <!-- Formulario -->
+                <Border BackgroundColor="{StaticResource White}"
+                        StrokeThickness="0" StrokeShape="RoundRectangle 20"
+                        Padding="18,20">
+                    <VerticalStackLayout Spacing="0">
+
+                        <Label Text="Datos de la deuda"
+                               FontFamily="OpenSansSemibold" FontSize="16"
+                               TextColor="{StaticResource TextPrimary}"
+                               Margin="0,0,0,18"/>
+
+                        <!-- ── Descripción ──────────────────────────────── -->
+                        <Label Text="Descripción" FontSize="13"
+                               TextColor="{StaticResource TextPrimary}" Margin="0,0,0,6"/>
+                        <Border Stroke="{StaticResource InputBorderBrush}"
+                                StrokeShape="RoundRectangle 12" StrokeThickness="1.5"
+                                BackgroundColor="{StaticResource PageBackground}" HeightRequest="52">
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border"
+                                             Binding="{Binding HasDescriptionError}" Value="True">
+                                    <Setter Property="Stroke" Value="{StaticResource ErrorBrush}"/>
+                                </DataTrigger>
+                            </Border.Triggers>
+                            <Entry Text="{Binding Description}"
+                                   Placeholder="Ej. Préstamo quincenal"
+                                   PlaceholderColor="{StaticResource TextPlaceholder}"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   BackgroundColor="Transparent" Margin="14,0" ReturnType="Next"/>
+                        </Border>
+                        <Label Text="{Binding DescriptionError}"
+                               IsVisible="{Binding HasDescriptionError}"
+                               TextColor="{StaticResource Error}" FontSize="11" Margin="2,4,0,0"/>
+
+                        <!-- ── Monto total ──────────────────────────────── -->
+                        <Label Text="Monto total" FontSize="13"
+                               TextColor="{StaticResource TextPrimary}" Margin="0,16,0,6"/>
+                        <Border Stroke="{StaticResource InputBorderBrush}"
+                                StrokeShape="RoundRectangle 12" StrokeThickness="1.5"
+                                BackgroundColor="{StaticResource PageBackground}" HeightRequest="70">
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border"
+                                             Binding="{Binding HasAmountError}" Value="True">
+                                    <Setter Property="Stroke" Value="{StaticResource ErrorBrush}"/>
+                                </DataTrigger>
+                            </Border.Triggers>
+                            <Grid ColumnDefinitions="Auto,*" Margin="16,0" ColumnSpacing="4">
+                                <Label Grid.Column="0" Text="$" FontSize="26"
+                                       FontFamily="OpenSansSemibold"
+                                       TextColor="{StaticResource TextSecondary}"
+                                       VerticalOptions="Center"/>
+                                <Entry Grid.Column="1" Text="{Binding Amount}"
+                                       Placeholder="0.00" Keyboard="Numeric"
+                                       FontSize="26" FontFamily="OpenSansSemibold"
+                                       TextColor="{StaticResource TextPrimary}"
+                                       PlaceholderColor="{StaticResource TextPlaceholder}"
+                                       BackgroundColor="Transparent" ReturnType="Next"/>
+                            </Grid>
+                        </Border>
+                        <Label Text="{Binding AmountError}"
+                               IsVisible="{Binding HasAmountError}"
+                               TextColor="{StaticResource Error}" FontSize="11" Margin="2,4,0,0"/>
+
+                        <!-- ── Periodicidad ─────────────────────────────── -->
+                        <Label Text="Periodicidad" FontSize="13"
+                               TextColor="{StaticResource TextPrimary}" Margin="0,16,0,10"/>
+
+                        <FlexLayout Wrap="Wrap" AlignItems="Start" AlignContent="Start">
+
+                            <Border BackgroundColor="{Binding UnicaBg}"
+                                    StrokeThickness="0" StrokeShape="RoundRectangle 20"
+                                    Padding="18,10" Margin="0,0,8,8">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectUnicaCommand}"/>
+                                </Border.GestureRecognizers>
+                                <Label Text="Única" FontFamily="OpenSansSemibold" FontSize="14"
+                                       TextColor="{Binding UnicaText}"/>
+                            </Border>
+
+                            <Border BackgroundColor="{Binding SemanalBg}"
+                                    StrokeThickness="0" StrokeShape="RoundRectangle 20"
+                                    Padding="18,10" Margin="0,0,8,8">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectSemanalCommand}"/>
+                                </Border.GestureRecognizers>
+                                <Label Text="Semanal" FontFamily="OpenSansSemibold" FontSize="14"
+                                       TextColor="{Binding SemanalText}"/>
+                            </Border>
+
+                            <Border BackgroundColor="{Binding QuincenalBg}"
+                                    StrokeThickness="0" StrokeShape="RoundRectangle 20"
+                                    Padding="18,10" Margin="0,0,8,8">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectQuincenalCommand}"/>
+                                </Border.GestureRecognizers>
+                                <Label Text="Quincenal" FontFamily="OpenSansSemibold" FontSize="14"
+                                       TextColor="{Binding QuincenalText}"/>
+                            </Border>
+
+                            <Border BackgroundColor="{Binding MensualBg}"
+                                    StrokeThickness="0" StrokeShape="RoundRectangle 20"
+                                    Padding="18,10" Margin="0,0,8,8">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectMensualCommand}"/>
+                                </Border.GestureRecognizers>
+                                <Label Text="Mensual" FontFamily="OpenSansSemibold" FontSize="14"
+                                       TextColor="{Binding MensualText}"/>
+                            </Border>
+
+                        </FlexLayout>
+
+                        <Label Text="Cómo quieres calcularlo" FontSize="13"
+                               TextColor="{StaticResource TextPrimary}" Margin="0,14,0,10"/>
+
+                        <Grid ColumnDefinitions="*,10,*">
+                            <Border Grid.Column="0"
+                                    BackgroundColor="{Binding ByInstallmentBg}"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 18"
+                                    Padding="14,12">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectByInstallmentAmountCommand}"/>
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="4">
+                                    <Label Text="Por monto de pago"
+                                           FontFamily="OpenSansSemibold"
+                                           FontSize="13"
+                                           TextColor="{Binding ByInstallmentText}"/>
+                                    <Label Text="El cliente dice cuánto puede dar por periodo."
+                                           FontSize="11"
+                                           TextColor="{Binding ByInstallmentText}"
+                                           Opacity="0.82"/>
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <Border Grid.Column="2"
+                                    BackgroundColor="{Binding ByDueDateBg}"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 18"
+                                    Padding="14,12">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding SelectByDueDateCommand}"/>
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="4">
+                                    <Label Text="Por fecha límite"
+                                           FontFamily="OpenSansSemibold"
+                                           FontSize="13"
+                                           TextColor="{Binding ByDueDateText}"/>
+                                    <Label Text="Tú eliges cuándo debe terminar y el sistema sugiere el pago."
+                                           FontSize="11"
+                                           TextColor="{Binding ByDueDateText}"
+                                           Opacity="0.82"/>
+                                </VerticalStackLayout>
+                            </Border>
+                        </Grid>
+
+                        <!-- ── Fechas ───────────────────────────────────── -->
+                        <VerticalStackLayout Margin="0,4,0,0" Spacing="14">
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="Fecha de inicio" FontSize="13"
+                                       TextColor="{StaticResource TextPrimary}"/>
+                                <Border Stroke="{StaticResource InputBorderBrush}"
+                                        StrokeShape="RoundRectangle 12" StrokeThickness="1.5"
+                                        BackgroundColor="{StaticResource PageBackground}"
+                                        HeightRequest="48">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding PickStartDateCommand}"/>
+                                    </Border.GestureRecognizers>
+                                    <Grid ColumnDefinitions="*,Auto" Padding="14,0">
+                                        <Label Text="{Binding StartDateText}"
+                                               TextColor="{StaticResource TextPrimary}"
+                                               VerticalOptions="Center"/>
+                                        <Label Grid.Column="1" Text="📅"
+                                               FontSize="16"
+                                               VerticalOptions="Center"/>
+                                    </Grid>
+                                </Border>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout IsVisible="{Binding ShowsFirstPaymentEditor}" Spacing="6">
+                                <Label Text="Primer pago" FontSize="13"
+                                       TextColor="{StaticResource TextPrimary}"/>
+                                <Border Stroke="{StaticResource InputBorderBrush}"
+                                        StrokeShape="RoundRectangle 12" StrokeThickness="1.5"
+                                        BackgroundColor="{StaticResource PageBackground}"
+                                        HeightRequest="48">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding PickFirstPaymentDateCommand}"/>
+                                    </Border.GestureRecognizers>
+                                    <Grid ColumnDefinitions="*,Auto" Padding="14,0">
+                                        <Label Text="{Binding FirstPaymentDateText}"
+                                               TextColor="{StaticResource TextPrimary}"
+                                               VerticalOptions="Center"/>
+                                        <Label Grid.Column="1" Text="📅"
+                                               FontSize="16"
+                                               VerticalOptions="Center"/>
+                                    </Grid>
+                                </Border>
+                                <Label Text="Aquí defines el día real en que pasarás a cobrar por primera vez."
+                                       FontSize="11"
+                                       TextColor="{StaticResource TextSecondary}"/>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout IsVisible="{Binding ShowsDueDateEditor}" Spacing="6">
+                                <Label Text="Fecha final" FontSize="13"
+                                       TextColor="{StaticResource TextPrimary}"/>
+                                <Border Stroke="{StaticResource InputBorderBrush}"
+                                        StrokeShape="RoundRectangle 12" StrokeThickness="1.5"
+                                        BackgroundColor="{StaticResource PageBackground}"
+                                        HeightRequest="48">
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border"
+                                                     Binding="{Binding HasDueDateError}" Value="True">
+                                            <Setter Property="Stroke" Value="{StaticResource ErrorBrush}"/>
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding PickDueDateCommand}"/>
+                                    </Border.GestureRecognizers>
+                                    <Grid ColumnDefinitions="*,Auto" Padding="14,0">
+                                        <Label Text="{Binding DueDateText}"
+                                               TextColor="{StaticResource TextPrimary}"
+                                               VerticalOptions="Center"/>
+                                        <Label Grid.Column="1" Text="📅"
+                                               FontSize="16"
+                                               VerticalOptions="Center"/>
+                                    </Grid>
+                                </Border>
+                            </VerticalStackLayout>
+                        </VerticalStackLayout>
+                        <Label Text="{Binding DueDateError}"
+                               IsVisible="{Binding HasDueDateError}"
+                               TextColor="{StaticResource Error}" FontSize="11" Margin="2,4,0,0"/>
+
+                        <VerticalStackLayout IsVisible="{Binding ShowsPaymentAmount}" Spacing="6" Margin="0,16,0,0">
+                            <Label Text="Pago por periodo" FontSize="13"
+                                   TextColor="{StaticResource TextPrimary}"/>
+                            <Border Stroke="{StaticResource InputBorderBrush}"
+                                    StrokeShape="RoundRectangle 12" StrokeThickness="1.5"
+                                    BackgroundColor="{StaticResource PageBackground}" HeightRequest="56">
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border"
+                                                 Binding="{Binding HasPaymentAmountError}" Value="True">
+                                        <Setter Property="Stroke" Value="{StaticResource ErrorBrush}"/>
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <Grid ColumnDefinitions="Auto,*" Margin="14,0" ColumnSpacing="4">
+                                    <Label Grid.Column="0" Text="$"
+                                           FontSize="20"
+                                           FontFamily="OpenSansSemibold"
+                                           TextColor="{StaticResource TextSecondary}"
+                                           VerticalOptions="Center"/>
+                                    <Entry Grid.Column="1"
+                                           Text="{Binding PaymentAmount}"
+                                           Placeholder="200.00"
+                                           Keyboard="Numeric"
+                                           TextColor="{StaticResource TextPrimary}"
+                                           PlaceholderColor="{StaticResource TextPlaceholder}"
+                                           BackgroundColor="Transparent"
+                                           VerticalOptions="Center"/>
+                                </Grid>
+                            </Border>
+                            <Label Text="{Binding PaymentAmountError}"
+                                   IsVisible="{Binding HasPaymentAmountError}"
+                                   TextColor="{StaticResource Error}" FontSize="11" Margin="2,0,0,0"/>
+                        </VerticalStackLayout>
+
+                        <Border IsVisible="{Binding HasPreview}"
+                                BackgroundColor="#EEF6F1"
+                                Stroke="#D8E9DE"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 16"
+                                Padding="14,12"
+                                Margin="0,16,0,0">
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="Vista previa del plan"
+                                       FontSize="12"
+                                       FontFamily="OpenSansSemibold"
+                                       TextColor="{StaticResource GreenPrimary}"/>
+                                <Label Text="{Binding PreviewPrimary}"
+                                       FontSize="16"
+                                       FontFamily="OpenSansSemibold"
+                                       TextColor="{StaticResource TextPrimary}"/>
+                                <Label Text="{Binding PreviewSecondary}"
+                                       FontSize="13"
+                                       TextColor="{StaticResource TextPrimary}"/>
+                                <Label Text="{Binding PreviewCaption}"
+                                       FontSize="11"
+                                       TextColor="{StaticResource TextSecondary}"/>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- ── Interés base ─────────────────────────────── -->
+                        <Grid ColumnDefinitions="*,Auto" Margin="0,18,0,6">
+                            <Label Grid.Column="0" Text="Interés (%)" FontSize="13"
+                                   TextColor="{StaticResource TextPrimary}" VerticalOptions="Center"/>
+                            <Border Grid.Column="1" BackgroundColor="#EBEBEB"
+                                    StrokeThickness="0" StrokeShape="RoundRectangle 8"
+                                    Padding="8,3" VerticalOptions="Center">
+                                <Label Text="Opcional" FontSize="11" TextColor="#888888"/>
+                            </Border>
+                        </Grid>
+                        <Border Stroke="{StaticResource InputBorderBrush}"
+                                StrokeShape="RoundRectangle 12" StrokeThickness="1.5"
+                                BackgroundColor="{StaticResource PageBackground}" HeightRequest="52">
+                            <Entry Text="{Binding InterestRate}"
+                                   Placeholder="0%" Keyboard="Numeric"
+                                   PlaceholderColor="{StaticResource TextPlaceholder}"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   BackgroundColor="Transparent" Margin="14,0" ReturnType="Next"/>
+                        </Border>
+                        <Label Text="Se aplica sobre el monto desde el inicio del préstamo."
+                               FontSize="11" TextColor="{StaticResource TextSecondary}"
+                               Margin="2,4,0,0"/>
+
+                        <!-- ── Interés moratorio ────────────────────────── -->
+                        <Grid ColumnDefinitions="*,Auto" Margin="0,18,0,6">
+                            <Label Grid.Column="0" Text="Interés moratorio (%)" FontSize="13"
+                                   TextColor="{StaticResource TextPrimary}" VerticalOptions="Center"/>
+                            <Border Grid.Column="1" BackgroundColor="#EBEBEB"
+                                    StrokeThickness="0" StrokeShape="RoundRectangle 8"
+                                    Padding="8,3" VerticalOptions="Center">
+                                <Label Text="Opcional" FontSize="11" TextColor="#888888"/>
+                            </Border>
+                        </Grid>
+                        <Border Stroke="{StaticResource InputBorderBrush}"
+                                StrokeShape="RoundRectangle 12" StrokeThickness="1.5"
+                                BackgroundColor="{StaticResource PageBackground}" HeightRequest="52">
+                            <Entry Text="{Binding MoratoryRate}"
+                                   Placeholder="0%" Keyboard="Numeric"
+                                   PlaceholderColor="{StaticResource TextPlaceholder}"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   BackgroundColor="Transparent" Margin="14,0" ReturnType="Next"/>
+                        </Border>
+                        <Label Text="Se cobra si el cliente no paga en la fecha de vencimiento."
+                               FontSize="11" TextColor="{StaticResource TextSecondary}"
+                               Margin="2,4,0,0"/>
+
+                        <!-- ── Notas internas ───────────────────────────── -->
+                        <Label Text="Notas internas" FontSize="13"
+                               TextColor="{StaticResource TextPrimary}" Margin="0,18,0,6"/>
+                        <Border Stroke="{StaticResource InputBorderBrush}"
+                                StrokeShape="RoundRectangle 12" StrokeThickness="1.5"
+                                BackgroundColor="{StaticResource PageBackground}" Padding="14,10">
+                            <Editor Text="{Binding Notes}"
+                                    Placeholder="Solo tú puedes verlas..."
+                                    PlaceholderColor="{StaticResource TextPlaceholder}"
+                                    TextColor="{StaticResource TextPrimary}"
+                                    BackgroundColor="Transparent"
+                                    AutoSize="TextChanges"
+                                    MinimumHeightRequest="90"/>
+                        </Border>
+
+                        <Border IsVisible="{Binding HasClientSummary}"
+                                BackgroundColor="#F8FBF9"
+                                Stroke="#D8E7DE"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 18"
+                                Padding="16,16"
+                                Margin="0,18,0,0">
+                            <VerticalStackLayout Spacing="10">
+                                <Label Text="Resumen para el cliente"
+                                       FontSize="14"
+                                       FontFamily="OpenSansSemibold"
+                                       TextColor="{StaticResource GreenPrimary}"/>
+
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Text="Capital prestado"
+                                           FontSize="13"
+                                           TextColor="{StaticResource TextSecondary}"/>
+                                    <Label Grid.Column="1"
+                                           Text="{Binding SummaryPrincipal}"
+                                           FontSize="13"
+                                           FontFamily="OpenSansSemibold"
+                                           TextColor="{StaticResource TextPrimary}"/>
+                                </Grid>
+
+                                <Grid IsVisible="{Binding HasInterestSummary}" ColumnDefinitions="*,Auto">
+                                    <Label Text="{Binding SummaryInterestLabel}"
+                                           FontSize="13"
+                                           TextColor="{StaticResource TextSecondary}"/>
+                                    <Label Grid.Column="1"
+                                           Text="{Binding SummaryInterestAmount}"
+                                           FontSize="13"
+                                           FontFamily="OpenSansSemibold"
+                                           TextColor="{StaticResource TextPrimary}"/>
+                                </Grid>
+
+                                <BoxView HeightRequest="1" Color="#E1EAE4"/>
+
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Text="Total a cobrar"
+                                           FontSize="13"
+                                           FontFamily="OpenSansSemibold"
+                                           TextColor="{StaticResource TextPrimary}"/>
+                                    <Label Grid.Column="1"
+                                           Text="{Binding SummaryTotalToCollect}"
+                                           FontSize="15"
+                                           FontFamily="OpenSansSemibold"
+                                           TextColor="{StaticResource GreenPrimary}"/>
+                                </Grid>
+
+                                <Grid IsVisible="{Binding HasInstallmentSummary}" ColumnDefinitions="*,Auto">
+                                    <Label Text="{Binding SummaryInstallmentTitle}"
+                                           FontSize="13"
+                                           TextColor="{StaticResource TextSecondary}"/>
+                                    <Label Grid.Column="1"
+                                           Text="{Binding SummaryInstallmentAmount}"
+                                           FontSize="13"
+                                           FontFamily="OpenSansSemibold"
+                                           TextColor="{StaticResource TextPrimary}"/>
+                                </Grid>
+
+                                <Label Text="{Binding SummaryFootnote}"
+                                       FontSize="11"
+                                       TextColor="{StaticResource TextSecondary}"/>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- ── Error general ────────────────────────────── -->
+                        <Border IsVisible="{Binding HasGeneralError}"
+                                BackgroundColor="#FFF5F5" Stroke="#FFCDD2"
+                                StrokeThickness="1" StrokeShape="RoundRectangle 10"
+                                Margin="0,16,0,0">
+                            <Label Text="{Binding GeneralError}"
+                                   TextColor="{StaticResource Error}"
+                                   FontSize="13" Padding="14,10"/>
+                        </Border>
+
+                    </VerticalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- ── Botón crear (fijo abajo) ─────────────────────────────────── -->
+        <Grid Grid.Row="2" Padding="16,10,16,36"
+              BackgroundColor="{StaticResource PageBackground}">
+            <Button Text="{Binding SaveButtonText}" Command="{Binding CreateCommand}"
+                    IsEnabled="{Binding CanCreate}"
+                    BackgroundColor="{StaticResource GreenPrimary}"
+                    TextColor="White" FontFamily="OpenSansSemibold"
+                    FontSize="16" CornerRadius="28" HeightRequest="56"
+                    HorizontalOptions="Fill">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button" Binding="{Binding IsEditBlocked}" Value="True">
+                        <Setter Property="BackgroundColor" Value="#9E9E9E"/>
+                        <Setter Property="Text" Value="No editable"/>
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+            <ActivityIndicator IsVisible="{Binding IsLoading}" IsRunning="{Binding IsLoading}"
+                               Color="{StaticResource GreenPrimary}"
+                               HorizontalOptions="Center" VerticalOptions="Center"/>
+        </Grid>
+
+    </Grid>
+</ContentPage>

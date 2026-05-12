@@ -141,7 +141,8 @@ public partial class DebtDetailPage : ContentPage, IQueryAttributable
 		_paymentSuccessCompletion?.TrySetResult("Seguir aquí");
 		_paymentSuccessCompletion = new TaskCompletionSource<string>();
 
-		PaymentSuccessSubtitleLabel.Text = "La cuota quedó registrada como pagada y el recibo quedó preparado.";
+		var method = _viewModel.LastPaymentMethodText;
+		PaymentSuccessSubtitleLabel.Text = $"Pagado con {method} · La cuota quedó registrada y el recibo está listo.";
 		PaymentSuccessBalanceLabel.Text = string.IsNullOrWhiteSpace(balanceText) ? "Actualizado" : balanceText;
 
 		PaymentSuccessOverlay.Opacity = 0;

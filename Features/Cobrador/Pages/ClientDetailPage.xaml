@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Paynest.Features.Cobrador.Pages.ClientDetailPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Paynest.Features.Cobrador.ViewModels"
+    xmlns:models="clr-namespace:Paynest.Features.Cobrador.Models"
+    x:DataType="vm:ClientDetailViewModel"
+    x:Name="thisPage"
+    Shell.NavBarIsVisible="False"
+    BackgroundColor="{StaticResource PageBackground}">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- ── Header verde ──────────────────────────────────────────────── -->
+        <Grid Grid.Row="0"
+              RowDefinitions="Auto,Auto,Auto"
+              BackgroundColor="{StaticResource GreenPrimary}"
+              Padding="20,52,20,20">
+
+            <!-- Barra superior: atrás + tres puntos -->
+            <Grid ColumnDefinitions="40,*,40">
+                <Border BackgroundColor="Transparent" StrokeThickness="0"
+                        HeightRequest="40" WidthRequest="40">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding BackCommand}"/>
+                    </Border.GestureRecognizers>
+                    <Label Text="‹" FontSize="30" TextColor="White"
+                           HorizontalOptions="Center" VerticalOptions="Center"/>
+                </Border>
+
+                <Border Grid.Column="2"
+                        BackgroundColor="Transparent" StrokeThickness="0"
+                        HeightRequest="40" WidthRequest="40"
+                        HorizontalOptions="End">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ShowMenuCommand}"/>
+                    </Border.GestureRecognizers>
+                    <Label Text="···" FontSize="22" FontFamily="OpenSansSemibold"
+                           TextColor="White"
+                           HorizontalOptions="Center" VerticalOptions="Center"/>
+                </Border>
+            </Grid>
+
+            <!-- Avatar + nombre + teléfono -->
+            <Grid Grid.Row="1" ColumnDefinitions="80,*" ColumnSpacing="16" Margin="0,18,0,0">
+
+                <!-- Avatar: foto del cliente o iniciales como fallback -->
+                <Grid Grid.Column="0" HeightRequest="72" WidthRequest="72">
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ViewPhotoCommand}"/>
+                    </Grid.GestureRecognizers>
+                    <Border IsVisible="{Binding HasNoPhoto}"
+                            BackgroundColor="{Binding AvatarColor}"
+                            Stroke="White" StrokeThickness="2.5"
+                            StrokeShape="Ellipse"
+                            HeightRequest="72" WidthRequest="72">
+                        <Label Text="{Binding Initials}"
+                               TextColor="White" FontSize="26" FontFamily="OpenSansSemibold"
+                               HorizontalOptions="Center" VerticalOptions="Center"/>
+                    </Border>
+                    <Border IsVisible="{Binding HasPhoto}"
+                            Stroke="White" StrokeThickness="2.5"
+                            StrokeShape="Ellipse"
+                            HeightRequest="72" WidthRequest="72">
+                        <Image Source="{Binding PhotoSource}" Aspect="AspectFill"/>
+                    </Border>
+                </Grid>
+
+                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="5">
+                    <Label Text="{Binding Name}"
+                           FontSize="22" FontFamily="OpenSansSemibold" TextColor="White"
+                           LineBreakMode="TailTruncation"/>
+                    <HorizontalStackLayout Spacing="6">
+                        <Label Text="✆" FontSize="13" TextColor="#B8D4C4"/>
+                        <Label Text="{Binding Phone}" FontSize="13" TextColor="#B8D4C4"/>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Grid>
+
+            <!-- Tarjetas de estadísticas -->
+            <Grid Grid.Row="2" ColumnDefinitions="*,*,*" ColumnSpacing="8" Margin="0,18,0,0">
+
+                <Border Grid.Column="0"
+                        BackgroundColor="#1E7A50"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 14"
+                        Padding="10,12">
+                    <VerticalStackLayout Spacing="3">
+                        <Label Text="DEUDA TOTAL" FontSize="9" FontFamily="OpenSansSemibold"
+                               CharacterSpacing="0.8" TextColor="#8ECBA8"
+                               HorizontalTextAlignment="Center"/>
+                        <Label Text="{Binding TotalDebt}" FontSize="17" FontFamily="OpenSansSemibold"
+                               TextColor="White" HorizontalTextAlignment="Center"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Grid.Column="1"
+                        BackgroundColor="#1E7A50"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 14"
+                        Padding="10,12">
+                    <VerticalStackLayout Spacing="3">
+                        <Label Text="PAGADO" FontSize="9" FontFamily="OpenSansSemibold"
+                               CharacterSpacing="0.8" TextColor="#8ECBA8"
+                               HorizontalTextAlignment="Center"/>
+                        <Label Text="{Binding TotalPaid}" FontSize="17" FontFamily="OpenSansSemibold"
+                               TextColor="White" HorizontalTextAlignment="Center"/>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Grid.Column="2"
+                        BackgroundColor="#1E7A50"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 14"
+                        Padding="10,12">
+                    <VerticalStackLayout Spacing="3">
+                        <Label Text="VENCIMIENTO" FontSize="9" FontFamily="OpenSansSemibold"
+                               CharacterSpacing="0.8" TextColor="#8ECBA8"
+                               HorizontalTextAlignment="Center"/>
+                        <Label Text="{Binding DueLabel}" FontSize="17" FontFamily="OpenSansSemibold"
+                               TextColor="White" HorizontalTextAlignment="Center"/>
+                    </VerticalStackLayout>
+                </Border>
+
+            </Grid>
+        </Grid>
+
+        <!-- ── Cuerpo scrollable ─────────────────────────────────────────── -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="20,18,20,32" Spacing="14">
+
+                <!-- Cargando detalle -->
+                <Border IsVisible="{Binding IsLoadingDetail}"
+                        BackgroundColor="White"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 16"
+                        Padding="18,20">
+                    <HorizontalStackLayout Spacing="12" HorizontalOptions="Center">
+                        <ActivityIndicator IsRunning="{Binding IsLoadingDetail}"
+                                           Color="{StaticResource GreenPrimary}"
+                                           WidthRequest="24" HeightRequest="24"/>
+                        <Label Text="Cargando información..."
+                               FontSize="14"
+                               TextColor="{StaticResource TextSecondary}"
+                               VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+                </Border>
+
+                <!-- Acciones primarias: registrar pago + llamar -->
+                <Grid ColumnDefinitions="*,56" ColumnSpacing="10">
+                    <Button Grid.Column="0"
+                            Text="Registrar pago"
+                            Command="{Binding RegisterPaymentCommand}"
+                            BackgroundColor="{StaticResource GreenPrimary}"
+                            TextColor="White" FontFamily="OpenSansSemibold"
+                            FontSize="15" CornerRadius="16" HeightRequest="52"/>
+
+                    <Border Grid.Column="1"
+                            BackgroundColor="White"
+                            Stroke="#D5DDD8" StrokeThickness="1.5"
+                            StrokeShape="RoundRectangle 16"
+                            HeightRequest="52" WidthRequest="56">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding CallClientCommand}"/>
+                        </Border.GestureRecognizers>
+                        <Label Text="✆" FontSize="22"
+                               TextColor="{StaticResource TextPrimary}"
+                               HorizontalOptions="Center" VerticalOptions="Center"/>
+                    </Border>
+                </Grid>
+
+                <!-- Estado del pago -->
+                <HorizontalStackLayout Spacing="8">
+                    <Label Text="{Binding StatusLabel}"
+                           FontSize="14" FontFamily="OpenSansSemibold"
+                           TextColor="{Binding StatusColor}"/>
+                    <Label Text="{Binding StatusDescription}"
+                           FontSize="14" TextColor="{StaticResource TextSecondary}"/>
+                </HorizontalStackLayout>
+
+                <!-- Historial de pagos -->
+                <VerticalStackLayout Spacing="10" IsVisible="{Binding IsDetailLoaded}">
+                    <Label Text="Historial de pagos"
+                           FontSize="16" FontFamily="OpenSansSemibold"
+                           TextColor="{StaticResource TextPrimary}"/>
+
+                    <Border BackgroundColor="White"
+                            Stroke="#E0E8E3" StrokeThickness="1"
+                            StrokeShape="RoundRectangle 20" Padding="0">
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding DebtHistory}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="models:ClientDebtItem">
+                                    <Grid ColumnDefinitions="52,*,Auto"
+                                          Padding="16,14" ColumnSpacing="12">
+
+                                        <!-- Ícono estado -->
+                                        <Border Grid.Column="0"
+                                                BackgroundColor="{Binding IconBackground}"
+                                                StrokeThickness="0"
+                                                StrokeShape="RoundRectangle 12"
+                                                HeightRequest="44" WidthRequest="44"
+                                                VerticalOptions="Center">
+                                            <Label Text="{Binding IconGlyph}"
+                                                   FontSize="20"
+                                                   TextColor="{Binding IconColor}"
+                                                   HorizontalOptions="Center"
+                                                   VerticalOptions="Center"/>
+                                        </Border>
+
+                                        <!-- Título + fecha + comprobante -->
+                                        <VerticalStackLayout Grid.Column="1"
+                                                             Spacing="3" VerticalOptions="Center">
+                                            <Label Text="{Binding Title}"
+                                                   FontSize="14" FontFamily="OpenSansSemibold"
+                                                   TextColor="{StaticResource TextPrimary}"/>
+                                            <Label Text="{Binding DateText}"
+                                                   FontSize="12"
+                                                   TextColor="{StaticResource TextSecondary}"/>
+                                            <Label Text="Descargar ticket →"
+                                                   FontSize="11" FontFamily="OpenSansSemibold"
+                                                   TextColor="{StaticResource GreenPrimary}">
+                                                <Label.GestureRecognizers>
+                                                    <TapGestureRecognizer
+                                                        Command="{Binding Source={x:Reference thisPage}, Path=BindingContext.DownloadTicketCommand}"
+                                                        CommandParameter="{Binding}"/>
+                                                </Label.GestureRecognizers>
+                                            </Label>
+                                        </VerticalStackLayout>
+
+                                        <!-- Monto + badge -->
+                                        <VerticalStackLayout Grid.Column="2"
+                                                             Spacing="5"
+                                                             HorizontalOptions="End"
+                                                             VerticalOptions="Center">
+                                            <Label Text="{Binding Amount}"
+                                                   FontSize="14" FontFamily="OpenSansSemibold"
+                                                   TextColor="{StaticResource TextPrimary}"
+                                                   HorizontalTextAlignment="End"/>
+                                            <Border BackgroundColor="{Binding StatusBackground}"
+                                                    StrokeThickness="0"
+                                                    StrokeShape="RoundRectangle 8"
+                                                    Padding="8,3" HorizontalOptions="End">
+                                                <Label Text="{Binding Status}"
+                                                       FontSize="11" FontFamily="OpenSansSemibold"
+                                                       TextColor="{Binding StatusTextColor}"/>
+                                            </Border>
+                                        </VerticalStackLayout>
+
+                                    </Grid>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Crear deuda -->
+                <Button Text="＋  Crear deuda"
+                        Command="{Binding CreateDebtCommand}"
+                        BackgroundColor="White"
+                        BorderColor="{StaticResource GreenPrimary}" BorderWidth="1.5"
+                        TextColor="{StaticResource GreenPrimary}"
+                        FontFamily="OpenSansSemibold"
+                        FontSize="14" CornerRadius="14" HeightRequest="50"/>
+
+                <!-- Información personal -->
+                <VerticalStackLayout Spacing="10" IsVisible="{Binding IsDetailLoaded}">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Información personal"
+                               FontSize="15" FontFamily="OpenSansSemibold"
+                               TextColor="{StaticResource TextPrimary}"
+                               VerticalOptions="Center"/>
+                        <Border Grid.Column="1"
+                                BackgroundColor="{Binding PersonalInfoBadgeBg}"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 10"
+                                Padding="8,4">
+                            <Label Text="{Binding PersonalInfoBadgeLabel}"
+                                   FontSize="11" FontFamily="OpenSansSemibold"
+                                   TextColor="{Binding PersonalInfoBadgeTextColor}"/>
+                        </Border>
+                    </Grid>
+
+                    <Border BackgroundColor="White" Stroke="#E2E8E4"
+                            StrokeThickness="1" StrokeShape="RoundRectangle 16"
+                            Padding="16,14">
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="16"
+                              RowDefinitions="Auto,Auto,Auto,Auto,Auto" RowSpacing="14">
+
+                            <VerticalStackLayout Grid.Row="0" Grid.Column="0" Spacing="3">
+                                <Label Text="Nombre completo" FontSize="11" TextColor="{StaticResource TextSecondary}"/>
+                                <Label Text="{Binding Name}" FontSize="13" FontFamily="OpenSansSemibold" TextColor="{StaticResource TextPrimary}"/>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Row="0" Grid.Column="1" Spacing="3">
+                                <Label Text="Teléfono" FontSize="11" TextColor="{StaticResource TextSecondary}"/>
+                                <Label Text="{Binding Phone}" FontSize="13" FontFamily="OpenSansSemibold" TextColor="{StaticResource TextPrimary}"/>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Row="1" Grid.ColumnSpan="2" Spacing="3">
+                                <Label Text="Correo electrónico" FontSize="11" TextColor="{StaticResource TextSecondary}"/>
+                                <Label Text="{Binding Email}" FontSize="13" FontFamily="OpenSansSemibold" TextColor="{StaticResource TextPrimary}"/>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Row="2" Grid.Column="0" Spacing="3">
+                                <Label Text="CURP" FontSize="11" TextColor="{StaticResource TextSecondary}"/>
+                                <Label Text="{Binding Curp}" FontSize="13" FontFamily="OpenSansSemibold" TextColor="{StaticResource TextPrimary}"/>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Row="2" Grid.Column="1" Spacing="3">
+                                <Label Text="RFC" FontSize="11" TextColor="{StaticResource TextSecondary}"/>
+                                <Label Text="{Binding Rfc}" FontSize="13" FontFamily="OpenSansSemibold" TextColor="{StaticResource TextPrimary}"/>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Row="3" Grid.ColumnSpan="2" Spacing="3">
+                                <Label Text="Fecha de registro" FontSize="11" TextColor="{StaticResource TextSecondary}"/>
+                                <Label Text="{Binding RegisteredAt}" FontSize="13" FontFamily="OpenSansSemibold" TextColor="{StaticResource TextPrimary}"/>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Row="4" Grid.ColumnSpan="2" Spacing="3">
+                                <Label Text="Notas" FontSize="11" TextColor="{StaticResource TextSecondary}"/>
+                                <Label Text="{Binding Notes}" FontSize="13" TextColor="{StaticResource TextPrimary}"/>
+                            </VerticalStackLayout>
+
+                        </Grid>
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Domicilio -->
+                <VerticalStackLayout Spacing="10" IsVisible="{Binding IsDetailLoaded}">
+                    <Label Text="Domicilio"
+                           FontSize="15" FontFamily="OpenSansSemibold"
+                           TextColor="{StaticResource TextPrimary}"/>
+
+                    <Border BackgroundColor="White" Stroke="#E2E8E4"
+                            StrokeThickness="1" StrokeShape="RoundRectangle 16"
+                            Padding="16,14">
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="16"
+                              RowDefinitions="Auto,Auto,Auto" RowSpacing="14">
+
+                            <VerticalStackLayout Grid.Row="0" Grid.ColumnSpan="2" Spacing="3">
+                                <Label Text="Dirección" FontSize="11" TextColor="{StaticResource TextSecondary}"/>
+                                <Label Text="{Binding Address}" FontSize="13" FontFamily="OpenSansSemibold" TextColor="{StaticResource TextPrimary}"/>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Row="1" Grid.Column="0" Spacing="3">
+                                <Label Text="Colonia" FontSize="11" TextColor="{StaticResource TextSecondary}"/>
+                                <Label Text="{Binding Colonia}" FontSize="13" FontFamily="OpenSansSemibold" TextColor="{StaticResource TextPrimary}"/>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Row="1" Grid.Column="1" Spacing="3">
+                                <Label Text="Código postal" FontSize="11" TextColor="{StaticResource TextSecondary}"/>
+                                <Label Text="{Binding PostalCode}" FontSize="13" FontFamily="OpenSansSemibold" TextColor="{StaticResource TextPrimary}"/>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Row="2" Grid.Column="0" Spacing="3">
+                                <Label Text="Municipio" FontSize="11" TextColor="{StaticResource TextSecondary}"/>
+                                <Label Text="{Binding Municipio}" FontSize="13" FontFamily="OpenSansSemibold" TextColor="{StaticResource TextPrimary}"/>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Row="2" Grid.Column="1" Spacing="3">
+                                <Label Text="Estado" FontSize="11" TextColor="{StaticResource TextSecondary}"/>
+                                <Label Text="{Binding Estado}" FontSize="13" FontFamily="OpenSansSemibold" TextColor="{StaticResource TextPrimary}"/>
+                            </VerticalStackLayout>
+
+                        </Grid>
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Documentos -->
+                <VerticalStackLayout Spacing="10" IsVisible="{Binding IsDetailLoaded}">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Documentos"
+                               FontSize="15" FontFamily="OpenSansSemibold"
+                               TextColor="{StaticResource TextPrimary}"
+                               VerticalOptions="Center"/>
+                        <Border Grid.Column="1"
+                                BackgroundColor="{Binding DocumentsBadgeBg}"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 10"
+                                Padding="8,4">
+                            <Label Text="{Binding DocumentsBadgeLabel}"
+                                   FontSize="11" FontFamily="OpenSansSemibold"
+                                   TextColor="{Binding DocumentsBadgeTextColor}"/>
+                        </Border>
+                    </Grid>
+
+                    <!-- INE frente + INE reverso -->
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <Border Grid.Column="0"
+                                BackgroundColor="White" Stroke="#E2E8E4"
+                                StrokeThickness="1" StrokeShape="RoundRectangle 16" Padding="12">
+                            <VerticalStackLayout Spacing="8">
+                                <Border BackgroundColor="#F0F5F2" StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 12" HeightRequest="100">
+                                    <Label Text="INE" FontSize="14" TextColor="#8AA69A"
+                                           HorizontalOptions="Center" VerticalOptions="Center"/>
+                                </Border>
+                                <Label Text="INE frente" FontSize="12" FontFamily="OpenSansSemibold"
+                                       TextColor="{StaticResource TextPrimary}"/>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border Grid.Column="1"
+                                BackgroundColor="White" Stroke="#E2E8E4"
+                                StrokeThickness="1" StrokeShape="RoundRectangle 16" Padding="12">
+                            <VerticalStackLayout Spacing="8">
+                                <Border BackgroundColor="#F0F5F2" StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 12" HeightRequest="100">
+                                    <Label Text="INE" FontSize="14" TextColor="#8AA69A"
+                                           HorizontalOptions="Center" VerticalOptions="Center"/>
+                                </Border>
+                                <Label Text="INE reverso" FontSize="12" FontFamily="OpenSansSemibold"
+                                       TextColor="{StaticResource TextPrimary}"/>
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+
+                    <!-- Comprobante de domicilio -->
+                    <Border BackgroundColor="White" Stroke="#E2E8E4"
+                            StrokeThickness="1" StrokeShape="RoundRectangle 16" Padding="12">
+                        <VerticalStackLayout Spacing="8">
+                            <Border BackgroundColor="#F0F5F2" StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 12" HeightRequest="100">
+                                <Label Text="Doc." FontSize="14" TextColor="#8AA69A"
+                                       HorizontalOptions="Center" VerticalOptions="Center"/>
+                            </Border>
+                            <Label Text="Comprobante de domicilio" FontSize="12" FontFamily="OpenSansSemibold"
+                                   TextColor="{StaticResource TextPrimary}"/>
+                        </VerticalStackLayout>
+                    </Border>
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+    </Grid>
+</ContentPage>

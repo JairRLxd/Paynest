@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Paynest.Features.Cobrador.Pages.EditClientPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Paynest.Features.Cobrador.ViewModels"
+    x:DataType="vm:EditClientViewModel"
+    Shell.NavBarIsVisible="False"
+    BackgroundColor="{StaticResource PageBackground}">
+
+    <Grid RowDefinitions="Auto,*">
+        <Grid Grid.Row="0"
+              Padding="24,52,24,12"
+              RowDefinitions="Auto,Auto">
+            <Grid ColumnDefinitions="40,*">
+                <Border BackgroundColor="Transparent"
+                        StrokeThickness="0"
+                        HeightRequest="40"
+                        WidthRequest="40">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding BackCommand}"/>
+                    </Border.GestureRecognizers>
+                    <Label Text="‹"
+                           FontSize="28"
+                           TextColor="{StaticResource GreenPrimary}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"/>
+                </Border>
+
+                <VerticalStackLayout Grid.Column="1"
+                                     Spacing="2"
+                                     VerticalOptions="Center">
+                    <Label Text="CLIENTES"
+                           FontSize="12"
+                           FontFamily="OpenSansSemibold"
+                           TextColor="{StaticResource GreenPrimary}"/>
+                    <Label Text="Editar cliente"
+                           FontSize="26"
+                           FontFamily="OpenSansSemibold"
+                           TextColor="{StaticResource TextPrimary}"/>
+                </VerticalStackLayout>
+            </Grid>
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="24,10,24,32"
+                                 Spacing="18">
+                <VerticalStackLayout HorizontalOptions="Center"
+                                     Spacing="10">
+                    <Grid>
+                        <Border BackgroundColor="{Binding AvatarColor}"
+                                StrokeThickness="0"
+                                StrokeShape="Ellipse"
+                                HeightRequest="110"
+                                WidthRequest="110">
+                            <Label Text="{Binding Initials}"
+                                   TextColor="White"
+                                   FontSize="34"
+                                   FontFamily="OpenSansSemibold"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"/>
+                        </Border>
+
+                        <Border BackgroundColor="{StaticResource GreenPrimary}"
+                                Stroke="White"
+                                StrokeThickness="2"
+                                StrokeShape="Ellipse"
+                                HeightRequest="34"
+                                WidthRequest="34"
+                                HorizontalOptions="End"
+                                VerticalOptions="End">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding ChangePhotoCommand}"/>
+                            </Border.GestureRecognizers>
+                            <Label Text="✎"
+                                   TextColor="White"
+                                   FontSize="16"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"/>
+                        </Border>
+                    </Grid>
+
+                    <Label Text="Cambiar foto"
+                           FontSize="14"
+                           FontFamily="OpenSansSemibold"
+                           TextColor="{StaticResource GreenPrimary}"/>
+                </VerticalStackLayout>
+
+                <Border BackgroundColor="White"
+                        Stroke="#E2E8E4"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 20"
+                        Padding="18,18,18,18">
+                    <VerticalStackLayout Spacing="14">
+                        <Label Text="Información personal"
+                               FontSize="16"
+                               FontFamily="OpenSansSemibold"
+                               TextColor="{StaticResource TextPrimary}"/>
+
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="Nombre completo" FontSize="14" TextColor="{StaticResource TextPrimary}"/>
+                            <Border BackgroundColor="White" Stroke="{StaticResource InputBorderBrush}"
+                                    StrokeThickness="1.5" StrokeShape="RoundRectangle 14" Padding="14,0">
+                                <Entry Text="{Binding Name}" HeightRequest="54"
+                                       BackgroundColor="Transparent" TextColor="{StaticResource TextPrimary}"/>
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="Teléfono" FontSize="14" TextColor="{StaticResource TextPrimary}"/>
+                            <Border BackgroundColor="White" Stroke="{StaticResource InputBorderBrush}"
+                                    StrokeThickness="1.5" StrokeShape="RoundRectangle 14" Padding="14,0">
+                                <Entry Text="{Binding Phone}" Keyboard="Telephone" HeightRequest="54"
+                                       BackgroundColor="Transparent" TextColor="{StaticResource TextPrimary}"/>
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="CURP" FontSize="14" TextColor="{StaticResource TextPrimary}"/>
+                            <Border BackgroundColor="White" Stroke="{StaticResource InputBorderBrush}"
+                                    StrokeThickness="1.5" StrokeShape="RoundRectangle 14" Padding="14,0">
+                                <Entry Text="{Binding Curp}" HeightRequest="54"
+                                       BackgroundColor="Transparent" TextColor="{StaticResource TextPrimary}"/>
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="RFC" FontSize="14" TextColor="{StaticResource TextPrimary}"/>
+                            <Border BackgroundColor="White" Stroke="{StaticResource InputBorderBrush}"
+                                    StrokeThickness="1.5" StrokeShape="RoundRectangle 14" Padding="14,0">
+                                <Entry Text="{Binding Rfc}" HeightRequest="54"
+                                       BackgroundColor="Transparent" TextColor="{StaticResource TextPrimary}"/>
+                            </Border>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border BackgroundColor="White"
+                        Stroke="#E2E8E4"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 20"
+                        Padding="18,18,18,18">
+                    <VerticalStackLayout Spacing="14">
+                        <Label Text="Domicilio"
+                               FontSize="16"
+                               FontFamily="OpenSansSemibold"
+                               TextColor="{StaticResource TextPrimary}"/>
+
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="Dirección" FontSize="14" TextColor="{StaticResource TextPrimary}"/>
+                            <Border BackgroundColor="White" Stroke="{StaticResource InputBorderBrush}"
+                                    StrokeThickness="1.5" StrokeShape="RoundRectangle 14" Padding="14,0">
+                                <Entry Text="{Binding Address}" HeightRequest="54"
+                                       BackgroundColor="Transparent" TextColor="{StaticResource TextPrimary}"/>
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <Grid ColumnDefinitions="*,12,*">
+                            <VerticalStackLayout Grid.Column="0" Spacing="8">
+                                <Label Text="Código postal" FontSize="14" TextColor="{StaticResource TextPrimary}"/>
+                                <Border BackgroundColor="White" Stroke="{StaticResource InputBorderBrush}"
+                                        StrokeThickness="1.5" StrokeShape="RoundRectangle 14" Padding="14,0">
+                                    <Entry Text="{Binding PostalCode}" Keyboard="Numeric" HeightRequest="54"
+                                           BackgroundColor="Transparent" TextColor="{StaticResource TextPrimary}"/>
+                                </Border>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Column="2" Spacing="8">
+                                <Label Text="Colonia" FontSize="14" TextColor="{StaticResource TextPrimary}"/>
+                                <Border BackgroundColor="White" Stroke="{StaticResource InputBorderBrush}"
+                                        StrokeThickness="1.5" StrokeShape="RoundRectangle 14" Padding="14,0">
+                                    <Entry Text="{Binding Colonia}" HeightRequest="54"
+                                           BackgroundColor="Transparent" TextColor="{StaticResource TextPrimary}"/>
+                                </Border>
+                            </VerticalStackLayout>
+                        </Grid>
+
+                        <Grid ColumnDefinitions="*,12,*">
+                            <VerticalStackLayout Grid.Column="0" Spacing="8">
+                                <Label Text="Municipio" FontSize="14" TextColor="{StaticResource TextPrimary}"/>
+                                <Border BackgroundColor="White" Stroke="{StaticResource InputBorderBrush}"
+                                        StrokeThickness="1.5" StrokeShape="RoundRectangle 14" Padding="14,0">
+                                    <Entry Text="{Binding Municipio}" HeightRequest="54"
+                                           BackgroundColor="Transparent" TextColor="{StaticResource TextPrimary}"/>
+                                </Border>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Column="2" Spacing="8">
+                                <Label Text="Estado" FontSize="14" TextColor="{StaticResource TextPrimary}"/>
+                                <Border BackgroundColor="White" Stroke="{StaticResource InputBorderBrush}"
+                                        StrokeThickness="1.5" StrokeShape="RoundRectangle 14" Padding="14,0">
+                                    <Entry Text="{Binding Estado}" HeightRequest="54"
+                                           BackgroundColor="Transparent" TextColor="{StaticResource TextPrimary}"/>
+                                </Border>
+                            </VerticalStackLayout>
+                        </Grid>
+
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="Notas" FontSize="14" TextColor="{StaticResource TextPrimary}"/>
+                            <Border BackgroundColor="White" Stroke="{StaticResource InputBorderBrush}"
+                                    StrokeThickness="1.5" StrokeShape="RoundRectangle 14" Padding="14,8">
+                                <Editor Text="{Binding Notes}" AutoSize="TextChanges"
+                                        MinimumHeightRequest="110"
+                                        BackgroundColor="Transparent" TextColor="{StaticResource TextPrimary}"/>
+                            </Border>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border BackgroundColor="White"
+                        Stroke="#E2E8E4"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 20"
+                        Padding="18,18,18,18">
+                    <VerticalStackLayout Spacing="14">
+                        <Label Text="Documentos e imágenes"
+                               FontSize="16"
+                               FontFamily="OpenSansSemibold"
+                               TextColor="{StaticResource TextPrimary}"/>
+
+                        <Grid ColumnDefinitions="*,12,*"
+                              RowDefinitions="Auto,12,Auto">
+
+                            <Border Grid.Row="0" Grid.Column="0"
+                                    BackgroundColor="White"
+                                    Stroke="#E2E8E4"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 16"
+                                    Padding="12">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ChangeOfficialIdFrontCommand}"/>
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="8">
+                                    <Border BackgroundColor="#F0F5F2"
+                                            StrokeThickness="0"
+                                            StrokeShape="RoundRectangle 12"
+                                            HeightRequest="108">
+                                        <Label Text="INE"
+                                               FontSize="14"
+                                               TextColor="#8AA69A"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center"/>
+                                    </Border>
+                                    <Label Text="{Binding OfficialIdFrontLabel}"
+                                           FontSize="12"
+                                           FontFamily="OpenSansSemibold"
+                                           TextColor="{StaticResource TextPrimary}"/>
+                                    <Label Text="Toca para reemplazar"
+                                           FontSize="11"
+                                           TextColor="{StaticResource TextSecondary}"/>
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <Border Grid.Row="0" Grid.Column="2"
+                                    BackgroundColor="White"
+                                    Stroke="#E2E8E4"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 16"
+                                    Padding="12">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ChangeOfficialIdBackCommand}"/>
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="8">
+                                    <Border BackgroundColor="#F0F5F2"
+                                            StrokeThickness="0"
+                                            StrokeShape="RoundRectangle 12"
+                                            HeightRequest="108">
+                                        <Label Text="INE"
+                                               FontSize="14"
+                                               TextColor="#8AA69A"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center"/>
+                                    </Border>
+                                    <Label Text="{Binding OfficialIdBackLabel}"
+                                           FontSize="12"
+                                           FontFamily="OpenSansSemibold"
+                                           TextColor="{StaticResource TextPrimary}"/>
+                                    <Label Text="Toca para reemplazar"
+                                           FontSize="11"
+                                           TextColor="{StaticResource TextSecondary}"/>
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <Border Grid.Row="2" Grid.Column="0"
+                                    BackgroundColor="White"
+                                    Stroke="#E2E8E4"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 16"
+                                    Padding="12">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ChangeProofOfAddressCommand}"/>
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="8">
+                                    <Border BackgroundColor="#F0F5F2"
+                                            StrokeThickness="0"
+                                            StrokeShape="RoundRectangle 12"
+                                            HeightRequest="108">
+                                        <Label Text="Doc."
+                                               FontSize="14"
+                                               TextColor="#8AA69A"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center"/>
+                                    </Border>
+                                    <Label Text="{Binding ProofOfAddressLabel}"
+                                           FontSize="12"
+                                           FontFamily="OpenSansSemibold"
+                                           TextColor="{StaticResource TextPrimary}"/>
+                                    <Label Text="Toca para reemplazar"
+                                           FontSize="11"
+                                           TextColor="{StaticResource TextSecondary}"/>
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <Border Grid.Row="2" Grid.Column="2"
+                                    BackgroundColor="White"
+                                    Stroke="#E2E8E4"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 16"
+                                    Padding="12">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ChangeClientPhotoCommand}"/>
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="8">
+                                    <Border BackgroundColor="#F0F5F2"
+                                            StrokeThickness="0"
+                                            StrokeShape="RoundRectangle 12"
+                                            HeightRequest="108">
+                                        <Label Text="Foto"
+                                               FontSize="14"
+                                               TextColor="#8AA69A"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center"/>
+                                    </Border>
+                                    <Label Text="{Binding ClientPhotoLabel}"
+                                           FontSize="12"
+                                           FontFamily="OpenSansSemibold"
+                                           TextColor="{StaticResource TextPrimary}"/>
+                                    <Label Text="Toca para reemplazar"
+                                           FontSize="11"
+                                           TextColor="{StaticResource TextSecondary}"/>
+                                </VerticalStackLayout>
+                            </Border>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Button Text="Guardar cambios"
+                        Command="{Binding SaveCommand}"
+                        BackgroundColor="{StaticResource GreenPrimary}"
+                        TextColor="White"
+                        FontFamily="OpenSansSemibold"
+                        FontSize="16"
+                        CornerRadius="28"
+                        HeightRequest="56"/>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

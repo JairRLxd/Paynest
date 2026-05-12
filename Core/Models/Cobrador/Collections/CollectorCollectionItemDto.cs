@@ -17,4 +17,6 @@ public sealed record CollectorCollectionItemDto(
     string   StatusLabel,
     bool     HasMoratory,
     bool     HasPartialPayment,
-    bool     IsOverdue);
+    bool     IsOverdue,
+    bool     IsDueToday = false,
+    bool     IsInThisWeek = false);

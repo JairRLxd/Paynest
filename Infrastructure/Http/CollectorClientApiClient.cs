@@ -11,6 +11,7 @@ namespace Paynest.Infrastructure.Http;
 
 public class CollectorClientApiClient(HttpClient http, AuthStateService authState) : ICollectorClientService
 {
+    private static readonly JsonSerializerOptions _jsonOpts = new(JsonSerializerDefaults.Web);
     public Task<CollectorClientListResponse> GetClientsAsync(CancellationToken ct = default)
         => SendAsync<CollectorClientListResponse>(HttpMethod.Get, "/api/v1/collector/clients", body: null, ct);
 
@@ -22,6 +23,9 @@ public class CollectorClientApiClient(HttpClient http, AuthStateService authStat
 
     public async Task UpdateClientAsync(string clientId, UpdateClientRequest request, CancellationToken ct = default)
         => await SendAsync<object>(HttpMethod.Put, $"/api/v1/collector/clients/{clientId}", request, ct);
+
+    public async Task DeleteClientAsync(string clientId, CancellationToken ct = default)
+        => await SendAsync<object>(HttpMethod.Delete, $"/api/v1/collector/clients/{clientId}", body: null, ct);
 
     private Task<T> SendAsync<T>(HttpMethod method, string path, object? body, CancellationToken ct)
         => authState.CallProtectedAsync(
@@ -35,7 +39,7 @@ public class CollectorClientApiClient(HttpClient http, AuthStateService authStat
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
         if (body is not null)
-            request.Content = JsonContent.Create(body);
+            request.Content = JsonContent.Create(body, options: _jsonOpts);
 
         var response = await http.SendAsync(request, ct);
         if (!response.IsSuccessStatusCode)

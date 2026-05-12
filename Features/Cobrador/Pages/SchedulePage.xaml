@@ -1,0 +1,479 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Name="SchedulePageRoot"
+    x:Class="Paynest.Features.Cobrador.Pages.SchedulePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:Paynest.Features.Cobrador.Models"
+    xmlns:vm="clr-namespace:Paynest.Features.Cobrador.ViewModels"
+    x:DataType="vm:ScheduleViewModel"
+    Shell.NavBarIsVisible="False"
+    BackgroundColor="{StaticResource PageBackground}">
+
+    <Grid RowDefinitions="Auto,*">
+        <Border Grid.Row="0"
+                BackgroundColor="{StaticResource GreenPrimary}"
+                StrokeThickness="0">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="0,0,30,30"/>
+            </Border.StrokeShape>
+
+            <Grid Padding="24,52,24,22" RowDefinitions="Auto,Auto" RowSpacing="14">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                    <VerticalStackLayout Spacing="3">
+                        <Label Text="Agenda"
+                               FontFamily="OpenSansSemibold"
+                               FontSize="27"
+                               TextColor="White"/>
+                        <Label Text="Revisa cobros por fecha"
+                               FontSize="13"
+                               TextColor="#CBE3D6"/>
+                    </VerticalStackLayout>
+
+                    <ActivityIndicator Grid.Column="1"
+                                       IsVisible="{Binding IsMonthLoading}"
+                                       IsRunning="{Binding IsMonthLoading}"
+                                       Color="White"
+                                       VerticalOptions="Center"/>
+                </Grid>
+
+                <Grid Grid.Row="1" ColumnDefinitions="44,*,44" ColumnSpacing="12">
+                    <Border BackgroundColor="#1F7A4F"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 14"
+                            HeightRequest="42"
+                            WidthRequest="42">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding PreviousMonthCommand}"/>
+                        </Border.GestureRecognizers>
+                        <Label Text="‹"
+                               FontSize="24"
+                               TextColor="White"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+                    </Border>
+
+                    <Label Grid.Column="1"
+                           Text="{Binding MonthTitle}"
+                           FontSize="18"
+                           FontFamily="OpenSansSemibold"
+                           TextColor="White"
+                           HorizontalTextAlignment="Center"
+                           VerticalTextAlignment="Center"/>
+
+                    <Border Grid.Column="2"
+                            BackgroundColor="#1F7A4F"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 14"
+                            HeightRequest="42"
+                            WidthRequest="42">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding NextMonthCommand}"/>
+                        </Border.GestureRecognizers>
+                        <Label Text="›"
+                               FontSize="24"
+                               TextColor="White"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+                    </Border>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,16,16,28" Spacing="18">
+
+                <Border BackgroundColor="{StaticResource White}"
+                        Stroke="#DDE5DF"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 24"
+                        Padding="16">
+                    <VerticalStackLayout Spacing="14">
+                        <Label Text="Calendario del mes"
+                               FontSize="16"
+                               FontFamily="OpenSansSemibold"
+                               TextColor="{StaticResource TextPrimary}"/>
+
+                        <Grid ColumnDefinitions="*,*,*,*,*,*,*" ColumnSpacing="6">
+                            <Label Text="L" HorizontalTextAlignment="Center" TextColor="{StaticResource TextSecondary}" FontFamily="OpenSansSemibold"/>
+                            <Label Grid.Column="1" Text="M" HorizontalTextAlignment="Center" TextColor="{StaticResource TextSecondary}" FontFamily="OpenSansSemibold"/>
+                            <Label Grid.Column="2" Text="M" HorizontalTextAlignment="Center" TextColor="{StaticResource TextSecondary}" FontFamily="OpenSansSemibold"/>
+                            <Label Grid.Column="3" Text="J" HorizontalTextAlignment="Center" TextColor="{StaticResource TextSecondary}" FontFamily="OpenSansSemibold"/>
+                            <Label Grid.Column="4" Text="V" HorizontalTextAlignment="Center" TextColor="{StaticResource TextSecondary}" FontFamily="OpenSansSemibold"/>
+                            <Label Grid.Column="5" Text="S" HorizontalTextAlignment="Center" TextColor="{StaticResource TextSecondary}" FontFamily="OpenSansSemibold"/>
+                            <Label Grid.Column="6" Text="D" HorizontalTextAlignment="Center" TextColor="{StaticResource TextSecondary}" FontFamily="OpenSansSemibold"/>
+                        </Grid>
+
+                        <FlexLayout Wrap="Wrap"
+                                    Direction="Row"
+                                    JustifyContent="Start"
+                                    AlignItems="Start"
+                                    BindableLayout.ItemsSource="{Binding CalendarDays}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="models:AgendaCalendarDayItem">
+                                    <Border BackgroundColor="{Binding BackgroundColor}"
+                                            Stroke="{Binding BorderColor}"
+                                            StrokeThickness="1"
+                                            StrokeShape="RoundRectangle 16"
+                                            HeightRequest="64"
+                                            WidthRequest="45"
+                                            Margin="0,0,6,8"
+                                            Opacity="{Binding Opacity}">
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnCalendarDayTapped"/>
+                                        </Border.GestureRecognizers>
+
+                                        <Grid Padding="7,6" RowDefinitions="Auto,*,Auto">
+                                            <Grid ColumnDefinitions="*,Auto">
+                                                <Label Text="{Binding DayText}"
+                                                       FontSize="14"
+                                                       FontFamily="OpenSansSemibold"
+                                                       TextColor="{Binding DayTextColor}"/>
+                                                <HorizontalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Start">
+                                                    <BoxView IsVisible="{Binding HasOverdue}"
+                                                             WidthRequest="7"
+                                                             HeightRequest="7"
+                                                             CornerRadius="4"
+                                                             Color="#F04438"/>
+                                                    <BoxView IsVisible="{Binding HasRescheduled}"
+                                                             WidthRequest="7"
+                                                             HeightRequest="7"
+                                                             CornerRadius="4"
+                                                             Color="#F59E0B"/>
+                                                </HorizontalStackLayout>
+                                            </Grid>
+
+                                            <Border Grid.Row="2"
+                                                    IsVisible="{Binding HasItems}"
+                                                    BackgroundColor="{Binding ItemsBadgeBackground}"
+                                                    StrokeThickness="0"
+                                                    StrokeShape="RoundRectangle 10"
+                                                    Padding="6,2"
+                                                    HorizontalOptions="Start">
+                                                <Label Text="{Binding ItemsCountText}"
+                                                       FontSize="11"
+                                                       FontFamily="OpenSansSemibold"
+                                                       TextColor="{Binding ItemsBadgeTextColor}"/>
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </FlexLayout>
+
+                        <Border IsVisible="{Binding HasCalendarError}"
+                                BackgroundColor="#FFF1F3"
+                                Stroke="#FECFD6"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 16"
+                                Padding="12,10">
+                            <Label Text="{Binding CalendarErrorMessage}"
+                                   FontSize="12"
+                                   TextColor="#F04438"/>
+                        </Border>
+
+                        <Border IsVisible="{Binding ShowMonthEmptyHint}"
+                                BackgroundColor="#F7FAF7"
+                                Stroke="#E3E9E4"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 16"
+                                Padding="14,12">
+                            <Label Text="Este mes no tiene cobros programados todavía."
+                                   FontSize="12"
+                                   TextColor="{StaticResource TextSecondary}"/>
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border BackgroundColor="{StaticResource White}"
+                        Stroke="#DDE5DF"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 24"
+                        Padding="16">
+                    <VerticalStackLayout Spacing="14">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding SelectedDayTitle}"
+                                       FontSize="17"
+                                       FontFamily="OpenSansSemibold"
+                                       TextColor="{StaticResource TextPrimary}"/>
+                                <Label Text="{Binding SelectedDaySubtitle}"
+                                       FontSize="12"
+                                       TextColor="{StaticResource TextSecondary}"/>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Column="1" HorizontalOptions="End" Spacing="2">
+                                <Label Text="Total del día"
+                                       FontSize="11"
+                                       TextColor="{StaticResource TextSecondary}"
+                                       HorizontalTextAlignment="End"/>
+                                <Label Text="{Binding SelectedDayAmount}"
+                                       FontSize="18"
+                                       FontFamily="OpenSansSemibold"
+                                       TextColor="{StaticResource GreenPrimary}"
+                                       HorizontalTextAlignment="End"/>
+                            </VerticalStackLayout>
+                        </Grid>
+
+                        <ActivityIndicator IsVisible="{Binding IsDayLoading}"
+                                           IsRunning="{Binding IsDayLoading}"
+                                           Color="{StaticResource GreenPrimary}"/>
+
+                        <Border IsVisible="{Binding ShowDayPrompt}"
+                                BackgroundColor="#F7FAF7"
+                                Stroke="#E3E9E4"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 18"
+                                Padding="18,16">
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="Selecciona un día"
+                                       FontSize="15"
+                                       FontFamily="OpenSansSemibold"
+                                       TextColor="{StaticResource TextPrimary}"/>
+                                <Label Text="La agenda carga primero el mes. Toca una fecha para ver los cobros de ese día."
+                                       FontSize="12"
+                                       TextColor="{StaticResource TextSecondary}"
+                                       LineHeight="1.3"/>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border IsVisible="{Binding HasDayError}"
+                                BackgroundColor="#FFF1F3"
+                                Stroke="#FECFD6"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 16"
+                                Padding="12,10">
+                            <Label Text="{Binding DayErrorMessage}"
+                                   FontSize="12"
+                                   TextColor="#F04438"/>
+                        </Border>
+
+                        <Border IsVisible="{Binding IsDayEmpty}"
+                                BackgroundColor="#F7FAF7"
+                                Stroke="#E3E9E4"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 18"
+                                Padding="18,16">
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="Sin cobros para este día"
+                                       FontSize="15"
+                                       FontFamily="OpenSansSemibold"
+                                       TextColor="{StaticResource TextPrimary}"/>
+                                <Label Text="Selecciona otra fecha para revisar vencimientos o cobros programados."
+                                       FontSize="12"
+                                       TextColor="{StaticResource TextSecondary}"
+                                       LineHeight="1.3"/>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <VerticalStackLayout Spacing="12"
+                                             BindableLayout.ItemsSource="{Binding DayItems}"
+                                             IsVisible="{Binding HasDayItems}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="models:AgendaCollectionItem">
+                                    <Border BackgroundColor="White"
+                                            Stroke="#E3E9E4"
+                                            StrokeThickness="1"
+                                            StrokeShape="RoundRectangle 20"
+                                            Padding="14">
+                                        <VerticalStackLayout Spacing="12">
+                                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                                <Border BackgroundColor="{Binding AvatarColor}"
+                                                        StrokeThickness="0"
+                                                        StrokeShape="RoundRectangle 18"
+                                                        HeightRequest="50"
+                                                        WidthRequest="50">
+                                                    <Label Text="{Binding ClientInitials}"
+                                                           FontSize="18"
+                                                           FontFamily="OpenSansSemibold"
+                                                           TextColor="White"
+                                                           HorizontalOptions="Center"
+                                                           VerticalOptions="Center"/>
+                                                </Border>
+
+                                                <VerticalStackLayout Grid.Column="1" Spacing="3">
+                                                    <Label Text="{Binding ClientName}"
+                                                           FontSize="15"
+                                                           FontFamily="OpenSansSemibold"
+                                                           TextColor="{StaticResource TextPrimary}"/>
+                                                    <Label Text="{Binding Address}"
+                                                           FontSize="12"
+                                                           LineBreakMode="TailTruncation"
+                                                           TextColor="{StaticResource TextSecondary}"/>
+                                                </VerticalStackLayout>
+
+                                                <VerticalStackLayout Grid.Column="2"
+                                                                     Spacing="2"
+                                                                     HorizontalOptions="End">
+                                                    <Label Text="{Binding AmountDueText}"
+                                                           FontSize="18"
+                                                           FontFamily="OpenSansSemibold"
+                                                           TextColor="{StaticResource TextPrimary}"
+                                                           HorizontalTextAlignment="End"/>
+                                                    <Border BackgroundColor="{Binding StatusBackground}"
+                                                            StrokeThickness="0"
+                                                            StrokeShape="RoundRectangle 10"
+                                                            Padding="10,4"
+                                                            HorizontalOptions="End">
+                                                        <Label Text="{Binding StatusLabel}"
+                                                               FontSize="11"
+                                                               FontFamily="OpenSansSemibold"
+                                                               TextColor="{Binding StatusTextColor}"/>
+                                                    </Border>
+                                                </VerticalStackLayout>
+                                            </Grid>
+
+                                            <!-- Rescheduled chip + reason -->
+                                            <HorizontalStackLayout Spacing="8" IsVisible="{Binding IsRescheduled}">
+                                                <Border BackgroundColor="#FFF7ED"
+                                                        Stroke="#FCD34D"
+                                                        StrokeThickness="1"
+                                                        StrokeShape="RoundRectangle 10"
+                                                        Padding="10,4">
+                                                    <Label Text="Reprogramado"
+                                                           FontSize="11"
+                                                           FontFamily="OpenSansSemibold"
+                                                           TextColor="#92400E"/>
+                                                </Border>
+                                                <Label Text="{Binding RescheduleReason}"
+                                                       FontSize="12"
+                                                       TextColor="{StaticResource TextSecondary}"
+                                                       VerticalOptions="Center"
+                                                       LineBreakMode="TailTruncation"
+                                                       IsVisible="{Binding HasRescheduleReason}"/>
+                                            </HorizontalStackLayout>
+
+                                            <VerticalStackLayout Spacing="2">
+                                                <Label Text="{Binding Description}"
+                                                       FontSize="13"
+                                                       TextColor="{StaticResource TextPrimary}"/>
+                                                <Label Text="{Binding InstallmentLabel}"
+                                                       FontSize="12"
+                                                       TextColor="{StaticResource TextSecondary}"/>
+                                            </VerticalStackLayout>
+
+                                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                                                <Button Text="Registrar pago"
+                                                        Clicked="OnRegisterPaymentClicked"
+                                                        BackgroundColor="{StaticResource GreenPrimary}"
+                                                        TextColor="White"
+                                                        FontFamily="OpenSansSemibold"
+                                                        CornerRadius="18"
+                                                        HeightRequest="44"/>
+                                                <Button Grid.Column="1"
+                                                        Text="📅"
+                                                        Clicked="OnRescheduleClicked"
+                                                        BackgroundColor="#F0F4F2"
+                                                        TextColor="{StaticResource TextPrimary}"
+                                                        FontSize="18"
+                                                        WidthRequest="52"
+                                                        HeightRequest="44"
+                                                        CornerRadius="18"
+                                                        SemanticProperties.Description="Cambiar fecha de cobro"/>
+                                            </Grid>
+                                        </VerticalStackLayout>
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Reschedule overlay -->
+        <Grid x:Name="RescheduleOverlay"
+              Grid.RowSpan="2"
+              IsVisible="False"
+              BackgroundColor="#990B1220">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnRescheduleOverlayDismissed"/>
+            </Grid.GestureRecognizers>
+            <Border x:Name="ReschedulePanel"
+                    Margin="16,0,16,24"
+                    Padding="18"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource AppSurface}, Dark={StaticResource AppSurfaceDark}}"
+                    Stroke="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}"
+                    StrokeShape="RoundRectangle 16"
+                    Shadow="{StaticResource AppCardShadow}"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Center"
+                    TranslationY="48">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer />
+                </Border.GestureRecognizers>
+                <VerticalStackLayout Spacing="16">
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="Cambiar fecha" FontAttributes="Bold" FontSize="20" TextColor="{StaticResource TextPrimary}"/>
+                            <Label x:Name="RescheduleTitleLabel" Style="{StaticResource AppCaption}" Text="Cobro seleccionado"/>
+                        </VerticalStackLayout>
+                        <Button Grid.Column="1"
+                                Text="×"
+                                FontSize="20"
+                                WidthRequest="42"
+                                HeightRequest="42"
+                                Padding="0"
+                                BackgroundColor="{StaticResource Divider}"
+                                TextColor="{StaticResource TextSecondary}"
+                                Clicked="OnRescheduleOverlayDismissed"/>
+                    </Grid>
+
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Nueva fecha de cobro"
+                               FontSize="13"
+                               FontFamily="OpenSansSemibold"
+                               TextColor="{StaticResource TextPrimary}"/>
+                        <Border Stroke="{StaticResource AppBorder}"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 12"
+                                Padding="14,10"
+                                BackgroundColor="{StaticResource AppSurfaceAlt}">
+                            <DatePicker x:Name="RescheduleDatePicker"
+                                        Format="d MMM yyyy"
+                                        FontSize="15"
+                                        TextColor="{StaticResource TextPrimary}"/>
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Motivo (opcional)"
+                               FontSize="13"
+                               FontFamily="OpenSansSemibold"
+                               TextColor="{StaticResource TextPrimary}"/>
+                        <Border Stroke="{StaticResource AppBorder}"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 12"
+                                Padding="14,10"
+                                BackgroundColor="{StaticResource AppSurfaceAlt}">
+                            <Entry x:Name="RescheduleReasonEntry"
+                                   Placeholder="Ej. cliente no disponible, acuerdo de pago..."
+                                   FontSize="14"
+                                   TextColor="{StaticResource TextPrimary}"
+                                   PlaceholderColor="{StaticResource TextSecondary}"
+                                   MaxLength="200"/>
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <ActivityIndicator x:Name="RescheduleLoadingIndicator"
+                                       IsVisible="False"
+                                       IsRunning="False"
+                                       Color="{StaticResource GreenPrimary}"
+                                       HorizontalOptions="Center"/>
+
+                    <Button x:Name="RescheduleConfirmButton"
+                            Text="Confirmar nueva fecha"
+                            BackgroundColor="{StaticResource GreenPrimary}"
+                            TextColor="White"
+                            FontFamily="OpenSansSemibold"
+                            CornerRadius="22"
+                            HeightRequest="50"
+                            Clicked="OnRescheduleConfirmed"/>
+                    <Button Text="Cancelar"
+                            Style="{StaticResource AppSecondaryButton}"
+                            Clicked="OnRescheduleOverlayDismissed"/>
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+    </Grid>
+</ContentPage>

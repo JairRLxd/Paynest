@@ -8,4 +8,5 @@ public interface ICollectorClientService
     Task<CollectorClientDetailResponse> GetClientDetailAsync(string clientId, CancellationToken ct = default);
     Task<CollectorClientFinancialSummaryResponse> GetFinancialSummaryAsync(string clientId, CancellationToken ct = default);
     Task UpdateClientAsync(string clientId, UpdateClientRequest request, CancellationToken ct = default);
+    Task DeleteClientAsync(string clientId, CancellationToken ct = default);
 }
