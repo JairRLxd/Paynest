@@ -70,7 +70,14 @@ internal sealed class ClientRefreshController : IDisposable
 	{
 		CancelCurrentRequest();
 		_requestCts = new CancellationTokenSource();
-		await _refreshAsync(_requestCts.Token);
+		try
+		{
+			await _refreshAsync(_requestCts.Token);
+		}
+		catch (OperationCanceledException) when (_requestCts?.IsCancellationRequested == true)
+		{
+			// Expected when a newer refresh supersedes the previous one.
+		}
 		if (args is not null && _afterRefreshAsync is not null)
 		{
 			await _afterRefreshAsync(args);

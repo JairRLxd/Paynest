@@ -476,7 +476,7 @@ public sealed class HttpDebtApiClient(HttpClient httpClient, AuthStateService au
         using var doc = JsonDocument.Parse(json);
         if (doc.RootElement.ValueKind == JsonValueKind.Array)
         {
-            return JsonSerializer.Deserialize<List<ReceiptDto>>(json, JsonOpts) ?? [];
+            return doc.RootElement.EnumerateArray().Select(ReceiptElementToDto).ToList();
         }
 
         if (TryGetArray(doc.RootElement, out var payments, "items", "payments", "data"))
@@ -500,6 +500,12 @@ public sealed class HttpDebtApiClient(HttpClient httpClient, AuthStateService au
         }
 
         using var doc = JsonDocument.Parse(json);
+        if (TryGetProperty(doc.RootElement, "receipt", out var wrappedReceipt) &&
+            wrappedReceipt.ValueKind == JsonValueKind.Object)
+        {
+            return ReceiptElementToDto(wrappedReceipt);
+        }
+
         return ReceiptElementToDto(doc.RootElement);
     }
 
