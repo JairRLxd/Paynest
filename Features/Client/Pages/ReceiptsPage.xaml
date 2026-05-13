@@ -5,7 +5,7 @@
 			 xmlns:vm="clr-namespace:Paynest.Features.Client.ViewModels"
 			 x:Class="Paynest.ReceiptsPage"
 			 Title="Recibos"
-			 BackgroundColor="{StaticResource AppBg}">
+			 BackgroundColor="{AppThemeBinding Light={StaticResource AppBg}, Dark={StaticResource AppBgDark}}">
 	<ContentPage.Resources>
 		<Style x:Key="ReceiptPrimaryButton" TargetType="Button">
 			<Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource AppAccent}, Dark={StaticResource AppAccentDark}}" />

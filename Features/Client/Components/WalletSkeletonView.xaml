@@ -4,7 +4,7 @@
              xmlns:local="clr-namespace:Paynest"
              x:Class="Paynest.WalletSkeletonView">
     <VerticalStackLayout Spacing="{StaticResource Space12}">
-        <Border StrokeThickness="0" StrokeShape="RoundRectangle 18" BackgroundColor="{StaticResource AppSurfaceAlt}" Padding="18">
+        <Border StrokeThickness="0" StrokeShape="RoundRectangle 18" BackgroundColor="{AppThemeBinding Light={StaticResource AppSurfaceAlt}, Dark={StaticResource AppSurfaceDark}}" Padding="18">
             <VerticalStackLayout Spacing="14">
                 <BoxView HeightRequest="14" WidthRequest="130" CornerRadius="7" Color="#D8E9DE" />
                 <BoxView HeightRequest="32" WidthRequest="190" CornerRadius="10" Color="#D8E9DE" />

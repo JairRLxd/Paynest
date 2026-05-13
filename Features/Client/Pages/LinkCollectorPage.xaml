@@ -4,15 +4,15 @@
              xmlns:local="clr-namespace:Paynest"
              x:Class="Paynest.LinkCollectorPage"
              Title="Vincular cobrador"
-             BackgroundColor="{StaticResource AppBg}">
+             BackgroundColor="{AppThemeBinding Light={StaticResource AppBg}, Dark={StaticResource AppBgDark}}">
     <ScrollView>
         <VerticalStackLayout x:Name="RootLayout" Padding="20,16,20,96" Spacing="{StaticResource Space16}">
             <Label Style="{StaticResource AppPageTitle}" Text="Vincular cobrador" SemanticProperties.HeadingLevel="Level1" />
             <Label Style="{StaticResource AppCaption}" Text="Escribe el codigo PAY que te compartio tu cobrador para ver tus deudas y pagos." />
 
             <Border
-                BackgroundColor="{StaticResource AppSurfaceAlt}"
-                Stroke="#D8E9DE"
+                BackgroundColor="{AppThemeBinding Light={StaticResource AppSurfaceAlt}, Dark={StaticResource AppSurfaceDark}}"
+                Stroke="{AppThemeBinding Light=#D8E9DE, Dark={StaticResource AppBorderDark}}"
                 StrokeShape="RoundRectangle 18"
                 Padding="16">
                 <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
@@ -22,10 +22,10 @@
                         StrokeShape="RoundRectangle 18"
                         HeightRequest="52"
                         WidthRequest="52">
-                        <Label Text="PAY" TextColor="{StaticResource GreenPrimary}" FontAttributes="Bold" FontSize="13" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+                        <Label Text="PAY" TextColor="{AppThemeBinding Light={StaticResource GreenPrimary}, Dark={StaticResource AppAccentDark}}" FontAttributes="Bold" FontSize="13" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
                     </Border>
                     <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
-                        <Label Text="Codigo del cobrador" TextColor="{StaticResource GreenPrimary}" FontAttributes="Bold" FontSize="14" />
+                        <Label Text="Codigo del cobrador" TextColor="{AppThemeBinding Light={StaticResource GreenPrimary}, Dark={StaticResource AppAccentDark}}" FontAttributes="Bold" FontSize="14" />
                         <Label Style="{StaticResource AppCaption}" Text="Debe verse como PAY-X7XTM5." />
                     </VerticalStackLayout>
                 </Grid>
@@ -38,8 +38,8 @@
                         <Entry
                             Text="{Binding CollectorCode}"
                             Placeholder="PAY-X7XTM5"
-                            TextColor="{StaticResource TextPrimary}"
-                            PlaceholderColor="{StaticResource TextPlaceholder}"
+                            TextColor="{AppThemeBinding Light={StaticResource AppTextPrimary}, Dark={StaticResource AppTextPrimaryDark}}"
+                            PlaceholderColor="{AppThemeBinding Light={StaticResource TextPlaceholder}, Dark={StaticResource AppTextSecondaryDark}}"
                             TextTransform="Uppercase"
                             ClearButtonVisibility="WhileEditing"
                             Keyboard="Text"
@@ -89,12 +89,12 @@
             </Border>
 
             <Border
-                BackgroundColor="{StaticResource AppSurface}"
-                Stroke="{StaticResource AppBorder}"
+                BackgroundColor="{AppThemeBinding Light={StaticResource AppSurface}, Dark={StaticResource AppSurfaceDark}}"
+                Stroke="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}"
                 StrokeShape="RoundRectangle 16"
                 Padding="14">
                 <VerticalStackLayout Spacing="6">
-                    <Label Text="Despues de vincularte" FontAttributes="Bold" FontSize="16" TextColor="{StaticResource TextPrimary}" />
+                    <Label Text="Despues de vincularte" FontAttributes="Bold" FontSize="16" TextColor="{AppThemeBinding Light={StaticResource AppTextPrimary}, Dark={StaticResource AppTextPrimaryDark}}" />
                     <Label Style="{StaticResource AppCaption}" Text="Actualizaremos Inicio, Calendario y Recibos para mostrar los datos que el cobrador tenga registrados para ti." />
                 </VerticalStackLayout>
             </Border>

@@ -4,7 +4,7 @@
 			 xmlns:local="clr-namespace:Paynest"
 			 x:Class="Paynest.CardSimulatorPage"
 			 Title="Saldo"
-			 BackgroundColor="{StaticResource AppBg}">
+			 BackgroundColor="{AppThemeBinding Light={StaticResource AppBg}, Dark={StaticResource AppBgDark}}">
 	<RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
 		<ScrollView x:Name="PageScrollView">
 			<VerticalStackLayout x:Name="RootLayout" Padding="20,16,20,96" Spacing="{StaticResource Space16}">
@@ -93,8 +93,8 @@
 							<Entry
 								Placeholder="Ej. Abono de prueba"
 								Text="{Binding Description}"
-								TextColor="{StaticResource TextPrimary}"
-								PlaceholderColor="{StaticResource TextPlaceholder}"
+								TextColor="{AppThemeBinding Light={StaticResource AppTextPrimary}, Dark={StaticResource AppTextPrimaryDark}}"
+								PlaceholderColor="{AppThemeBinding Light={StaticResource TextPlaceholder}, Dark={StaticResource AppTextSecondaryDark}}"
 								ClearButtonVisibility="WhileEditing"
 								SemanticProperties.Description="Concepto del abono de saldo" />
 						</VerticalStackLayout>
@@ -106,8 +106,8 @@
 								Placeholder="$0.00"
 								Keyboard="Numeric"
 								Text="{Binding AmountInput}"
-								TextColor="{StaticResource TextPrimary}"
-								PlaceholderColor="{StaticResource TextPlaceholder}"
+								TextColor="{AppThemeBinding Light={StaticResource AppTextPrimary}, Dark={StaticResource AppTextPrimaryDark}}"
+								PlaceholderColor="{AppThemeBinding Light={StaticResource TextPlaceholder}, Dark={StaticResource AppTextSecondaryDark}}"
 								SemanticProperties.Description="Monto a abonar al saldo Paynest" />
 						</VerticalStackLayout>
 
@@ -164,12 +164,12 @@
 											<Label FontAttributes="Bold" FontSize="16" Text="{Binding Description}" LineBreakMode="TailTruncation" />
 											<Border
 												IsVisible="{Binding IsNewBadgeVisible}"
-												BackgroundColor="{StaticResource AppSurfaceAlt}"
+												BackgroundColor="{AppThemeBinding Light={StaticResource AppSurfaceAlt}, Dark={StaticResource AppBorderDark}}"
 												StrokeThickness="0"
 												StrokeShape="RoundRectangle 8"
 												Padding="7,3"
 												VerticalOptions="Center">
-												<Label Text="Nuevo" TextColor="{StaticResource GreenPrimary}" FontAttributes="Bold" FontSize="11" />
+												<Label Text="Nuevo" TextColor="{AppThemeBinding Light={StaticResource GreenPrimary}, Dark={StaticResource AppAccentDark}}" FontAttributes="Bold" FontSize="11" />
 											</Border>
 										</HorizontalStackLayout>
 										<Label Style="{StaticResource AppCaption}" Text="{Binding DateText}" />

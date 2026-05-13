@@ -5,7 +5,7 @@
 			 xmlns:vm="clr-namespace:Paynest.Features.Client.ViewModels"
 			 x:Class="Paynest.MainPage"
 			 Title="Inicio"
-			 BackgroundColor="{StaticResource AppBg}">
+			 BackgroundColor="{AppThemeBinding Light={StaticResource AppBg}, Dark={StaticResource AppBgDark}}">
 	<ScrollView>
 		<VerticalStackLayout x:Name="RootLayout" Padding="{StaticResource PagePadding}" Spacing="{StaticResource Space16}">
 			<Label Style="{StaticResource AppPageTitle}" Text="Tus deudas activas" />
@@ -43,12 +43,12 @@
 							<Border
 								Style="{StaticResource AppCardBorder}"
 								Margin="{StaticResource CardItemMargin}"
-								BackgroundColor="{StaticResource AppSurfaceAlt}"
-								Stroke="#D8E9DE">
+								BackgroundColor="{AppThemeBinding Light={StaticResource AppSurfaceAlt}, Dark={StaticResource AppSurfaceDark}}"
+								Stroke="{AppThemeBinding Light=#D8E9DE, Dark={StaticResource AppBorderDark}}">
 								<Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="12" RowSpacing="8">
 									<VerticalStackLayout Spacing="2">
-										<Label Text="Saldo Paynest" TextColor="{StaticResource GreenPrimary}" FontAttributes="Bold" FontSize="14" />
-										<Label Text="{Binding WalletBalanceText}" TextColor="{StaticResource TextPrimary}" FontAttributes="Bold" FontSize="24" />
+										<Label Text="Saldo Paynest" TextColor="{AppThemeBinding Light={StaticResource GreenPrimary}, Dark={StaticResource AppAccentDark}}" FontAttributes="Bold" FontSize="14" />
+										<Label Text="{Binding WalletBalanceText}" TextColor="{AppThemeBinding Light={StaticResource AppTextPrimary}, Dark={StaticResource AppTextPrimaryDark}}" FontAttributes="Bold" FontSize="24" />
 									</VerticalStackLayout>
 									<Button
 										Grid.Column="1"
@@ -59,7 +59,7 @@
 										Clicked="OnWalletSummaryClicked" />
 									<Label Grid.Row="1" Grid.ColumnSpan="2" Style="{StaticResource AppCaption}" Text="Último movimiento" />
 									<Grid Grid.Row="2" Grid.ColumnSpan="2" ColumnDefinitions="*,Auto" ColumnSpacing="10">
-										<Label Text="{Binding WalletMovementText}" FontAttributes="Bold" TextColor="{StaticResource TextPrimary}" LineBreakMode="TailTruncation" />
+										<Label Text="{Binding WalletMovementText}" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource AppTextPrimary}, Dark={StaticResource AppTextPrimaryDark}}" LineBreakMode="TailTruncation" />
 										<Label
 											Grid.Column="1"
 											Text="{Binding WalletMovementAmountText}"
@@ -86,9 +86,9 @@
 														FontAttributes="Bold"
 														FontSize="20"
 														Text="{Binding Name}"
-														TextColor="{StaticResource TextPrimary}"
+														TextColor="{AppThemeBinding Light={StaticResource AppTextPrimary}, Dark={StaticResource AppTextPrimaryDark}}"
 														LineBreakMode="TailTruncation" />
-													<Label Grid.Column="1" Text="›" FontSize="28" TextColor="{StaticResource AppAccent}" VerticalOptions="Center" />
+													<Label Grid.Column="1" Text="›" FontSize="28" TextColor="{AppThemeBinding Light={StaticResource AppAccent}, Dark={StaticResource AppAccentDark}}" VerticalOptions="Center" />
 												</Grid>
 												<Label Style="{StaticResource AppCaption}" Text="{Binding FreelancerName}" LineBreakMode="TailTruncation" />
 												<Label Style="{StaticResource AppCaption}" Text="{Binding FrequencyText}" />
@@ -98,10 +98,10 @@
 														Grid.Column="1"
 														Style="{StaticResource AppAmountText}"
 														Text="{Binding PendingAmountText}"
-														TextColor="{StaticResource TextPrimary}"
+														TextColor="{AppThemeBinding Light={StaticResource AppTextPrimary}, Dark={StaticResource AppTextPrimaryDark}}"
 														LineBreakMode="TailTruncation" />
 												</Grid>
-												<Label Text="Ver detalle" FontAttributes="Bold" FontSize="13" TextColor="{StaticResource AppAccent}" />
+												<Label Text="Ver detalle" FontAttributes="Bold" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource AppAccent}, Dark={StaticResource AppAccentDark}}" />
 											</VerticalStackLayout>
 										</Border>
 									</DataTemplate>

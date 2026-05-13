@@ -1,5 +1,6 @@
 #nullable enable
 using System.Net.Http.Headers;
+using Paynest.Infrastructure;
 using Paynest.Models;
 
 namespace Paynest.Services;
@@ -98,10 +99,17 @@ public sealed class ReceiptActionService
 			return ReceiptUnavailable("El recibo se registró, pero todavía no está listo para abrirse.");
 		}
 
-		if (Uri.TryCreate(paymentResult.ReceiptFileUrl, UriKind.Absolute, out var fileUri))
+		if (!string.IsNullOrWhiteSpace(paymentResult.ReceiptFileUrl))
 		{
-			await Launcher.OpenAsync(fileUri);
-			return new ReceiptActionResult { Success = true, Url = fileUri.ToString() };
+			var localPath = await DownloadReceiptFileAsync(paymentResult.ReceiptId, paymentResult.ReceiptFileUrl, cancellationToken);
+			if (!string.IsNullOrWhiteSpace(localPath))
+			{
+				await Launcher.OpenAsync(new OpenFileRequest
+				{
+					File = new ReadOnlyFile(localPath)
+				});
+				return new ReceiptActionResult { Success = true, Url = paymentResult.ReceiptFileUrl };
+			}
 		}
 
 		return await OpenReceiptAsync(paymentResult.ReceiptId, cancellationToken);
@@ -152,7 +160,7 @@ public sealed class ReceiptActionService
 
 	private async Task<string?> DownloadReceiptFileAsync(string receiptId, string remoteUrl, CancellationToken cancellationToken)
 	{
-		if (!Uri.TryCreate(remoteUrl, UriKind.Absolute, out var uri))
+		if (!TryResolveReceiptUri(remoteUrl, out var uri))
 		{
 			return null;
 		}
@@ -176,6 +184,36 @@ public sealed class ReceiptActionService
 			await File.WriteAllBytesAsync(filePath, bytes, cancellationToken);
 			return filePath;
 		}, cancellationToken);
+	}
+
+	private bool TryResolveReceiptUri(string remoteUrl, out Uri uri)
+	{
+		if (!Uri.TryCreate(remoteUrl, UriKind.RelativeOrAbsolute, out var parsed))
+		{
+			uri = default!;
+			return false;
+		}
+
+		var baseUri = _httpClient.BaseAddress ?? ApiConstants.BaseUri;
+		if (!parsed.IsAbsoluteUri)
+		{
+			uri = new Uri(baseUri, parsed);
+			return true;
+		}
+
+		if (parsed.Host is "localhost" or "127.0.0.1" or "::1")
+		{
+			uri = new UriBuilder(parsed)
+			{
+				Scheme = baseUri.Scheme,
+				Host = baseUri.Host,
+				Port = baseUri.IsDefaultPort ? -1 : baseUri.Port
+			}.Uri;
+			return true;
+		}
+
+		uri = parsed;
+		return true;
 	}
 
 	private static string BuildReceiptFileName(string receiptId)

@@ -12,6 +12,84 @@
             IsDetecting="True"
             BarcodesDetected="OnBarcodesDetected" />
 
+        <Grid Grid.Row="0" InputTransparent="True">
+            <Grid RowDefinitions="*,260,*" ColumnDefinitions="*,260,*">
+                <BoxView Grid.Row="0" Grid.ColumnSpan="3" Color="#66000000" />
+                <BoxView Grid.Row="1" Grid.Column="0" Color="#66000000" />
+                <BoxView Grid.Row="1" Grid.Column="2" Color="#66000000" />
+                <BoxView Grid.Row="2" Grid.ColumnSpan="3" Color="#66000000" />
+
+                <Border
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Stroke="#CCFFFFFF"
+                    StrokeThickness="2"
+                    BackgroundColor="#0DFFFFFF"
+                    StrokeShape="RoundRectangle 20">
+                    <Grid>
+                        <Border
+                            HorizontalOptions="Start"
+                            VerticalOptions="Start"
+                            WidthRequest="34"
+                            HeightRequest="34"
+                            Margin="10"
+                            Stroke="{StaticResource AppAccent}"
+                            StrokeThickness="4"
+                            BackgroundColor="Transparent"
+                            StrokeShape="RoundRectangle 12" />
+                        <Border
+                            HorizontalOptions="End"
+                            VerticalOptions="Start"
+                            WidthRequest="34"
+                            HeightRequest="34"
+                            Margin="10"
+                            Stroke="{StaticResource AppAccent}"
+                            StrokeThickness="4"
+                            BackgroundColor="Transparent"
+                            StrokeShape="RoundRectangle 12" />
+                        <Border
+                            HorizontalOptions="Start"
+                            VerticalOptions="End"
+                            WidthRequest="34"
+                            HeightRequest="34"
+                            Margin="10"
+                            Stroke="{StaticResource AppAccent}"
+                            StrokeThickness="4"
+                            BackgroundColor="Transparent"
+                            StrokeShape="RoundRectangle 12" />
+                        <Border
+                            HorizontalOptions="End"
+                            VerticalOptions="End"
+                            WidthRequest="34"
+                            HeightRequest="34"
+                            Margin="10"
+                            Stroke="{StaticResource AppAccent}"
+                            StrokeThickness="4"
+                            BackgroundColor="Transparent"
+                            StrokeShape="RoundRectangle 12" />
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <VerticalStackLayout
+                VerticalOptions="End"
+                HorizontalOptions="Center"
+                Spacing="4"
+                Margin="24,0,24,110">
+                <Label
+                    Text="Alinea el QR dentro del marco"
+                    FontFamily="OpenSansSemibold"
+                    FontSize="15"
+                    HorizontalTextAlignment="Center"
+                    TextColor="White" />
+                <Label
+                    Text="El escaneo se realiza automáticamente"
+                    FontSize="12"
+                    HorizontalTextAlignment="Center"
+                    TextColor="#DDFFFFFF" />
+            </VerticalStackLayout>
+        </Grid>
+
         <Border
             Grid.Row="1"
             Margin="16"

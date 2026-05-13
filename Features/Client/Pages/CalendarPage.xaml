@@ -5,7 +5,7 @@
 			 xmlns:vm="clr-namespace:Paynest.Features.Client.ViewModels"
 			 x:Class="Paynest.CalendarPage"
 			 Title="Calendario"
-			 BackgroundColor="{StaticResource AppBg}">
+			 BackgroundColor="{AppThemeBinding Light={StaticResource AppBg}, Dark={StaticResource AppBgDark}}">
 	<ContentPage.Resources>
 		<Style x:Key="CalendarFilterButton" TargetType="Button">
 			<Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource AppSurface}, Dark={StaticResource AppSurfaceDark}}" />
@@ -24,7 +24,7 @@
 		<DatePicker
 			Grid.Row="1"
 			Date="{Binding SelectedDate}"
-			TextColor="{StaticResource TextPrimary}"
+			TextColor="{AppThemeBinding Light={StaticResource AppTextPrimary}, Dark={StaticResource AppTextPrimaryDark}}"
 			SemanticProperties.Description="Selector de mes y año para filtrar vencimientos" />
 		<Label Grid.Row="2" Style="{StaticResource AppCaption}" Text="{Binding FilterText}" />
 		<ScrollView Grid.Row="3" Orientation="Horizontal" HorizontalScrollBarVisibility="Never">

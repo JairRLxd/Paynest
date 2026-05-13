@@ -4,15 +4,15 @@
 			 xmlns:local="clr-namespace:Paynest"
 			 x:Class="Paynest.NotificationsPage"
 			 Title="Notificaciones"
-			 BackgroundColor="{StaticResource AppBg}">
+			 BackgroundColor="{AppThemeBinding Light={StaticResource AppBg}, Dark={StaticResource AppBgDark}}">
 	<ScrollView>
 		<VerticalStackLayout x:Name="RootLayout" Padding="20,16,20,96" Spacing="{StaticResource Space16}">
 			<Label Style="{StaticResource AppPageTitle}" Text="Recordatorios de vencimiento" SemanticProperties.HeadingLevel="Level1" />
 			<Label Style="{StaticResource AppCaption}" Text="Define cómo quieres recibir avisos para no atrasarte." />
 
 		<Border
-			BackgroundColor="{StaticResource AppSurfaceAlt}"
-			Stroke="#D8E9DE"
+			BackgroundColor="{AppThemeBinding Light={StaticResource AppSurfaceAlt}, Dark={StaticResource AppSurfaceDark}}"
+			Stroke="{AppThemeBinding Light=#D8E9DE, Dark={StaticResource AppBorderDark}}"
 			StrokeShape="RoundRectangle 16"
 			Padding="14">
 			<Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
@@ -23,11 +23,11 @@
 					HeightRequest="48"
 					WidthRequest="48"
 					VerticalOptions="Start">
-					<Label Text="!" TextColor="{StaticResource GreenPrimary}" FontAttributes="Bold" FontSize="22" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+					<Label Text="!" TextColor="{AppThemeBinding Light={StaticResource GreenPrimary}, Dark={StaticResource AppAccentDark}}" FontAttributes="Bold" FontSize="22" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
 				</Border>
 				<VerticalStackLayout Grid.Column="1" Spacing="4">
-					<Label Text="Vista previa" TextColor="{StaticResource GreenPrimary}" FontAttributes="Bold" FontSize="14" />
-					<Label Text="{Binding ReminderSummary}" TextColor="{StaticResource TextPrimary}" FontAttributes="Bold" LineBreakMode="WordWrap" />
+					<Label Text="Vista previa" TextColor="{AppThemeBinding Light={StaticResource GreenPrimary}, Dark={StaticResource AppAccentDark}}" FontAttributes="Bold" FontSize="14" />
+					<Label Text="{Binding ReminderSummary}" TextColor="{AppThemeBinding Light={StaticResource AppTextPrimary}, Dark={StaticResource AppTextPrimaryDark}}" FontAttributes="Bold" LineBreakMode="WordWrap" />
 					<Label Style="{StaticResource AppCaption}" Text="{Binding ReminderTimeText}" />
 				</VerticalStackLayout>
 			</Grid>
@@ -67,7 +67,7 @@
 					<TimePicker
 						Grid.Column="1"
 						Time="{Binding ReminderTime}"
-						TextColor="{StaticResource TextPrimary}"
+						TextColor="{AppThemeBinding Light={StaticResource AppTextPrimary}, Dark={StaticResource AppTextPrimaryDark}}"
 						VerticalOptions="Center"
 						SemanticProperties.Description="Seleccionar hora para los recordatorios" />
 				</Grid>
@@ -91,8 +91,8 @@
 		</Border>
 
 		<Border
-			BackgroundColor="{StaticResource AppSurfaceAlt}"
-			Stroke="{StaticResource AppBorder}"
+			BackgroundColor="{AppThemeBinding Light={StaticResource AppSurfaceAlt}, Dark={StaticResource AppSurfaceDark}}"
+			Stroke="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}"
 			StrokeShape="RoundRectangle 14"
 			Padding="12,10">
 			<Label

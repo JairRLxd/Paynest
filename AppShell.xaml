@@ -6,14 +6,14 @@
     xmlns:local="clr-namespace:Paynest"
     xmlns:cobrador="clr-namespace:Paynest.Features.Cobrador.Pages"
     Shell.FlyoutBehavior="Disabled"
-    Shell.BackgroundColor="{StaticResource GreenPrimary}"
-    Shell.ForegroundColor="{StaticResource White}"
-    Shell.TitleColor="{StaticResource White}"
-    Shell.UnselectedColor="{StaticResource TabBarInactiveLight}"
-    Shell.TabBarBackgroundColor="{StaticResource TabBarBgLight}"
-    Shell.TabBarForegroundColor="{StaticResource TabBarActiveLight}"
-    Shell.TabBarTitleColor="{StaticResource TabBarActiveLight}"
-    Shell.TabBarUnselectedColor="{StaticResource TabBarInactiveLight}">
+    Shell.BackgroundColor="{AppThemeBinding Light={StaticResource GreenPrimary}, Dark={StaticResource AppSurfaceDark}}"
+    Shell.ForegroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource AppTextPrimaryDark}}"
+    Shell.TitleColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource AppTextPrimaryDark}}"
+    Shell.UnselectedColor="{AppThemeBinding Light={StaticResource TabBarInactiveLight}, Dark={StaticResource TabBarInactiveDark}}"
+    Shell.TabBarBackgroundColor="{AppThemeBinding Light={StaticResource TabBarBgLight}, Dark={StaticResource TabBarBgDark}}"
+    Shell.TabBarForegroundColor="{AppThemeBinding Light={StaticResource TabBarActiveLight}, Dark={StaticResource TabBarActiveDark}}"
+    Shell.TabBarTitleColor="{AppThemeBinding Light={StaticResource TabBarActiveLight}, Dark={StaticResource TabBarActiveDark}}"
+    Shell.TabBarUnselectedColor="{AppThemeBinding Light={StaticResource TabBarInactiveLight}, Dark={StaticResource TabBarInactiveDark}}">
 
     <Shell.FlyoutHeader>
         <Grid

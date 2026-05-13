@@ -10,7 +10,6 @@
 
     <Grid RowDefinitions="*, Auto">
 
-        <!-- ── Contenido principal scrollable ─────────────────────────── -->
         <ScrollView Grid.Row="0">
             <VerticalStackLayout Padding="28,52,28,24" Spacing="0">
 
