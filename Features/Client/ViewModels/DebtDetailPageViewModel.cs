@@ -48,6 +48,7 @@ public sealed class DebtDetailPageViewModel : BaseViewModel
 		get => _isAllPaidStateVisible;
 		private set => SetProperty(ref _isAllPaidStateVisible, value);
 	}
+	public bool WasDebtSettledByLastPayment { get; private set; }
 
 	public bool IsPaying
 	{
@@ -96,8 +97,6 @@ public sealed class DebtDetailPageViewModel : BaseViewModel
 		try
 		{
 			IsPaying = true;
-			await Task.Delay(220, cancellationToken);
-
 			var result = await _service.MarkInstallmentAsPaidAsync(installmentId, cancellationToken);
 			if (result.Success)
 			{
@@ -107,8 +106,9 @@ public sealed class DebtDetailPageViewModel : BaseViewModel
 				RaisePropertyChanged(nameof(LastPaymentBalanceText));
 				RaisePropertyChanged(nameof(LastPaymentMethodText));
 				MarkInstallmentAsPaidLocally(installmentId);
-				await Task.Delay(650, cancellationToken);
 				await ReloadAsync(cancellationToken);
+				WasDebtSettledByLastPayment = IsAllPaidStateVisible;
+				RaisePropertyChanged(nameof(WasDebtSettledByLastPayment));
 				return true;
 			}
 

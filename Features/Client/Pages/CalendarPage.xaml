@@ -8,8 +8,8 @@
 			 BackgroundColor="{AppThemeBinding Light={StaticResource AppBg}, Dark={StaticResource AppBgDark}}">
 	<ContentPage.Resources>
 		<Style x:Key="CalendarFilterButton" TargetType="Button">
-			<Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource AppSurface}, Dark={StaticResource AppSurfaceDark}}" />
-			<Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppBorderDark}}" />
+			<Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource AppSurface}, Dark={StaticResource AppBorderDark}}" />
+			<Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource AppBorder}, Dark={StaticResource AppTextSecondaryDark}}" />
 			<Setter Property="BorderWidth" Value="1" />
 			<Setter Property="CornerRadius" Value="18" />
 			<Setter Property="FontFamily" Value="OpenSansSemibold" />

@@ -23,9 +23,11 @@ public partial class CalendarPage : ContentPage
 	protected override async void OnAppearing()
 	{
 		base.OnAppearing();
-		await _refreshController.ActivateAsync();
-		await PageMotion.FadeInUpAsync(RootLayout);
-		await PageMotion.StaggerInAsync(RootLayout.Children.OfType<View>());
+		var refreshTask = _refreshController.ActivateAsync();
+		await Task.WhenAll(
+			refreshTask,
+			PageMotion.FadeInUpAsync(RootLayout),
+			PageMotion.StaggerInAsync(RootLayout.Children.OfType<View>()));
 	}
 
 	protected override void OnDisappearing()

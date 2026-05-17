@@ -56,12 +56,16 @@ public partial class AppShell : Shell
     private async void OnSwitchGroupClicked(object sender, EventArgs e)
     {
         FlyoutIsPresented = false;
-        var groups = _clientDebtService.GetGroups();
+        var groups = _clientDebtService.GetGroups()
+            .Where(g => g.PendingAmount > 0)
+            .ToList();
         if (groups.Count == 0)
         {
             try
             {
-                groups = await _clientDebtService.GetGroupsAsync();
+                groups = (await _clientDebtService.GetGroupsAsync())
+                    .Where(g => g.PendingAmount > 0)
+                    .ToList();
             }
             catch
             {

@@ -18,7 +18,11 @@ public sealed class MainPageViewModel : BaseViewModel
 	private string _walletMovementText = "Sin movimientos recientes";
 	private string _walletMovementAmountText = string.Empty;
 	private string _walletMovementAmountColor = "#6B6B6B";
+	private string _emptyTitleText = "Tu panel está limpio";
+	private string _emptyDescriptionText = "Vinculate con tu cobrador para consultar las deudas y pagos que registre para ti.";
+	private string _emptyActionText = "Vincular cobrador";
 	private bool _hasWalletMovement;
+	private bool _hasSettledDebts;
 	private ScreenState _state = ScreenState.Loading;
 	private string _errorMessage = string.Empty;
 	private bool _isRefreshing;
@@ -31,6 +35,16 @@ public sealed class MainPageViewModel : BaseViewModel
 		RetryCommand = new Command(async () => await RefreshAsync());
 		RefreshCommand = new Command(async () => await RefreshFromPullAsync());
 		LinkCollectorCommand = new Command(async () => await Shell.Current.GoToAsync(nameof(LinkCollectorPage)));
+		EmptyActionCommand = new Command(async () =>
+		{
+			if (HasSettledDebts)
+			{
+				await Shell.Current.GoToAsync("//receipts");
+				return;
+			}
+
+			await Shell.Current.GoToAsync(nameof(LinkCollectorPage));
+		});
 		LoadLocalSnapshot();
 	}
 
@@ -39,6 +53,7 @@ public sealed class MainPageViewModel : BaseViewModel
 	public Command RetryCommand { get; }
 	public Command RefreshCommand { get; }
 	public Command LinkCollectorCommand { get; }
+	public Command EmptyActionCommand { get; }
 
 	public string CurrentGroupText
 	{
@@ -98,6 +113,30 @@ public sealed class MainPageViewModel : BaseViewModel
 	{
 		get => _hasWalletMovement;
 		private set => SetProperty(ref _hasWalletMovement, value);
+	}
+
+	public bool HasSettledDebts
+	{
+		get => _hasSettledDebts;
+		private set => SetProperty(ref _hasSettledDebts, value);
+	}
+
+	public string EmptyTitleText
+	{
+		get => _emptyTitleText;
+		private set => SetProperty(ref _emptyTitleText, value);
+	}
+
+	public string EmptyDescriptionText
+	{
+		get => _emptyDescriptionText;
+		private set => SetProperty(ref _emptyDescriptionText, value);
+	}
+
+	public string EmptyActionText
+	{
+		get => _emptyActionText;
+		private set => SetProperty(ref _emptyActionText, value);
 	}
 
 	public ScreenState State
@@ -209,12 +248,22 @@ public sealed class MainPageViewModel : BaseViewModel
 
 	private void ApplyDashboard(IReadOnlyList<DebtGroup> groups, IReadOnlyList<Installment> currentInstallments)
 	{
-		var nextGroups = groups.Select(g => new GroupCardItem(g)).ToList();
+		var activeGroups = groups.Where(g => g.PendingAmount > 0).ToList();
+		var nextGroups = activeGroups.Select(g => new GroupCardItem(g)).ToList();
 		CollectionSyncHelper.SyncByKey(Groups, nextGroups, x => x.Id);
 
-		CurrentGroupText = $"Grupo actual: {_service.CurrentGroup.Name}";
-		ActiveGroupsText = groups.Count.ToString();
-		TotalPendingText = groups.Sum(g => g.PendingAmount).ToString("C");
+		HasSettledDebts = groups.Count > 0 && activeGroups.Count == 0;
+		EmptyTitleText = HasSettledDebts ? "Todo pagado" : "Tu panel está limpio";
+		EmptyDescriptionText = HasSettledDebts
+			? "Liquidaste tus deudas activas. Tus recibos siguen disponibles cuando quieras consultarlos."
+			: "Vinculate con tu cobrador para consultar las deudas y pagos que registre para ti.";
+		EmptyActionText = HasSettledDebts ? "Ver recibos" : "Vincular cobrador";
+
+		CurrentGroupText = activeGroups.Count == 0
+			? "No tienes deudas activas"
+			: $"Grupo actual: {_service.CurrentGroup.Name}";
+		ActiveGroupsText = activeGroups.Count.ToString();
+		TotalPendingText = activeGroups.Sum(g => g.PendingAmount).ToString("C");
 
 		var actionableInstallments = currentInstallments
 			.Where(i => i.Status is InstallmentStatus.Pending or InstallmentStatus.Overdue)

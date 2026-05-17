@@ -243,22 +243,35 @@ public sealed class DebtApiRepository : IClientDebtRepository
 
 	private void EnsureCurrentGroup(IReadOnlyList<DebtGroup> groups)
 	{
+		var previousGroupId = _currentGroup?.Id;
 		if (groups.Count == 0)
 		{
 			_currentGroup = null;
+			NotifyCurrentGroupChangedIfNeeded(previousGroupId);
 			return;
 		}
 
 		if (_currentGroup is not null)
 		{
 			var refreshedCurrent = groups.FirstOrDefault(g => g.Id == _currentGroup.Id);
-			if (refreshedCurrent is not null)
+			if (refreshedCurrent is not null && refreshedCurrent.PendingAmount > 0)
 			{
 				_currentGroup = refreshedCurrent;
+				NotifyCurrentGroupChangedIfNeeded(previousGroupId);
 				return;
 			}
 		}
 
-		_currentGroup = groups[0];
+		// Prefer a debt that still needs action; keep a settled debt only when no active debt remains.
+		_currentGroup = groups.FirstOrDefault(g => g.PendingAmount > 0) ?? groups[0];
+		NotifyCurrentGroupChangedIfNeeded(previousGroupId);
+	}
+
+	private void NotifyCurrentGroupChangedIfNeeded(string? previousGroupId)
+	{
+		if (previousGroupId != _currentGroup?.Id)
+		{
+			CurrentGroupChanged?.Invoke(this, EventArgs.Empty);
+		}
 	}
 }

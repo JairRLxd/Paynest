@@ -27,8 +27,8 @@ public partial class CardSimulatorPage : ContentPage
 	protected override async void OnAppearing()
 	{
 		base.OnAppearing();
-		await _refreshController.ActivateAsync();
-		await PageMotion.FadeInUpAsync(RootLayout);
+		var refreshTask = _refreshController.ActivateAsync();
+		await Task.WhenAll(refreshTask, PageMotion.FadeInUpAsync(RootLayout));
 	}
 
 	private async void OnDepositClicked(object sender, EventArgs e)

@@ -18,7 +18,8 @@ internal static class PageMotion
 		IEnumerable<View> sections,
 		int take = 6,
 		uint durationMs = 150,
-		double offsetY = 8)
+		double offsetY = 8,
+		int staggerDelayMs = 45)
 	{
 		var list = sections.Take(take).ToList();
 		foreach (var section in list)
@@ -27,11 +28,18 @@ internal static class PageMotion
 			section.TranslationY = offsetY;
 		}
 
-		foreach (var section in list)
+		await Task.WhenAll(list.Select((section, index) => AnimateSectionAsync(section, index, durationMs, staggerDelayMs)));
+	}
+
+	private static async Task AnimateSectionAsync(View section, int index, uint durationMs, int staggerDelayMs)
+	{
+		if (index > 0)
 		{
-			await Task.WhenAll(
-				section.FadeToAsync(1, durationMs),
-				section.TranslateToAsync(0, 0, durationMs));
+			await Task.Delay(index * staggerDelayMs);
 		}
+
+		await Task.WhenAll(
+			section.FadeToAsync(1, durationMs),
+			section.TranslateToAsync(0, 0, durationMs));
 	}
 }

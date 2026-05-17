@@ -129,10 +129,10 @@
 				<local:PageStateContainer.EmptyContent>
 						<local:EmptyStateView
 							IconSource="tab_home.svg"
-							TitleText="Tu panel está limpio"
-							DescriptionText="Vinculate con tu cobrador para consultar las deudas y pagos que registre para ti."
-							ActionText="Vincular cobrador"
-							ActionCommand="{Binding LinkCollectorCommand}" />
+							TitleText="{Binding EmptyTitleText}"
+							DescriptionText="{Binding EmptyDescriptionText}"
+							ActionText="{Binding EmptyActionText}"
+							ActionCommand="{Binding EmptyActionCommand}" />
 				</local:PageStateContainer.EmptyContent>
 
 				<local:PageStateContainer.ErrorContent>

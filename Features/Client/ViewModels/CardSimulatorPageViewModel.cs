@@ -371,8 +371,12 @@ public sealed class CardSimulatorPageViewModel : BaseViewModel
 		public string BadgeBackground { get; }
 		public string BadgeForeground { get; }
 		public string ReferenceText { get; }
-		public string CardBackground => IsHighlighted ? "#EBF5EF" : "White";
-		public string CardBorderColor => IsHighlighted ? "#2A6349" : "#D8D5CE";
+		public Color CardBackground => ResolveThemeColor(
+			light: IsHighlighted ? "#EBF5EF" : "#FFFFFF",
+			dark: IsHighlighted ? "#25312C" : "#161D1A");
+		public Color CardBorderColor => ResolveThemeColor(
+			light: IsHighlighted ? "#2A6349" : "#D8D5CE",
+			dark: IsHighlighted ? "#39A370" : "#25312C");
 		public float CardBorderWidth => IsHighlighted ? 1.5f : 0f;
 		public bool IsNewBadgeVisible => IsHighlighted;
 		public double CardScale
@@ -410,5 +414,8 @@ public sealed class CardSimulatorPageViewModel : BaseViewModel
 				_ => "Movimiento"
 			};
 		}
+
+		private static Color ResolveThemeColor(string light, string dark)
+			=> Color.FromArgb(Microsoft.Maui.Controls.Application.Current?.RequestedTheme == AppTheme.Dark ? dark : light);
 	}
 }
