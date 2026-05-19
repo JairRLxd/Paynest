@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Paynest.Core.Interfaces;
+using Paynest.Core.Validation;
 using Paynest.Core.Models.Cobrador.Clients;
 using Paynest.Features.Cobrador.Models;
 using Paynest.Infrastructure.Exceptions;
@@ -81,16 +82,16 @@ public partial class EditClientViewModel : ObservableObject
         try
         {
             var request = new UpdateClientRequest(
-                Name:       Name,
-                Phone:      string.IsNullOrWhiteSpace(Phone) ? null : Phone,
-                Curp:       string.IsNullOrWhiteSpace(Curp) ? null : Curp,
-                Rfc:        string.IsNullOrWhiteSpace(Rfc) ? null : Rfc,
-                Address:    string.IsNullOrWhiteSpace(Address) ? null : Address,
-                PostalCode: string.IsNullOrWhiteSpace(PostalCode) ? null : PostalCode,
-                Colonia:    string.IsNullOrWhiteSpace(Colonia) ? null : Colonia,
-                Municipio:  string.IsNullOrWhiteSpace(Municipio) ? null : Municipio,
-                Estado:     string.IsNullOrWhiteSpace(Estado) ? null : Estado,
-                Notes:      string.IsNullOrWhiteSpace(Notes) ? null : Notes);
+                Name:       InputSanitizer.Text(Name),
+                Phone:      InputSanitizer.NullableIdentifier(Phone),
+                Curp:       InputSanitizer.NullableIdentifier(Curp),
+                Rfc:        InputSanitizer.NullableIdentifier(Rfc, "&"),
+                Address:    InputSanitizer.NullableText(Address),
+                PostalCode: InputSanitizer.NullableText(PostalCode),
+                Colonia:    InputSanitizer.NullableText(Colonia),
+                Municipio:  InputSanitizer.NullableText(Municipio),
+                Estado:     InputSanitizer.NullableText(Estado),
+                Notes:      InputSanitizer.NullableText(Notes));
 
             await _clientService.UpdateClientAsync(_clientId, request, ct);
             _refreshService.NotifyChanged(CollectorRefreshScope.Clients | CollectorRefreshScope.ClientDetail, _clientId);

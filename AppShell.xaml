@@ -84,35 +84,25 @@
     </TabBar>
 
     <TabBar x:Name="CollectorTabBar" Route="collector">
-        <ShellContent
-            Title="Inicio"
-            Icon="tab_home.svg"
-            Route="collector_home"
-            ContentTemplate="{DataTemplate cobrador:HomePage}" />
+        <Tab Title="Inicio" Icon="tab_home.svg" Route="collector_home">
+            <ShellContent ContentTemplate="{DataTemplate cobrador:HomePage}" Route="home" />
+        </Tab>
 
-        <ShellContent
-            Title="Clientes"
-            Icon="tab_clients.svg"
-            Route="clients"
-            ContentTemplate="{DataTemplate cobrador:ClientsPage}" />
+        <Tab Title="Clientes" Icon="tab_clients.svg" Route="clients">
+            <ShellContent ContentTemplate="{DataTemplate cobrador:ClientsPage}" Route="list" />
+        </Tab>
 
-        <ShellContent
-            Title="Cobros"
-            Icon="tab_collections.svg"
-            Route="collections"
-            ContentTemplate="{DataTemplate cobrador:CollectionsPage}" />
+        <Tab Title="Cobros" Icon="tab_collections.svg" Route="collections">
+            <ShellContent ContentTemplate="{DataTemplate cobrador:CollectionsPage}" Route="list" />
+        </Tab>
 
-        <ShellContent
-            Title="Agenda"
-            Icon="tab_schedule.svg"
-            Route="schedule"
-            ContentTemplate="{DataTemplate cobrador:SchedulePage}" />
+        <Tab Title="Agenda" Icon="tab_schedule.svg" Route="schedule">
+            <ShellContent ContentTemplate="{DataTemplate cobrador:SchedulePage}" Route="list" />
+        </Tab>
 
-        <ShellContent
-            Title="Perfil"
-            Icon="tab_profile.svg"
-            Route="profile"
-            ContentTemplate="{DataTemplate cobrador:UserProfilePage}" />
+        <Tab Title="Perfil" Icon="tab_profile.svg" Route="profile">
+            <ShellContent ContentTemplate="{DataTemplate cobrador:UserProfilePage}" Route="page" />
+        </Tab>
     </TabBar>
 
     <MenuItem x:Name="SwitchGroupMenuItem" Text="Cambiar deuda activa" Clicked="OnSwitchGroupClicked" />

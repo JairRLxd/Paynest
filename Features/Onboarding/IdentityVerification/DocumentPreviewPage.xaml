@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Paynest.Features.Onboarding.IdentityVerification.DocumentPreviewPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Paynest.Features.Onboarding.IdentityVerification"
+    x:DataType="vm:DocumentPreviewViewModel"
+    Shell.NavBarIsVisible="False"
+    NavigationPage.HasNavigationBar="False"
+    BackgroundColor="#0D0D0D">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- ── Barra superior ───────────────────────────────────────────── -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,44" Padding="20,52,12,12">
+            <Label Grid.Column="0"
+                   Text="{Binding Title}"
+                   TextColor="White"
+                   FontFamily="OpenSansSemibold"
+                   FontSize="17"
+                   VerticalOptions="Center"/>
+            <Border Grid.Column="1"
+                    BackgroundColor="#2A2A2A"
+                    StrokeThickness="0"
+                    StrokeShape="Ellipse"
+                    HeightRequest="36" WidthRequest="36"
+                    VerticalOptions="Center">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding CloseCommand}"/>
+                </Border.GestureRecognizers>
+                <Label Text="✕" TextColor="White" FontSize="14"
+                       HorizontalOptions="Center" VerticalOptions="Center"/>
+            </Border>
+        </Grid>
+
+        <!-- ── Imagen / Estado ───────────────────────────────────────────── -->
+        <Grid Grid.Row="1">
+
+            <!-- Cargando -->
+            <VerticalStackLayout IsVisible="{Binding IsLoading}"
+                                 HorizontalOptions="Center"
+                                 VerticalOptions="Center"
+                                 Spacing="16">
+                <ActivityIndicator IsRunning="True" Color="White"
+                                   HeightRequest="40" WidthRequest="40"/>
+                <Label Text="Cargando imagen..."
+                       TextColor="#AAAAAA" FontSize="14"
+                       HorizontalOptions="Center"/>
+            </VerticalStackLayout>
+
+            <!-- Error -->
+            <VerticalStackLayout IsVisible="{Binding HasError}"
+                                 HorizontalOptions="Center"
+                                 VerticalOptions="Center"
+                                 Spacing="12"
+                                 Padding="32,0">
+                <Label Text="⚠" FontSize="36" HorizontalOptions="Center" TextColor="#FF6B6B"/>
+                <Label Text="{Binding ErrorMessage}"
+                       TextColor="#AAAAAA" FontSize="14"
+                       HorizontalTextAlignment="Center" LineHeight="1.4"/>
+            </VerticalStackLayout>
+
+            <!-- Imagen -->
+            <Image IsVisible="{Binding HasImage}"
+                   Source="{Binding DocumentImage}"
+                   Aspect="AspectFit"
+                   HorizontalOptions="Fill"
+                   VerticalOptions="Fill"
+                   Margin="0"/>
+
+        </Grid>
+
+        <!-- ── Botón reemplazar ──────────────────────────────────────────── -->
+        <VerticalStackLayout Grid.Row="2" Padding="24,12,24,44" Spacing="10">
+            <Button Text="Reemplazar documento"
+                    Command="{Binding ReplaceCommand}"
+                    IsEnabled="{Binding IsNotLoading}"
+                    BackgroundColor="Transparent"
+                    BorderColor="#444444"
+                    BorderWidth="1.5"
+                    TextColor="White"
+                    FontFamily="OpenSansSemibold"
+                    FontSize="15"
+                    CornerRadius="28"
+                    HeightRequest="50"
+                    HorizontalOptions="Fill"/>
+        </VerticalStackLayout>
+
+    </Grid>
+</ContentPage>

@@ -18,22 +18,12 @@
             </Border.StrokeShape>
             <VerticalStackLayout Padding="24,52,24,22" Spacing="16">
 
-                <!-- Saludo + campana -->
-                <Grid ColumnDefinitions="*,Auto">
-                    <VerticalStackLayout Spacing="2">
-                        <Label Text="{Binding Greeting}" TextColor="#B8DCC9" FontSize="14"/>
-                        <Label Text="{Binding UserName}" TextColor="White"
-                               FontSize="26" FontFamily="OpenSansSemibold"/>
-                    </VerticalStackLayout>
-                    <Border Grid.Column="1" BackgroundColor="#1F4F37" StrokeThickness="0"
-                            StrokeShape="Ellipse" HeightRequest="42" WidthRequest="42"
-                            VerticalOptions="Center">
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding NotificacionesCommand}"/>
-                        </Border.GestureRecognizers>
-                        <Label Text="🔔" FontSize="18" HorizontalOptions="Center" VerticalOptions="Center"/>
-                    </Border>
-                </Grid>
+                <!-- Saludo -->
+                <VerticalStackLayout Spacing="2">
+                    <Label Text="{Binding Greeting}" TextColor="#B8DCC9" FontSize="14"/>
+                    <Label Text="{Binding UserName}" TextColor="White"
+                           FontSize="26" FontFamily="OpenSansSemibold"/>
+                </VerticalStackLayout>
 
                 <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}"
                                    Color="White" HorizontalOptions="Center"/>
@@ -97,7 +87,7 @@
                             <TapGestureRecognizer Command="{Binding NuevaDeudaCommand}"/>
                         </Border.GestureRecognizers>
                         <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
-                            <Label Text="📋" FontSize="22" VerticalOptions="Center"/>
+                            <Image Source="ic_debt.svg" HeightRequest="22" WidthRequest="22" VerticalOptions="Center"/>
                             <VerticalStackLayout Spacing="2" VerticalOptions="Center">
                                 <Label Text="Nueva deuda" TextColor="White"
                                        FontSize="14" FontFamily="OpenSansSemibold"/>
@@ -113,7 +103,7 @@
                             <TapGestureRecognizer Command="{Binding RegistrarPagoCommand}"/>
                         </Border.GestureRecognizers>
                         <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
-                            <Label Text="💳" FontSize="22" VerticalOptions="Center"/>
+                            <Image Source="tab_card.svg" HeightRequest="22" WidthRequest="22" VerticalOptions="Center"/>
                             <VerticalStackLayout Spacing="2" VerticalOptions="Center">
                                 <Label Text="Registrar pago" TextColor="{StaticResource TextPrimary}"
                                        FontSize="14" FontFamily="OpenSansSemibold"/>
@@ -133,7 +123,7 @@
                             <TapGestureRecognizer Command="{Binding AnadirClienteCommand}"/>
                         </Border.GestureRecognizers>
                         <VerticalStackLayout HorizontalOptions="Center" Spacing="5">
-                            <Label Text="👤" FontSize="20" HorizontalOptions="Center"/>
+                            <Image Source="tab_profile.svg" HeightRequest="20" WidthRequest="20" HorizontalOptions="Center"/>
                             <Label Text="Cliente" TextColor="{StaticResource TextPrimary}"
                                    FontSize="10" FontFamily="OpenSansSemibold"
                                    HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
@@ -146,7 +136,7 @@
                             <TapGestureRecognizer Command="{Binding EditarDeudaCommand}"/>
                         </Border.GestureRecognizers>
                         <VerticalStackLayout HorizontalOptions="Center" Spacing="5">
-                            <Label Text="✏️" FontSize="20" HorizontalOptions="Center"/>
+                            <Image Source="ic_edit_dark.svg" HeightRequest="20" WidthRequest="20" HorizontalOptions="Center"/>
                             <Label Text="Editar deuda" TextColor="{StaticResource TextPrimary}"
                                    FontSize="10" FontFamily="OpenSansSemibold"
                                    HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
@@ -159,7 +149,7 @@
                             <TapGestureRecognizer Command="{Binding VerCobroCommand}"/>
                         </Border.GestureRecognizers>
                         <VerticalStackLayout HorizontalOptions="Center" Spacing="5">
-                            <Label Text="💰" FontSize="20" HorizontalOptions="Center"/>
+                            <Image Source="ic_money.svg" HeightRequest="20" WidthRequest="20" HorizontalOptions="Center"/>
                             <Label Text="Cobros" TextColor="{StaticResource TextPrimary}"
                                    FontSize="10" FontFamily="OpenSansSemibold"
                                    HorizontalOptions="Center"/>
@@ -172,7 +162,7 @@
                             <TapGestureRecognizer Command="{Binding VerAgendaCommand}"/>
                         </Border.GestureRecognizers>
                         <VerticalStackLayout HorizontalOptions="Center" Spacing="5">
-                            <Label Text="🗓" FontSize="20" HorizontalOptions="Center"/>
+                            <Image Source="ic_calendar.svg" HeightRequest="20" WidthRequest="20" HorizontalOptions="Center"/>
                             <Label Text="Agenda" TextColor="{StaticResource TextPrimary}"
                                    FontSize="10" FontFamily="OpenSansSemibold"
                                    HorizontalOptions="Center"/>
@@ -202,7 +192,7 @@
                             <Grid ColumnDefinitions="*,Auto">
                                 <Label Text="PENDIENTE" TextColor="{StaticResource TextSecondary}"
                                        FontSize="11" CharacterSpacing="0.5" VerticalOptions="Center"/>
-                                <Label Grid.Column="1" Text="⚠️" FontSize="16"/>
+                                <Image Grid.Column="1" Source="ic_warning.svg" HeightRequest="16" WidthRequest="16" VerticalOptions="Center"/>
                             </Grid>
                             <Label Text="{Binding PendienteTotal}" TextColor="#E65100"
                                    FontSize="22" FontFamily="OpenSansSemibold"/>

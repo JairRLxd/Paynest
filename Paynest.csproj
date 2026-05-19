@@ -53,6 +53,16 @@
 		<MauiImage Include="Resources\Images\*" />
 		<MauiImage Update="Resources\Images\dotnet_bot.svg" BaseSize="168,208" />
 
+		<!-- Tab bar icons: explicit 24x24 base size for correct density scaling -->
+		<MauiImage Update="Resources\Images\tab_home.svg" BaseSize="24,24" />
+		<MauiImage Update="Resources\Images\tab_clients.svg" BaseSize="24,24" />
+		<MauiImage Update="Resources\Images\tab_collections.svg" BaseSize="24,24" />
+		<MauiImage Update="Resources\Images\tab_schedule.svg" BaseSize="24,24" />
+		<MauiImage Update="Resources\Images\tab_profile.svg" BaseSize="24,24" />
+		<MauiImage Update="Resources\Images\tab_calendar.svg" BaseSize="24,24" />
+		<MauiImage Update="Resources\Images\tab_receipt.svg" BaseSize="24,24" />
+		<MauiImage Update="Resources\Images\tab_card.svg" BaseSize="24,24" />
+
 		<!-- Custom Fonts -->
 		<MauiFont Include="Resources\Fonts\*" />
 

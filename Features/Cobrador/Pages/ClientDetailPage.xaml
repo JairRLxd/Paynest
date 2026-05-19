@@ -72,7 +72,7 @@
                            FontSize="22" FontFamily="OpenSansSemibold" TextColor="White"
                            LineBreakMode="TailTruncation"/>
                     <HorizontalStackLayout Spacing="6">
-                        <Label Text="✆" FontSize="13" TextColor="#B8D4C4"/>
+                        <Image Source="ic_phone.svg" HeightRequest="13" WidthRequest="13" VerticalOptions="Center"/>
                         <Label Text="{Binding Phone}" FontSize="13" TextColor="#B8D4C4"/>
                     </HorizontalStackLayout>
                 </VerticalStackLayout>
@@ -164,8 +164,7 @@
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding CallClientCommand}"/>
                         </Border.GestureRecognizers>
-                        <Label Text="✆" FontSize="22"
-                               TextColor="{StaticResource TextPrimary}"
+                        <Image Source="ic_phone.svg" HeightRequest="22" WidthRequest="22"
                                HorizontalOptions="Center" VerticalOptions="Center"/>
                     </Border>
                 </Grid>

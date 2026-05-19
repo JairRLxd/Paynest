@@ -13,6 +13,33 @@ public partial class PaymentSetupViewModel(
     Paynest.Services.AuthStateService authState,
     Paynest.Services.CollectorPaymentSettings paymentSettings) : ObservableObject
 {
+    public bool IsEditMode { get; set; }
+
+    public async Task LoadPaymentConfigAsync()
+    {
+        IsLoading    = true;
+        GeneralError = null;
+        try
+        {
+            var data = await profileService.GetPaymentConfigAsync();
+            EfectivoEnabled     = data.EfectivoEnabled;
+            TransferenciaEnabled = data.TransferenciaEnabled;
+            BankName            = data.BankName      ?? string.Empty;
+            AccountHolder       = data.AccountHolder ?? string.Empty;
+            Clabe               = data.Clabe         ?? string.Empty;
+            TerminalEnabled     = data.TerminalEnabled;
+            TerminalProvider    = data.TerminalProvider  ?? string.Empty;
+            TerminalReference   = data.TerminalReference ?? string.Empty;
+        }
+        catch (Exception ex)
+        {
+            GeneralError = ex.Message;
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
     // ── Efectivo ────────────────────────────────────────────────────────────
 
     [ObservableProperty] private bool _efectivoEnabled = true;
@@ -80,20 +107,30 @@ public partial class PaymentSetupViewModel(
 
         try
         {
+            var config = new PaymentConfigRequest(
+                EfectivoEnabled,
+                TransferenciaEnabled,
+                TransferenciaEnabled ? InputSanitizer.Text(BankName)        : null,
+                TransferenciaEnabled ? InputSanitizer.Text(AccountHolder)   : null,
+                TransferenciaEnabled ? InputSanitizer.Digits(Clabe)         : null,
+                TerminalEnabled,
+                TerminalEnabled      ? InputSanitizer.Text(TerminalProvider) : null,
+                TerminalEnabled      ? InputSanitizer.Text(TerminalReference): null
+            );
+
+            if (IsEditMode)
+            {
+                await profileService.UpdatePaymentConfigAsync(config);
+                paymentSettings.Update(EfectivoEnabled, TransferenciaEnabled, TerminalEnabled);
+                if (App.CurrentNavigation is { } nav)
+                    await nav.PopAsync();
+                return;
+            }
+
             if (session.PersonalInfo is not null)
                 await profileService.SavePersonalInfoAsync(session.PersonalInfo);
 
-            await profileService.SavePaymentConfigAsync(new PaymentConfigRequest(
-                EfectivoEnabled,
-                TransferenciaEnabled,
-                TransferenciaEnabled ? BankName.Trim()      : null,
-                TransferenciaEnabled ? AccountHolder.Trim() : null,
-                TransferenciaEnabled ? Clabe.Trim()         : null,
-                TerminalEnabled,
-                TerminalEnabled ? TerminalProvider.Trim()   : null,
-                TerminalEnabled ? TerminalReference.Trim()  : null
-            ));
-
+            await profileService.SavePaymentConfigAsync(config);
             authState.MarkProfileCompleted();
             paymentSettings.Update(EfectivoEnabled, TransferenciaEnabled, TerminalEnabled);
             NavigateToMain();

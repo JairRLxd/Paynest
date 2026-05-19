@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Paynest.Core.Interfaces;
+using Paynest.Core.Validation;
 using Paynest.Core.Models.Cobrador.Clients.CreateDebt;
 using Paynest.Features.Cobrador.Models;
 using Paynest.Features.Cobrador.Pages;
@@ -134,17 +135,21 @@ public partial class CreateDebtViewModel(ICollectorDebtService debtService) : Ob
     [ObservableProperty][NotifyPropertyChangedFor(nameof(HasAmountError))] private string? _amountError;
     [ObservableProperty][NotifyPropertyChangedFor(nameof(HasPaymentAmountError))] private string? _paymentAmountError;
     [ObservableProperty][NotifyPropertyChangedFor(nameof(HasDueDateError))] private string? _dueDateError;
+    [ObservableProperty][NotifyPropertyChangedFor(nameof(HasInterestRateError))] private string? _interestRateError;
+    [ObservableProperty][NotifyPropertyChangedFor(nameof(HasMoratoryRateError))] private string? _moratoryRateError;
     [ObservableProperty][NotifyPropertyChangedFor(nameof(HasGeneralError))] private string? _generalError;
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsEditBlocked), nameof(CanCreate))]
     private bool _editBlocked;
-    public bool IsEditBlocked => _editBlocked;
+    public bool IsEditBlocked => EditBlocked;
 
     public bool HasClientError => ClientError is not null;
     public bool HasDescriptionError => DescriptionError is not null;
     public bool HasAmountError => AmountError is not null;
     public bool HasPaymentAmountError => PaymentAmountError is not null;
     public bool HasDueDateError => DueDateError is not null;
+    public bool HasInterestRateError => InterestRateError is not null;
+    public bool HasMoratoryRateError => MoratoryRateError is not null;
     public bool HasGeneralError => GeneralError is not null;
 
     [ObservableProperty][NotifyPropertyChangedFor(nameof(HasPreview))] private string _previewPrimary = string.Empty;
@@ -220,14 +225,25 @@ public partial class CreateDebtViewModel(ICollectorDebtService debtService) : Ob
     [RelayCommand]
     async Task SelectClientAsync()
     {
-        var page = Application.Current?.Windows.FirstOrDefault()?.Page;
-        if (page is null)
-            return;
+        var pickerPage = MauiProgram.Services.GetRequiredService<ClientPickerPage>();
+        if (pickerPage.BindingContext is ClientPickerViewModel pickerVm)
+        {
+            pickerVm.OnClientSelected = client =>
+            {
+                LoadClientContext(client);
+                ClientError  = null;
+                GeneralError = null;
+            };
+            pickerVm.OnAddNewClient = async () =>
+            {
+                var addPage = MauiProgram.Services.GetRequiredService<AddClientPage>();
+                if (App.CurrentNavigation is { } nav)
+                    await nav.PushAsync(addPage);
+            };
+        }
 
-        await page.DisplayAlertAsync(
-            "Seleccionar cliente",
-            "La selección real de clientes aún no está integrada en este flujo. Por ahora crea la deuda desde el detalle del cliente.",
-            "Entendido");
+        if (App.CurrentNavigation is { } navigation)
+            await navigation.PushModalAsync(pickerPage);
     }
 
     [RelayCommand] void SelectUnica() => Periodicidad = Periodicidad.Unica;
@@ -334,7 +350,7 @@ public partial class CreateDebtViewModel(ICollectorDebtService debtService) : Ob
     public void LoadForEdit(CollectorDebtDetailResponse debt, string clientName)
     {
         _editDebtId = debt.DebtId;
-        _editBlocked = false;
+        EditBlocked = false;
 
         _isApplyingPreview = true;
         try
@@ -376,8 +392,10 @@ public partial class CreateDebtViewModel(ICollectorDebtService debtService) : Ob
             _isApplyingPreview = false;
         }
 
-        ClientError  = null;
-        GeneralError = null;
+        ClientError       = null;
+        GeneralError      = null;
+        InterestRateError = null;
+        MoratoryRateError = null;
         ClearPreviewState();
 
         OnPropertyChanged(nameof(IsEditMode));
@@ -397,8 +415,8 @@ public partial class CreateDebtViewModel(ICollectorDebtService debtService) : Ob
         ClientInitials = string.Empty;
         ClientAvatarColor = Color.FromArgb("#4D8A6A");
         ActiveDebts = 0;
-        ClientError = null;
-        GeneralError = "Por ahora selecciona el cliente desde su detalle para crear una deuda sin usar datos mock.";
+        ClientError  = null;
+        GeneralError = null;
         ClearPreviewState();
     }
 
@@ -568,7 +586,7 @@ public partial class CreateDebtViewModel(ICollectorDebtService debtService) : Ob
         }
 
         return new CollectorDebtPreviewRequest(
-            Description.Trim(),
+            InputSanitizer.Text(Description),
             totalAmount.Value,
             Periodicidad,
             CalculationMode,
@@ -578,7 +596,7 @@ public partial class CreateDebtViewModel(ICollectorDebtService debtService) : Ob
             paymentAmount,
             ParsePercent(InterestRate),
             ParsePercent(MoratoryRate),
-            string.IsNullOrWhiteSpace(Notes) ? null : Notes.Trim());
+            InputSanitizer.NullableText(Notes));
     }
 
     private CollectorDebtCreateRequest? BuildCreateRequest()
@@ -596,7 +614,7 @@ public partial class CreateDebtViewModel(ICollectorDebtService debtService) : Ob
         }
 
         return new CollectorDebtCreateRequest(
-            Description.Trim(),
+            InputSanitizer.Text(Description),
             totalAmount.Value,
             Periodicidad,
             CalculationMode,
@@ -606,12 +624,13 @@ public partial class CreateDebtViewModel(ICollectorDebtService debtService) : Ob
             paymentAmount,
             ParsePercent(InterestRate),
             ParsePercent(MoratoryRate),
-            string.IsNullOrWhiteSpace(Notes) ? null : Notes.Trim());
+            InputSanitizer.NullableText(Notes));
     }
 
     private bool Validate()
     {
         ClientError = string.IsNullOrWhiteSpace(ClientId) ? "Selecciona un cliente para continuar" : null;
+
         DescriptionError = string.IsNullOrWhiteSpace(Description) ? "Ingresa una descripción para la deuda" : null;
 
         var totalAmount = ParseMoney(Amount);
@@ -630,11 +649,23 @@ public partial class CreateDebtViewModel(ICollectorDebtService debtService) : Ob
                 PaymentAmountError = "Ingresa cuánto pagará por periodo";
         }
 
+        var interestVal = ParsePercent(InterestRate);
+        InterestRateError = !string.IsNullOrWhiteSpace(InterestRate) && (interestVal is null || interestVal < 0)
+            ? "El interés debe ser un número igual o mayor a 0"
+            : null;
+
+        var moratoryVal = ParsePercent(MoratoryRate);
+        MoratoryRateError = !string.IsNullOrWhiteSpace(MoratoryRate) && (moratoryVal is null || moratoryVal < 0)
+            ? "El interés moratorio debe ser un número igual o mayor a 0"
+            : null;
+
         return ClientError is null
             && DescriptionError is null
             && AmountError is null
             && PaymentAmountError is null
-            && DueDateError is null;
+            && DueDateError is null
+            && InterestRateError is null
+            && MoratoryRateError is null;
     }
 
     private bool ValidatePreviewDates()

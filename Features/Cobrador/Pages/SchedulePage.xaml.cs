@@ -1,3 +1,4 @@
+using Paynest.Core.Validation;
 using Paynest.Features.Cobrador.Models;
 using Paynest.Features.Cobrador.ViewModels;
 using Paynest.Services;
@@ -61,9 +62,7 @@ public partial class SchedulePage : ContentPage
 
         // Read values while elements are still in DOM (just IsVisible=false).
         var newDate = RescheduleDatePicker.Date ?? DateTime.Today.AddDays(1);
-        var reason = RescheduleReasonEntry.Text?.Trim();
-        if (string.IsNullOrWhiteSpace(reason))
-            reason = null;
+        var reason = InputSanitizer.NullableText(RescheduleReasonEntry.Text);
 
         await _viewModel.RescheduleAsync(item, newDate, reason);
     }

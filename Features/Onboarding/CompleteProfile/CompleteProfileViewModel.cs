@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
+using Paynest.Core.Interfaces;
 using Paynest.Core.Models.Profile;
 using Paynest.Core.Validation;
 using Paynest.Features.Onboarding.IdentityVerification;
@@ -12,8 +13,14 @@ namespace Paynest.Features.Onboarding.CompleteProfile;
 public partial class CompleteProfileViewModel(
     OnboardingSession session,
     PostalCodeClient postalClient,
-    AuthStateService authState) : ObservableObject
+    AuthStateService authState,
+    IProfileService profileService) : ObservableObject
 {
+    // Cuando se entra desde el perfil (edición), no se redirige al login al volver.
+    public bool IsEditMode { get; set; }
+
+    // Evita que al pre-rellenar el CP se dispare el lookup automático.
+    private bool _suppressPostalLookup;
     // ── Datos personales ────────────────────────────────────────────────────
 
     [ObservableProperty] private string _visibleName = string.Empty;
@@ -43,6 +50,7 @@ public partial class CompleteProfileViewModel(
 
     partial void OnPostalCodeChanged(string value)
     {
+        if (_suppressPostalLookup) return;
         if (value.Length == 5)
             LookupPostalCodeCommand.Execute(null);
         else
@@ -61,7 +69,7 @@ public partial class CompleteProfileViewModel(
         IsLookingUp     = true;
 
         var result = await postalClient.LookupAsync(
-            PostalCode.Trim(), authState.AccessToken!, CancellationToken.None);
+            InputSanitizer.Digits(PostalCode), authState.AccessToken!, CancellationToken.None);
 
         IsLookingUp = false;
 
@@ -141,6 +149,40 @@ public partial class CompleteProfileViewModel(
 
     // ── Comandos ────────────────────────────────────────────────────────────
 
+    public async Task LoadProfileAsync()
+    {
+        IsLoading = true;
+        GeneralError = null;
+        try
+        {
+            var data = await profileService.GetPersonalInfoAsync();
+
+            _suppressPostalLookup = true;
+            VisibleName   = data.VisibleName;
+            Phone         = data.Phone;
+            PostalCode    = data.PostalCode;
+            Municipio     = data.Municipio;
+            Estado        = data.Estado;
+            Colonias      = [data.Colonia];
+            Colonia       = data.Colonia;
+            Address       = data.Address;
+            Curp          = data.Curp;
+            Rfc           = data.Rfc;
+            OperationType = data.OperationType;
+            BusinessName  = data.BusinessName ?? string.Empty;
+            BusinessType  = data.BusinessType ?? string.Empty;
+            _suppressPostalLookup = false;
+        }
+        catch (Exception ex)
+        {
+            GeneralError = ex.Message;
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
     [RelayCommand] void SelectPersona() => OperationType = OperationType.Persona;
     [RelayCommand] void SelectEmpresa() => OperationType = OperationType.Empresa;
 
@@ -165,14 +207,28 @@ public partial class CompleteProfileViewModel(
         try
         {
             session.PersonalInfo = new UserProfileRequest(
-                VisibleName.Trim(), Phone.Trim(),
-                PostalCode.Trim(), Colonia!, Municipio, Estado,
-                Address.Trim(), Curp.Trim().ToUpper(), Rfc.Trim().ToUpper(),
+                InputSanitizer.Text(VisibleName),
+                InputSanitizer.Digits(Phone),
+                InputSanitizer.Digits(PostalCode),
+                InputSanitizer.Text(Colonia!),
+                InputSanitizer.Text(Municipio),
+                InputSanitizer.Text(Estado),
+                InputSanitizer.Text(Address),
+                InputSanitizer.Identifier(Curp),
+                InputSanitizer.Identifier(Rfc, "&"),
                 OperationType,
-                BusinessName:     IsEmpresa ? BusinessName.Trim() : null,
-                BusinessType:     IsEmpresa ? BusinessType.Trim() : null,
-                BusinessLogoPath: IsEmpresa ? BusinessLogoPath    : null
+                BusinessName:     IsEmpresa ? InputSanitizer.Text(BusinessName)  : null,
+                BusinessType:     IsEmpresa ? InputSanitizer.Text(BusinessType)  : null,
+                BusinessLogoPath: IsEmpresa ? BusinessLogoPath                   : null
             );
+
+            if (IsEditMode)
+            {
+                await profileService.UpdatePersonalInfoAsync(session.PersonalInfo);
+                if (App.CurrentNavigation is { } nav)
+                    await nav.PopAsync();
+                return;
+            }
 
             var next = MauiProgram.Services.GetRequiredService<IdentityVerificationPage>();
             if (App.CurrentNavigation is { } navigation)
@@ -187,6 +243,13 @@ public partial class CompleteProfileViewModel(
     [RelayCommand]
     async Task BackAsync()
     {
+        if (IsEditMode)
+        {
+            if (App.CurrentNavigation is { } nav)
+                await nav.PopAsync();
+            return;
+        }
+
         var loginPage = MauiProgram.Services.GetRequiredService<Features.Auth.Login.LoginPage>();
         App.SetRootPage(new NavigationPage(loginPage)
         {

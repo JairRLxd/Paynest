@@ -11,6 +11,10 @@ public partial class AppShell : Shell
     private readonly IClientDebtService _clientDebtService;
     private readonly AuthStateService _authState;
 
+    // Declared here; implemented per-platform in Platforms/iOS/AppShell.ios.cs.
+    // No-op on Android (Shell properties handle it declaratively).
+    partial void PlatformOnNavigated();
+
     public AppShell()
     {
         InitializeComponent();
@@ -19,6 +23,7 @@ public partial class AppShell : Shell
 
         RegisterRoutes();
         ConfigureRoleShell();
+        Navigated += (_, _) => PlatformOnNavigated();
 
         _clientDebtService.CurrentGroupChanged += OnCurrentGroupChanged;
         _authState.SessionChanged += OnSessionChanged;

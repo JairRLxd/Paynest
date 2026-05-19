@@ -1,9 +1,11 @@
 ﻿#nullable enable
 using System.Text.RegularExpressions;
+using Paynest.Core.Validation;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Paynest.Core.Models.Auth;
+using Paynest.Features.Auth.ForgotPassword;
 using Paynest.Features.Onboarding.CompleteProfile;
 using Paynest.Infrastructure.Exceptions;
 using Paynest.Services;
@@ -69,7 +71,7 @@ public partial class LoginViewModel(AuthStateService authState, IServiceProvider
 
         try
         {
-            await authState.LoginAsync(new LoginRequest(Email.Trim(), Password));
+            await authState.LoginAsync(new LoginRequest(InputSanitizer.Email(Email), Password));
             NavigateToApp();
         }
         catch (AuthException ex)
@@ -98,9 +100,12 @@ public partial class LoginViewModel(AuthStateService authState, IServiceProvider
     }
 
     [RelayCommand]
-    void ForgotPassword()
+    async Task ForgotPassword()
     {
-        // TODO: implementar flujo recuperar contraseña
+        var page = sp.GetRequiredService<ForgotPasswordPage>();
+        var navigation = Application.Current?.Windows.FirstOrDefault()?.Page?.Navigation;
+        if (navigation is not null)
+            await navigation.PushAsync(page);
     }
 
     // ── helpers ──────────────────────────────────────────────────────────────

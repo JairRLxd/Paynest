@@ -42,7 +42,7 @@
                             StrokeShape="RoundRectangle 16"
                             Margin="0,0,0,12" Padding="0">
                         <Grid ColumnDefinitions="48,*" HeightRequest="48">
-                            <Label Grid.Column="0" Text="🔍" FontSize="17"
+                            <Image Grid.Column="0" Source="ic_search.svg" HeightRequest="18" WidthRequest="18"
                                    HorizontalOptions="Center" VerticalOptions="Center"/>
                             <Entry Grid.Column="1" Text="{Binding SearchText}"
                                    Placeholder="Buscar cliente..."

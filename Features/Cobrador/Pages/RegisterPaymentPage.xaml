@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:models="clr-namespace:Paynest.Features.Cobrador.Models"
     xmlns:vm="clr-namespace:Paynest.Features.Cobrador.ViewModels"
+    xmlns:behaviors="clr-namespace:Paynest.Core.Behaviors"
     x:Name="thisPage"
     x:DataType="vm:RegisterPaymentViewModel"
     Shell.NavBarIsVisible="False"
@@ -121,7 +122,11 @@
                                            FontSize="18" FontFamily="OpenSansSemibold"
                                            PlaceholderColor="{StaticResource TextPlaceholder}"
                                            TextColor="{StaticResource TextPrimary}"
-                                           BackgroundColor="Transparent"/>
+                                           BackgroundColor="Transparent">
+                                        <Entry.Behaviors>
+                                            <behaviors:NumericEntryBehavior AllowDecimal="True"/>
+                                        </Entry.Behaviors>
+                                    </Entry>
                                 </Grid>
                             </Border>
 

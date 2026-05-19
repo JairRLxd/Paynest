@@ -1,5 +1,6 @@
 #nullable enable
 using System.Collections.ObjectModel;
+using Paynest.Core.Validation;
 using Paynest.Features.Client.Api;
 using Paynest.Services;
 
@@ -216,7 +217,7 @@ public sealed class CardSimulatorPageViewModel : BaseViewModel
 			var response = await _apiClient.DepositWalletAsync(new WalletDepositRequestDto
 			{
 				Amount = amount,
-				Description = string.IsNullOrWhiteSpace(Description) ? "Abono de saldo" : Description.Trim()
+				Description = InputSanitizer.NullableText(Description) ?? "Abono de saldo"
 			}, cancellationToken);
 
 			ApplyWallet(response.Wallet);

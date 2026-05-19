@@ -34,6 +34,28 @@ public class AuthApiClient : IAuthService
     public Task<AuthResponse> RegisterAsync(RegisterRequest request, CancellationToken ct = default)
         => PostAsync<AuthResponse>($"{BasePath}/register", request, ct);
 
+    public async Task ForgotPasswordAsync(ForgotPasswordRequest request, CancellationToken ct = default)
+    {
+        using var req = new HttpRequestMessage(HttpMethod.Post, $"{BasePath}/forgot-password");
+        req.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        req.Content = new StringContent(
+            JsonSerializer.Serialize(request, JsonOpts), Encoding.UTF8, "application/json");
+        var res = await _http.SendAsync(req, ct);
+        if (!res.IsSuccessStatusCode)
+            await ThrowAuthExceptionAsync(res, $"{BasePath}/forgot-password", ct);
+    }
+
+    public async Task ResetPasswordAsync(ResetPasswordRequest request, CancellationToken ct = default)
+    {
+        using var req = new HttpRequestMessage(HttpMethod.Post, $"{BasePath}/reset-password");
+        req.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        req.Content = new StringContent(
+            JsonSerializer.Serialize(request, JsonOpts), Encoding.UTF8, "application/json");
+        var res = await _http.SendAsync(req, ct);
+        if (!res.IsSuccessStatusCode)
+            await ThrowAuthExceptionAsync(res, $"{BasePath}/reset-password", ct);
+    }
+
     public Task<AuthResponse> RefreshAsync(string refreshToken, CancellationToken ct = default)
         => PostAsync<AuthResponse>($"{BasePath}/refresh", new RefreshTokenRequest(refreshToken), ct);
 

@@ -62,7 +62,23 @@
                 <Label Text="Tu seguridad y la de tus clientes es nuestra prioridad."
                        TextColor="{StaticResource TextSecondary}"
                        FontSize="14" LineHeight="1.4"
-                       Margin="0,0,0,28"/>
+                       Margin="0,0,0,16"/>
+
+                <!-- Progreso de documentos -->
+                <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,20">
+                    <ProgressBar Grid.Column="0"
+                                 Progress="{Binding DocumentProgress}"
+                                 ProgressColor="{StaticResource GreenPrimary}"
+                                 BackgroundColor="{StaticResource InputBorder}"
+                                 HeightRequest="6"
+                                 VerticalOptions="Center"/>
+                    <Label Grid.Column="1"
+                           Text="{Binding DocumentProgressText}"
+                           FontSize="12"
+                           TextColor="{StaticResource TextSecondary}"
+                           Margin="10,0,0,0"
+                           VerticalOptions="Center"/>
+                </Grid>
 
                 <!-- ── Tarjeta: INE / Pasaporte — Frente ──────────────── -->
                 <Border BackgroundColor="{StaticResource White}" StrokeThickness="0"
@@ -72,7 +88,8 @@
                                 BackgroundColor="#EBF5EF" StrokeThickness="0"
                                 StrokeShape="Ellipse" HeightRequest="48" WidthRequest="48"
                                 VerticalOptions="Center">
-                            <Label Text="🪪" FontSize="22" HorizontalOptions="Center" VerticalOptions="Center"/>
+                            <Image Source="ic_idcard.svg" HeightRequest="24" WidthRequest="24"
+                                   HorizontalOptions="Center" VerticalOptions="Center"/>
                         </Border>
                         <Label Grid.Row="0" Grid.Column="1" Text="ID oficial — Frente"
                                FontFamily="OpenSansSemibold" FontSize="15"
@@ -89,7 +106,7 @@
                                 BorderWidth="1.5" CornerRadius="8" HeightRequest="38"
                                 FontSize="13" HorizontalOptions="Start"
                                 Padding="16,0"
-                                Command="{Binding UploadIdFronteCommand}"/>
+                                Command="{Binding TapIdFronteCommand}"/>
                     </Grid>
                 </Border>
 
@@ -101,7 +118,8 @@
                                 BackgroundColor="#EBF5EF" StrokeThickness="0"
                                 StrokeShape="Ellipse" HeightRequest="48" WidthRequest="48"
                                 VerticalOptions="Center">
-                            <Label Text="🪪" FontSize="22" HorizontalOptions="Center" VerticalOptions="Center"/>
+                            <Image Source="ic_idcard.svg" HeightRequest="24" WidthRequest="24"
+                                   HorizontalOptions="Center" VerticalOptions="Center"/>
                         </Border>
                         <Label Grid.Row="0" Grid.Column="1" Text="ID oficial — Reverso"
                                FontFamily="OpenSansSemibold" FontSize="15"
@@ -118,7 +136,7 @@
                                 BorderWidth="1.5" CornerRadius="8" HeightRequest="38"
                                 FontSize="13" HorizontalOptions="Start"
                                 Padding="16,0"
-                                Command="{Binding UploadIdReversoCommand}"/>
+                                Command="{Binding TapIdReversoCommand}"/>
                     </Grid>
                 </Border>
 
@@ -130,7 +148,8 @@
                                 BackgroundColor="#EBF5EF" StrokeThickness="0"
                                 StrokeShape="Ellipse" HeightRequest="48" WidthRequest="48"
                                 VerticalOptions="Center">
-                            <Label Text="🤳" FontSize="22" HorizontalOptions="Center" VerticalOptions="Center"/>
+                            <Image Source="ic_selfie.svg" HeightRequest="24" WidthRequest="24"
+                                   HorizontalOptions="Center" VerticalOptions="Center"/>
                         </Border>
                         <Label Grid.Row="0" Grid.Column="1" Text="Selfie o validación facial"
                                FontFamily="OpenSansSemibold" FontSize="15"
@@ -147,7 +166,7 @@
                                 BorderWidth="1.5" CornerRadius="8" HeightRequest="38"
                                 FontSize="13" HorizontalOptions="Start"
                                 Padding="16,0"
-                                Command="{Binding UploadSelfieCommand}"/>
+                                Command="{Binding TapSelfieCommand}"/>
                     </Grid>
                 </Border>
 
@@ -159,7 +178,8 @@
                                 BackgroundColor="#EBF5EF" StrokeThickness="0"
                                 StrokeShape="Ellipse" HeightRequest="48" WidthRequest="48"
                                 VerticalOptions="Center">
-                            <Label Text="🏠" FontSize="22" HorizontalOptions="Center" VerticalOptions="Center"/>
+                            <Image Source="ic_house.svg" HeightRequest="24" WidthRequest="24"
+                                   HorizontalOptions="Center" VerticalOptions="Center"/>
                         </Border>
                         <Label Grid.Row="0" Grid.Column="1" Text="Comprobante de domicilio — Frente"
                                FontFamily="OpenSansSemibold" FontSize="15"
@@ -176,7 +196,7 @@
                                 BorderWidth="1.5" CornerRadius="8" HeightRequest="38"
                                 FontSize="13" HorizontalOptions="Start"
                                 Padding="16,0"
-                                Command="{Binding UploadAddressFronteCommand}"/>
+                                Command="{Binding TapAddressFronteCommand}"/>
                     </Grid>
                 </Border>
 
@@ -188,7 +208,8 @@
                                 BackgroundColor="#EBF5EF" StrokeThickness="0"
                                 StrokeShape="Ellipse" HeightRequest="48" WidthRequest="48"
                                 VerticalOptions="Center">
-                            <Label Text="🏠" FontSize="22" HorizontalOptions="Center" VerticalOptions="Center"/>
+                            <Image Source="ic_house.svg" HeightRequest="24" WidthRequest="24"
+                                   HorizontalOptions="Center" VerticalOptions="Center"/>
                         </Border>
                         <Label Grid.Row="0" Grid.Column="1" Text="Comprobante de domicilio — Reverso"
                                FontFamily="OpenSansSemibold" FontSize="15"
@@ -205,7 +226,7 @@
                                 BorderWidth="1.5" CornerRadius="8" HeightRequest="38"
                                 FontSize="13" HorizontalOptions="Start"
                                 Padding="16,0"
-                                Command="{Binding UploadAddressReversoCommand}"/>
+                                Command="{Binding TapAddressReversoCommand}"/>
                     </Grid>
                 </Border>
 
@@ -229,7 +250,7 @@
                     TextColor="{StaticResource White}" FontFamily="OpenSansSemibold"
                     FontSize="16" CornerRadius="28" HeightRequest="56" HorizontalOptions="Fill"/>
             <HorizontalStackLayout HorizontalOptions="Center" Spacing="6">
-                <Label Text="🔒" FontSize="12" VerticalOptions="Center"/>
+                <Image Source="ic_lock.svg" HeightRequest="13" WidthRequest="13" VerticalOptions="Center"/>
                 <Label Text="Tu información está protegida y encriptada"
                        TextColor="{StaticResource TextSecondary}" FontSize="12"
                        VerticalOptions="Center"/>

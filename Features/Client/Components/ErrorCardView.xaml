@@ -5,7 +5,7 @@
              x:Class="Paynest.ErrorCardView">
     <Border Style="{StaticResource AppCardBorder}" Stroke="{AppThemeBinding Light={StaticResource DangerFg}, Dark={StaticResource DangerBg}}">
         <VerticalStackLayout Spacing="8">
-            <Label FontSize="24" HorizontalTextAlignment="Center" Text="⚠️" />
+            <Image Source="ic_warning.svg" HeightRequest="28" WidthRequest="28" HorizontalOptions="Center"/>
             <Label Style="{StaticResource AppSectionTitle}" HorizontalTextAlignment="Center" Text="No pudimos cargar esta sección" />
             <Label Style="{StaticResource AppCaption}" HorizontalTextAlignment="Center" Text="{Binding Source={RelativeSource AncestorType={x:Type local:ErrorCardView}}, Path=ErrorMessage}" />
             <Button

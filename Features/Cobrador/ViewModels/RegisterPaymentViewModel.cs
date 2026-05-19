@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Paynest.Core.Validation;
 using Paynest.Features.Cobrador.UseCases;
 using Paynest.Core.Models.Cobrador.Clients.RegisterPayment;
 using Paynest.Features.Cobrador.Models;
@@ -244,7 +245,7 @@ public partial class RegisterPaymentViewModel(
                 IsTotalPayment,
                 ToBackendMethod(SelectedMethod),
                 DateTime.Now,
-                string.IsNullOrWhiteSpace(Notes) ? null : Notes.Trim());
+                InputSanitizer.NullableText(Notes));
             var preview = await previewPayment.ExecuteAsync(_clientId, req, ct);
             ApplyPreview(preview, isInitial: false);
         }
@@ -385,7 +386,7 @@ public partial class RegisterPaymentViewModel(
                 IsTotalPayment:  IsTotalPayment,
                 Method:          ToBackendMethod(SelectedMethod),
                 PaymentDateTime: PaymentDateTime,
-                Notes:           string.IsNullOrWhiteSpace(Notes) ? null : Notes.Trim(),
+                Notes:           InputSanitizer.NullableText(Notes),
                 ProofFilePath:   null);
 
             var response = await registerPayment.ExecuteAsync(_clientId, request);

@@ -1,5 +1,6 @@
 ﻿#nullable enable
 using System.Text.RegularExpressions;
+using Paynest.Core.Validation;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
@@ -99,7 +100,13 @@ public partial class RegisterViewModel(
         try
         {
             await authState.RegisterAsync(
-                new RegisterRequest(Email.Trim(), FirstName.Trim(), LastNameP.Trim(), LastNameM.Trim(), Password, PasswordConfirm));
+                new RegisterRequest(
+                    InputSanitizer.Email(Email),
+                    InputSanitizer.Text(FirstName),
+                    InputSanitizer.Text(LastNameP),
+                    InputSanitizer.Text(LastNameM),
+                    Password,
+                    PasswordConfirm));
             NavigateToApp();
         }
         catch (AuthException ex)

@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:Paynest.Features.Cobrador.ViewModels"
+    xmlns:behaviors="clr-namespace:Paynest.Core.Behaviors"
     x:DataType="vm:CreateDebtViewModel"
     Shell.NavBarIsVisible="False"
     NavigationPage.HasNavigationBar="False"
@@ -141,6 +142,7 @@
                             </Border.Triggers>
                             <Entry Text="{Binding Description}"
                                    Placeholder="Ej. Préstamo quincenal"
+                                   MaxLength="255"
                                    PlaceholderColor="{StaticResource TextPlaceholder}"
                                    TextColor="{StaticResource TextPrimary}"
                                    BackgroundColor="Transparent" Margin="14,0" ReturnType="Next"/>
@@ -171,7 +173,11 @@
                                        FontSize="26" FontFamily="OpenSansSemibold"
                                        TextColor="{StaticResource TextPrimary}"
                                        PlaceholderColor="{StaticResource TextPlaceholder}"
-                                       BackgroundColor="Transparent" ReturnType="Next"/>
+                                       BackgroundColor="Transparent" ReturnType="Next">
+                                    <Entry.Behaviors>
+                                        <behaviors:NumericEntryBehavior AllowDecimal="True"/>
+                                    </Entry.Behaviors>
+                                </Entry>
                             </Grid>
                         </Border>
                         <Label Text="{Binding AmountError}"
@@ -287,9 +293,9 @@
                                         <Label Text="{Binding StartDateText}"
                                                TextColor="{StaticResource TextPrimary}"
                                                VerticalOptions="Center"/>
-                                        <Label Grid.Column="1" Text="📅"
-                                               FontSize="16"
-                                               VerticalOptions="Center"/>
+                                        <Image Grid.Column="1" Source="ic_calendar.svg"
+                                               HeightRequest="18" WidthRequest="18"
+                                               VerticalOptions="Center" Margin="8,0,0,0"/>
                                     </Grid>
                                 </Border>
                             </VerticalStackLayout>
@@ -308,9 +314,9 @@
                                         <Label Text="{Binding FirstPaymentDateText}"
                                                TextColor="{StaticResource TextPrimary}"
                                                VerticalOptions="Center"/>
-                                        <Label Grid.Column="1" Text="📅"
-                                               FontSize="16"
-                                               VerticalOptions="Center"/>
+                                        <Image Grid.Column="1" Source="ic_calendar.svg"
+                                               HeightRequest="18" WidthRequest="18"
+                                               VerticalOptions="Center" Margin="8,0,0,0"/>
                                     </Grid>
                                 </Border>
                                 <Label Text="Aquí defines el día real en que pasarás a cobrar por primera vez."
@@ -338,9 +344,9 @@
                                         <Label Text="{Binding DueDateText}"
                                                TextColor="{StaticResource TextPrimary}"
                                                VerticalOptions="Center"/>
-                                        <Label Grid.Column="1" Text="📅"
-                                               FontSize="16"
-                                               VerticalOptions="Center"/>
+                                        <Image Grid.Column="1" Source="ic_calendar.svg"
+                                               HeightRequest="18" WidthRequest="18"
+                                               VerticalOptions="Center" Margin="8,0,0,0"/>
                                     </Grid>
                                 </Border>
                             </VerticalStackLayout>
@@ -374,7 +380,11 @@
                                            TextColor="{StaticResource TextPrimary}"
                                            PlaceholderColor="{StaticResource TextPlaceholder}"
                                            BackgroundColor="Transparent"
-                                           VerticalOptions="Center"/>
+                                           VerticalOptions="Center">
+                                        <Entry.Behaviors>
+                                            <behaviors:NumericEntryBehavior AllowDecimal="True"/>
+                                        </Entry.Behaviors>
+                                    </Entry>
                                 </Grid>
                             </Border>
                             <Label Text="{Binding PaymentAmountError}"
@@ -420,12 +430,25 @@
                         <Border Stroke="{StaticResource InputBorderBrush}"
                                 StrokeShape="RoundRectangle 12" StrokeThickness="1.5"
                                 BackgroundColor="{StaticResource PageBackground}" HeightRequest="52">
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border"
+                                             Binding="{Binding HasInterestRateError}" Value="True">
+                                    <Setter Property="Stroke" Value="{StaticResource ErrorBrush}"/>
+                                </DataTrigger>
+                            </Border.Triggers>
                             <Entry Text="{Binding InterestRate}"
                                    Placeholder="0%" Keyboard="Numeric"
                                    PlaceholderColor="{StaticResource TextPlaceholder}"
                                    TextColor="{StaticResource TextPrimary}"
-                                   BackgroundColor="Transparent" Margin="14,0" ReturnType="Next"/>
+                                   BackgroundColor="Transparent" Margin="14,0" ReturnType="Next">
+                                <Entry.Behaviors>
+                                    <behaviors:NumericEntryBehavior AllowDecimal="True"/>
+                                </Entry.Behaviors>
+                            </Entry>
                         </Border>
+                        <Label Text="{Binding InterestRateError}"
+                               IsVisible="{Binding HasInterestRateError}"
+                               TextColor="{StaticResource Error}" FontSize="11" Margin="2,2,0,0"/>
                         <Label Text="Se aplica sobre el monto desde el inicio del préstamo."
                                FontSize="11" TextColor="{StaticResource TextSecondary}"
                                Margin="2,4,0,0"/>
@@ -443,12 +466,25 @@
                         <Border Stroke="{StaticResource InputBorderBrush}"
                                 StrokeShape="RoundRectangle 12" StrokeThickness="1.5"
                                 BackgroundColor="{StaticResource PageBackground}" HeightRequest="52">
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border"
+                                             Binding="{Binding HasMoratoryRateError}" Value="True">
+                                    <Setter Property="Stroke" Value="{StaticResource ErrorBrush}"/>
+                                </DataTrigger>
+                            </Border.Triggers>
                             <Entry Text="{Binding MoratoryRate}"
                                    Placeholder="0%" Keyboard="Numeric"
                                    PlaceholderColor="{StaticResource TextPlaceholder}"
                                    TextColor="{StaticResource TextPrimary}"
-                                   BackgroundColor="Transparent" Margin="14,0" ReturnType="Next"/>
+                                   BackgroundColor="Transparent" Margin="14,0" ReturnType="Next">
+                                <Entry.Behaviors>
+                                    <behaviors:NumericEntryBehavior AllowDecimal="True"/>
+                                </Entry.Behaviors>
+                            </Entry>
                         </Border>
+                        <Label Text="{Binding MoratoryRateError}"
+                               IsVisible="{Binding HasMoratoryRateError}"
+                               TextColor="{StaticResource Error}" FontSize="11" Margin="2,2,0,0"/>
                         <Label Text="Se cobra si el cliente no paga en la fecha de vencimiento."
                                FontSize="11" TextColor="{StaticResource TextSecondary}"
                                Margin="2,4,0,0"/>
@@ -461,6 +497,7 @@
                                 BackgroundColor="{StaticResource PageBackground}" Padding="14,10">
                             <Editor Text="{Binding Notes}"
                                     Placeholder="Solo tú puedes verlas..."
+                                    MaxLength="500"
                                     PlaceholderColor="{StaticResource TextPlaceholder}"
                                     TextColor="{StaticResource TextPrimary}"
                                     BackgroundColor="Transparent"

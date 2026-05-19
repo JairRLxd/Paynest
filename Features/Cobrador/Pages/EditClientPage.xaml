@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:Paynest.Features.Cobrador.ViewModels"
+    xmlns:behaviors="clr-namespace:Paynest.Core.Behaviors"
     x:DataType="vm:EditClientViewModel"
     Shell.NavBarIsVisible="False"
     BackgroundColor="{StaticResource PageBackground}">
@@ -72,11 +73,8 @@
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding ChangePhotoCommand}"/>
                             </Border.GestureRecognizers>
-                            <Label Text="✎"
-                                   TextColor="White"
-                                   FontSize="16"
-                                   HorizontalOptions="Center"
-                                   VerticalOptions="Center"/>
+                            <Image Source="ic_edit.svg" HeightRequest="16" WidthRequest="16"
+                                   HorizontalOptions="Center" VerticalOptions="Center"/>
                         </Border>
                     </Grid>
 
@@ -161,7 +159,11 @@
                                 <Border BackgroundColor="White" Stroke="{StaticResource InputBorderBrush}"
                                         StrokeThickness="1.5" StrokeShape="RoundRectangle 14" Padding="14,0">
                                     <Entry Text="{Binding PostalCode}" Keyboard="Numeric" HeightRequest="54"
-                                           BackgroundColor="Transparent" TextColor="{StaticResource TextPrimary}"/>
+                                           BackgroundColor="Transparent" TextColor="{StaticResource TextPrimary}">
+                                        <Entry.Behaviors>
+                                            <behaviors:NumericEntryBehavior AllowDecimal="False"/>
+                                        </Entry.Behaviors>
+                                    </Entry>
                                 </Border>
                             </VerticalStackLayout>
 

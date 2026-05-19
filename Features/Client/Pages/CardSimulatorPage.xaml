@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 			 xmlns:local="clr-namespace:Paynest"
+			 xmlns:behaviors="clr-namespace:Paynest.Core.Behaviors"
 			 x:Class="Paynest.CardSimulatorPage"
 			 Title="Saldo"
 			 BackgroundColor="{AppThemeBinding Light={StaticResource AppBg}, Dark={StaticResource AppBgDark}}">
@@ -108,7 +109,11 @@
 								Text="{Binding AmountInput}"
 								TextColor="{AppThemeBinding Light={StaticResource AppTextPrimary}, Dark={StaticResource AppTextPrimaryDark}}"
 								PlaceholderColor="{AppThemeBinding Light={StaticResource TextPlaceholder}, Dark={StaticResource AppTextSecondaryDark}}"
-								SemanticProperties.Description="Monto a abonar al saldo Paynest" />
+								SemanticProperties.Description="Monto a abonar al saldo Paynest">
+								<Entry.Behaviors>
+									<behaviors:NumericEntryBehavior AllowDecimal="True"/>
+								</Entry.Behaviors>
+							</Entry>
 						</VerticalStackLayout>
 
 						<Border

@@ -361,11 +361,10 @@
                                                         CornerRadius="18"
                                                         HeightRequest="44"/>
                                                 <Button Grid.Column="1"
-                                                        Text="📅"
+                                                        ImageSource="ic_calendar.svg"
                                                         Clicked="OnRescheduleClicked"
                                                         BackgroundColor="#F0F4F2"
                                                         TextColor="{StaticResource TextPrimary}"
-                                                        FontSize="18"
                                                         WidthRequest="52"
                                                         HeightRequest="44"
                                                         CornerRadius="18"

@@ -1,6 +1,7 @@
 using System.Net;
 using Microsoft.Extensions.Logging;
 using Paynest.Core.Interfaces;
+using Paynest.Features.Auth.ForgotPassword;
 using Paynest.Features.Auth.Login;
 using Paynest.Features.Auth.Register;
 using Paynest.Features.Client.Api;
@@ -12,6 +13,8 @@ using Paynest.Features.Cobrador.ViewModels;
 using Paynest.Features.Onboarding;
 using Paynest.Features.Onboarding.CompleteProfile;
 using Paynest.Features.Onboarding.IdentityVerification;
+using DocumentPreviewPage = Paynest.Features.Onboarding.IdentityVerification.DocumentPreviewPage;
+using DocumentPreviewViewModel = Paynest.Features.Onboarding.IdentityVerification.DocumentPreviewViewModel;
 using Paynest.Features.Onboarding.PaymentSetup;
 using Paynest.Features.Splash;
 using Paynest.Infrastructure;
@@ -92,6 +95,8 @@ public static class MauiProgram
         builder.Services.AddTransient<LoginPage>();
         builder.Services.AddTransient<RegisterViewModel>();
         builder.Services.AddTransient<RegisterPage>();
+        builder.Services.AddTransient<ForgotPasswordViewModel>();
+        builder.Services.AddTransient<ForgotPasswordPage>();
         builder.Services.AddTransient<LinkCollectorPage>();
 
         builder.Services.AddSingleton<OnboardingSession>();
@@ -99,6 +104,8 @@ public static class MauiProgram
         builder.Services.AddTransient<CompleteProfilePage>();
         builder.Services.AddTransient<IdentityVerificationViewModel>();
         builder.Services.AddTransient<IdentityVerificationPage>();
+        builder.Services.AddTransient<DocumentPreviewViewModel>();
+        builder.Services.AddTransient<DocumentPreviewPage>();
         builder.Services.AddTransient<PaymentSetupViewModel>();
         builder.Services.AddTransient<PaymentSetupPage>();
 

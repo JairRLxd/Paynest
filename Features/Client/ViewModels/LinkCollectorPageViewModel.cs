@@ -1,4 +1,5 @@
 #nullable enable
+using Paynest.Core.Validation;
 using Paynest.Features.Client.Api;
 using Paynest.Services;
 
@@ -152,7 +153,7 @@ public sealed class LinkCollectorPageViewModel : BaseViewModel
 			}
 		}
 
-		var code = trimmed.ToUpperInvariant().Replace(" ", string.Empty);
+		var code = InputSanitizer.Identifier(trimmed);
 		if (string.IsNullOrWhiteSpace(code))
 		{
 			return string.Empty;

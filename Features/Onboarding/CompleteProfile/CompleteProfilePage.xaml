@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:Paynest.Features.Onboarding.CompleteProfile"
+    xmlns:behaviors="clr-namespace:Paynest.Core.Behaviors"
     x:DataType="vm:CompleteProfileViewModel"
     Shell.NavBarIsVisible="False"
     NavigationPage.HasNavigationBar="False"
@@ -114,7 +115,11 @@
                         <Entry Placeholder="Código postal" Text="{Binding PostalCode}"
                                Keyboard="Numeric" MaxLength="5"
                                BackgroundColor="Transparent" PlaceholderColor="{StaticResource TextPlaceholder}"
-                               TextColor="{StaticResource TextPrimary}" Margin="14,0" ReturnType="Next"/>
+                               TextColor="{StaticResource TextPrimary}" Margin="14,0" ReturnType="Next">
+                            <Entry.Behaviors>
+                                <behaviors:NumericEntryBehavior AllowDecimal="False"/>
+                            </Entry.Behaviors>
+                        </Entry>
                     </Border>
                     <ActivityIndicator Grid.Column="2"
                                        IsVisible="{Binding IsLookingUp}" IsRunning="{Binding IsLookingUp}"
