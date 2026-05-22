@@ -142,7 +142,8 @@ public sealed class LinkCollectorPageViewModel : BaseViewModel
 				.Select(part => part.Split('=', 2))
 				.FirstOrDefault(parts =>
 					parts.Length == 2 &&
-					string.Equals(parts[0], "collectorCode", StringComparison.OrdinalIgnoreCase));
+					(string.Equals(parts[0], "collectorCode", StringComparison.OrdinalIgnoreCase) ||
+					 string.Equals(parts[0], "code", StringComparison.OrdinalIgnoreCase)));
 			if (fromQuery is { Length: 2 })
 			{
 				trimmed = Uri.UnescapeDataString(fromQuery[1]);
@@ -153,12 +154,22 @@ public sealed class LinkCollectorPageViewModel : BaseViewModel
 			}
 		}
 
-		var code = InputSanitizer.Identifier(trimmed);
+		var code = InputSanitizer.Identifier(trimmed, "-");
 		if (string.IsNullOrWhiteSpace(code))
 		{
 			return string.Empty;
 		}
 
-		return code.StartsWith("PAY-", StringComparison.Ordinal) ? code : $"PAY-{code}";
+		if (code.StartsWith("PAY-", StringComparison.Ordinal))
+		{
+			return code;
+		}
+
+		if (code.StartsWith("PAY", StringComparison.Ordinal) && code.Length == 9)
+		{
+			return $"PAY-{code[3..]}";
+		}
+
+		return code.Length == 6 ? $"PAY-{code}" : code;
 	}
 }

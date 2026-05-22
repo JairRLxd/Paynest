@@ -35,7 +35,7 @@ public class AuthStateService(IAuthService authService)
     public bool IsClient => NormalizedRole == "client";
     public bool IsCollectorRole => NormalizedRole is "collector" or "admin" or "admin_collector";
     public bool IsAdminCollector => NormalizedRole == "admin_collector";
-    public bool RequiresCollectorOnboarding => IsAdminCollector && !IsProfileCompleted;
+    public bool RequiresCollectorOnboarding => false;
 
     public void MarkProfileCompleted()
     {

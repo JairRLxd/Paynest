@@ -1,6 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 using Paynest.Features.Auth.Login;
-using Paynest.Features.Onboarding.CompleteProfile;
 using Paynest.Features.Splash;
 using Paynest.Services;
 
@@ -56,16 +55,6 @@ public partial class App : Application
 
     public static Page BuildAuthenticatedRootPage(AuthStateService authState)
     {
-        if (authState.RequiresCollectorOnboarding)
-        {
-            var onboardingPage = MauiProgram.Services.GetRequiredService<CompleteProfilePage>();
-            return new NavigationPage(onboardingPage)
-            {
-                BarBackgroundColor = Colors.Transparent,
-                BackgroundColor = Color.FromArgb("#F2F0EB")
-            };
-        }
-
         return MauiProgram.Services.GetRequiredService<AppShell>();
     }
 
