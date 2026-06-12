@@ -7,6 +7,44 @@ Paynest es una aplicacion movil desarrollada con .NET MAUI para gestionar flujos
 
 La app consume una API backend mediante endpoints protegidos con autenticacion, mantiene sesion local y puede trabajar contra backend real o con mocks para desarrollo de interfaz.
 
+## Capturas
+
+### Autenticacion
+
+| Login | Registro |
+|---|---|
+| <img src="docs/screenshots/auth-login.png" width="220" alt="Login de Paynest" /> | <img src="docs/screenshots/auth-register.png" width="220" alt="Registro de Paynest" /> |
+
+### Flujo cliente
+
+| Inicio | Vincular cobrador | Calendario |
+|---|---|---|
+| <img src="docs/screenshots/client-home.png" width="220" alt="Inicio del cliente" /> | <img src="docs/screenshots/client-link-collector.png" width="220" alt="Vincular cobrador" /> | <img src="docs/screenshots/client-calendar.png" width="220" alt="Calendario de vencimientos" /> |
+
+| Recibos | Saldo Paynest |
+|---|---|
+| <img src="docs/screenshots/client-receipts.png" width="220" alt="Recibos del cliente" /> | <img src="docs/screenshots/client-wallet.png" width="220" alt="Saldo Paynest" /> |
+
+### Onboarding cobrador
+
+| Completar perfil |
+|---|
+| <img src="docs/screenshots/collector-onboarding-profile.png" width="220" alt="Onboarding de perfil del cobrador" /> |
+
+### Flujo cobrador
+
+| Inicio | Clientes | Codigo QR |
+|---|---|---|
+| <img src="docs/screenshots/collector-home.png" width="220" alt="Inicio del cobrador" /> | <img src="docs/screenshots/collector-clients.png" width="220" alt="Lista de clientes" /> | <img src="docs/screenshots/collector-add-client.png" width="220" alt="Codigo de cobrador y QR" /> |
+
+| Centro de cobranza | Nueva deuda | Registrar pago |
+|---|---|---|
+| <img src="docs/screenshots/collector-collections.png" width="220" alt="Centro de cobranza" /> | <img src="docs/screenshots/collector-new-debt.png" width="220" alt="Crear nueva deuda" /> | <img src="docs/screenshots/collector-register-payment.png" width="220" alt="Registrar pago" /> |
+
+| Perfil |
+|---|
+| <img src="docs/screenshots/collector-profile.png" width="220" alt="Perfil del cobrador" /> |
+
 ## Tecnologias
 
 - .NET MAUI
@@ -235,4 +273,3 @@ El proyecto ya cuenta con:
 - Recibos.
 - Estados de carga, vacios y error.
 - UI adaptada para cliente y cobrador.
-
